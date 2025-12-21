@@ -7,6 +7,7 @@ import {
   createDbSession,
   SESSION_COOKIE_NAME_TO_SET,
   SESSION_COOKIE_NAMES,
+  SESSION_TTL_SECONDS,
 } from "@/lib/auth/session";
 
 export const runtime = "nodejs";
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
     secure: isProd,
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 30,
+    maxAge: SESSION_TTL_SECONDS,
   });
 
   return res;
