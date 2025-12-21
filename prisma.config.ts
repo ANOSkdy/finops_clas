@@ -11,8 +11,6 @@ export default defineConfig({
   datasource: {
     // For Prisma Migrate / CLI
     url: env("DATABASE_URL"),
-    // For direct connection (recommended when DATABASE_URL points to a pooler)
-    directUrl: env("DIRECT_URL"),
     // Optional (only if you explicitly use a separate shadow DB):
     // shadowDatabaseUrl: env("SHADOW_DATABASE_URL"),
   },
