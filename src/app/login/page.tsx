@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/toast";
 
-export default function LoginPage() {
+function LoginForm() {
   const sp = useSearchParams();
   const next = useMemo(() => sp.get("next") || "/selectcompany", [sp]);
   const { toast } = useToast();
@@ -92,5 +92,31 @@ export default function LoginPage() {
         </Card>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-base text-ink">
+          <div className="mx-auto w-full max-w-xl px-4 py-10">
+            <Card className="glass">
+              <CardHeader>
+                <div className="text-xl font-semibold tracking-tight">ログイン</div>
+                <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="h-12 rounded-2xl border border-border/40 bg-white/5" />
+                <div className="h-12 rounded-2xl border border-border/40 bg-white/5" />
+                <div className="h-12 rounded-2xl border border-border/40 bg-white/5" />
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

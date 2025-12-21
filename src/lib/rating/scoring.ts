@@ -20,7 +20,7 @@ export function scoreFromUpload(meta: {
   if (mime.includes("csv") || mime.includes("excel") || mime.includes("spreadsheet")) score += 3;
 
   // size hints (avoid overfitting)
-  const size = Number(meta.sizeBytes || 0n);
+  const size = Number(meta.sizeBytes ?? BigInt(0));
   if (size >= 200_000) score += 2;
   if (size >= 1_500_000) score += 1;
 

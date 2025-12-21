@@ -13,7 +13,7 @@ export async function requireActiveCompany(req: NextRequest) {
   if (!auth) return null;
 
   const companyId = auth.session.activeCompanyId;
-  if (!companyId) return { auth, companyId: null as const, membership: null, company: null };
+  if (!companyId) return { auth, companyId: null, membership: null, company: null };
 
   const membership = await prisma.membership.findUnique({
     where: { userId_companyId: { userId: auth.user.id, companyId } },
