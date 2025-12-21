@@ -94,7 +94,7 @@ export default function NewCompanyPage() {
               onClick={() => setLegalForm("sole")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "sole"
-                  ? "border-primary bg-primary text-white shadow-softSm"
+                  ? "border-primary bg-primary text-base shadow-softSm"
                   : "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
               }`}
             >
@@ -105,7 +105,7 @@ export default function NewCompanyPage() {
               onClick={() => setLegalForm("corporation")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "corporation"
-                  ? "border-primary bg-primary text-white shadow-softSm"
+                  ? "border-primary bg-primary text-base shadow-softSm"
                   : "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
               }`}
             >

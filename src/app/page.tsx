@@ -6,7 +6,7 @@ export default function Home() {
       <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-16">
         <div className="w-full rounded-3xl border border-line bg-white/90 p-10 text-center shadow-soft sm:p-14">
           <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-6">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-white shadow-softSm">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-base shadow-softSm">
               C
             </div>
             <div className="space-y-3">
@@ -20,7 +20,7 @@ export default function Home() {
 
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
               <a
-                className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-white shadow-softSm hover:bg-primary/90"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-base shadow-softSm hover:bg-primary/90"
                 href="/login"
               >
                 ログインへ進む

@@ -87,7 +87,7 @@ export default function ManualPage() {
                 key={d.slug}
                 className={`ring-focus rounded-xl border px-3 py-2 text-sm ${
                   d.slug === slug
-                    ? "border-primary bg-primary text-white shadow-softSm"
+                    ? "border-primary bg-primary text-base shadow-softSm"
                     : "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
                 }`}
                 onClick={() => {

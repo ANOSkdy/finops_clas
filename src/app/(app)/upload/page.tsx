@@ -207,7 +207,7 @@ export default function UploadPage() {
               onClick={() => setPurpose("rating")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "rating"
-                  ? "border-primary bg-primary text-white shadow-softSm"
+                  ? "border-primary bg-primary text-base shadow-softSm"
                   : "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
               }`}
             >
@@ -218,7 +218,7 @@ export default function UploadPage() {
               onClick={() => setPurpose("trial_balance")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "trial_balance"
-                  ? "border-primary bg-primary text-white shadow-softSm"
+                  ? "border-primary bg-primary text-base shadow-softSm"
                   : "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
               }`}
             >

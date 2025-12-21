@@ -46,7 +46,7 @@ export function BottomNav() {
           aria-label="Upload"
           className={cn(
             "ring-focus tap-44 col-span-1 mx-auto grid h-12 w-12 place-items-center rounded-2xl",
-            "bg-primary text-white shadow-soft active:translate-y-px"
+            "border border-primary/30 bg-base text-primary shadow-soft active:translate-y-px"
           )}
         >
           <span aria-hidden="true">⬆</span>

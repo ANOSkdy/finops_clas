@@ -18,11 +18,11 @@ export function Button({
 
   const variants =
     variant === "primary"
-      ? "bg-primary text-white hover:bg-primary/90 shadow-softSm"
+      ? "bg-primary text-base hover:bg-primary/90 shadow-softSm"
       : variant === "secondary"
         ? "bg-white/90 text-primary hover:bg-primary/10 border border-primary/20 shadow-softSm"
         : variant === "danger"
-          ? "bg-accent2 text-white hover:bg-accent2/90 shadow-softSm"
+          ? "bg-accent2 text-base hover:bg-accent2/90 shadow-softSm"
           : "bg-transparent text-primary hover:bg-primary/10 border border-transparent";
 
   return <button className={cn(base, sizes, variants, className)} {...props} />;
