@@ -1,0 +1,96 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Field } from "@/components/ui/Field";
+import { useToast } from "@/components/ui/toast";
+
+export default function LoginPage() {
+  const sp = useSearchParams();
+  const next = useMemo(() => sp.get("next") || "/selectcompany", [sp]);
+  const { toast } = useToast();
+
+  const [loginId, setLoginId] = useState("admin");
+  const [password, setPassword] = useState("password");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit() {
+    try {
+      setBusy(true);
+      setError(null);
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ loginId, password }),
+      });
+
+      if (res.status !== 204) {
+        setError("IDまたはパスワードが違います。");
+        toast({ variant: "error", description: "ログインに失敗しました" });
+        return;
+      }
+
+      toast({ variant: "success", description: "ログインしました" });
+      window.location.href = next;
+    } catch {
+      setError("ログインに失敗しました。");
+      toast({ variant: "error", description: "ネットワークを確認してください" });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-base text-ink">
+      <div className="mx-auto w-full max-w-xl px-4 py-10">
+        <Card className="glass">
+          <CardHeader>
+            <div className="text-xl font-semibold tracking-tight">ログイン</div>
+            <div className="mt-1 text-sm text-inkMuted">
+              デモ：admin / password
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {error && (
+              <div role="alert" className="rounded-2xl border border-accent2/30 bg-accent2/10 px-4 py-3 text-sm text-ink">
+                {error}
+              </div>
+            )}
+
+            <Field
+              label="Login ID"
+              required
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              inputMode="text"
+              disabled={busy}
+            />
+
+            <Field
+              label="Password"
+              required
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              disabled={busy}
+              onKeyDown={(e) => { if (e.key === "Enter") onSubmit(); }}
+            />
+
+            <Button onClick={onSubmit} disabled={busy} className="w-full">
+              {busy ? "ログイン中…" : "ログイン"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  );
+}
