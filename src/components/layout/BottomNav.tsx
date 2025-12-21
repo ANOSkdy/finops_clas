@@ -26,7 +26,7 @@ export function BottomNav() {
     );
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-white/88 backdrop-blur safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-base/95 backdrop-blur safe-bottom">
       <div className="mx-auto grid h-16 max-w-xl grid-cols-5 items-center px-2 safe-x">
         {left.map((it) => (
           <a

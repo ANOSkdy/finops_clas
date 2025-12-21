@@ -18,12 +18,12 @@ export function Button({
 
   const variants =
     variant === "primary"
-      ? "bg-primary text-white hover:opacity-95 shadow-softSm"
+      ? "bg-primary text-white hover:bg-primary/90 shadow-softSm"
       : variant === "secondary"
-        ? "bg-panel text-ink hover:bg-base border border-line shadow-softSm"
+        ? "bg-white/90 text-primary hover:bg-primary/10 border border-primary/20 shadow-softSm"
         : variant === "danger"
-          ? "bg-accent2 text-white hover:opacity-95 shadow-softSm"
-          : "bg-transparent text-ink hover:bg-base border border-transparent";
+          ? "bg-accent2 text-white hover:bg-accent2/90 shadow-softSm"
+          : "bg-transparent text-primary hover:bg-primary/10 border border-transparent";
 
   return <button className={cn(base, sizes, variants, className)} {...props} />;
 }

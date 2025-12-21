@@ -79,7 +79,7 @@ export default function SelectCompanyPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">会社を選択</div>
-        <div className="mt-1 text-sm text-zinc-400">所属会社を選択してアクティブに設定します。</div>
+        <div className="mt-1 text-sm text-inkMuted">所属会社を選択してアクティブに設定します。</div>
       </div>
 
       <div className="flex gap-3">
@@ -105,7 +105,7 @@ export default function SelectCompanyPage() {
         <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">読み込みに失敗しました</div>
-            <div className="mt-1 text-sm text-zinc-400">ネットワークを確認してください。</div>
+            <div className="mt-1 text-sm text-inkMuted">ネットワークを確認してください。</div>
           </CardHeader>
           <CardContent className="flex items-center gap-3">
             <Button onClick={load}>再試行</Button>
@@ -117,7 +117,7 @@ export default function SelectCompanyPage() {
         <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">会社がありません</div>
-            <div className="mt-1 text-sm text-zinc-400">「新しい会社を登録」から作成してください。</div>
+            <div className="mt-1 text-sm text-inkMuted">「新しい会社を登録」から作成してください。</div>
           </CardHeader>
         </Card>
       )}
@@ -129,11 +129,11 @@ export default function SelectCompanyPage() {
               <CardHeader className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-base font-semibold">{c.name}</div>
-                  <div className="mt-1 text-xs text-zinc-400">
+                  <div className="mt-1 text-xs text-inkMuted">
                     {c.legalForm === "sole" ? "個人事業主" : "法人"}
                     {c.representativeName ? ` / 代表: ${c.representativeName}` : ""}
                   </div>
-                  <div className="mt-2 text-xs text-zinc-400">
+                  <div className="mt-2 text-xs text-inkMuted">
                     {c.contactEmail ?? ""}
                     {c.contactEmail && c.contactPhone ? " / " : ""}
                     {c.contactPhone ?? ""}

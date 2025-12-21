@@ -71,7 +71,7 @@ export default function ManualPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">Manual</div>
-        <div className="mt-1 text-sm text-zinc-400">
+        <div className="mt-1 text-sm text-inkMuted">
           目次から選択して閲覧し、必要ならAI要約します。
         </div>
       </div>
@@ -87,8 +87,8 @@ export default function ManualPage() {
                 key={d.slug}
                 className={`ring-focus rounded-xl border px-3 py-2 text-sm ${
                   d.slug === slug
-                    ? "border-zinc-200 bg-zinc-100 text-zinc-900"
-                    : "border-border bg-zinc-900/35 text-zinc-200 hover:bg-zinc-900/55"
+                    ? "border-primary bg-primary text-white shadow-softSm"
+                    : "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
                 }`}
                 onClick={() => {
                   setSlug(d.slug);
@@ -105,10 +105,10 @@ export default function ManualPage() {
         <Card>
           <CardHeader>
             <div className="text-base font-semibold">{doc?.title}</div>
-            <div className="mt-1 text-sm text-zinc-400">本文（v1：ローカル同梱）</div>
+            <div className="mt-1 text-sm text-inkMuted">本文（v1：ローカル同梱）</div>
           </CardHeader>
           <CardContent>
-            <pre className="whitespace-pre-wrap text-sm text-zinc-200">
+            <pre className="whitespace-pre-wrap text-sm text-ink">
               {doc?.contentMd.trim()}
             </pre>
           </CardContent>
@@ -118,7 +118,7 @@ export default function ManualPage() {
           <CardHeader className="flex items-center justify-between gap-3">
             <div>
               <div className="text-base font-semibold">AI要約</div>
-              <div className="mt-1 text-sm text-zinc-400">
+              <div className="mt-1 text-sm text-inkMuted">
                 AI出力はプレーンテキスト表示（HTMLとして扱わない）
               </div>
             </div>
@@ -139,14 +139,14 @@ export default function ManualPage() {
 
           <CardContent className="space-y-3">
             {error && (
-              <div role="alert" className="rounded-2xl border border-salmon-500/30 bg-salmon-500/10 px-4 py-3 text-sm text-salmon-50">
+              <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
                 {error}
               </div>
             )}
 
             {summary ? (
               <>
-                <pre className="whitespace-pre-wrap text-sm text-zinc-200">{summary}</pre>
+                <pre className="whitespace-pre-wrap text-sm text-ink">{summary}</pre>
                 <div>
                   <Button variant="secondary" onClick={onCopy}>
                     コピー
@@ -154,7 +154,7 @@ export default function ManualPage() {
                 </div>
               </>
             ) : (
-              <div className="text-sm text-zinc-400">要約結果はここに表示されます。</div>
+              <div className="text-sm text-inkMuted">要約結果はここに表示されます。</div>
             )}
           </CardContent>
         </Card>

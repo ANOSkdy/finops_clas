@@ -216,7 +216,7 @@ CLAS`
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">Trial Balance</div>
-        <div className="mt-1 text-sm text-zinc-400">
+        <div className="mt-1 text-sm text-inkMuted">
           試算表アップロード → メール作成 → 送信（監査ログ保存）
         </div>
       </div>
@@ -225,7 +225,7 @@ CLAS`
         <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">会社が選択されていません</div>
-            <div className="mt-1 text-sm text-zinc-400">先に会社を選択してください。</div>
+            <div className="mt-1 text-sm text-inkMuted">先に会社を選択してください。</div>
           </CardHeader>
           <CardContent>
             <a href="/selectcompany"><Button>会社を選択</Button></a>
@@ -234,7 +234,7 @@ CLAS`
       )}
 
       {inlineError && (
-        <div role="alert" className="rounded-2xl border border-salmon-500/30 bg-salmon-500/10 px-4 py-3 text-sm text-salmon-50">
+        <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
           {inlineError}
         </div>
       )}
@@ -242,29 +242,29 @@ CLAS`
       <Card className="glass">
         <CardHeader>
           <div className="text-base font-semibold">Upload</div>
-          <div className="mt-1 text-sm text-zinc-400">Active: {companyName ?? "未選択"}</div>
+          <div className="mt-1 text-sm text-inkMuted">Active: {companyName ?? "未選択"}</div>
         </CardHeader>
         <CardContent className="space-y-3">
           <input
             ref={inputRef}
             type="file"
-            className="ring-focus tap-44 w-full rounded-xl border border-border bg-zinc-900/40 px-3 py-2 text-sm text-zinc-100"
+            className="ring-focus tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
             accept={accept}
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             disabled={busy}
           />
-          <div className="text-xs text-zinc-400">
+          <div className="text-xs text-inkMuted">
             {file ? `${file.name} (${formatBytes(file.size)})` : "未選択"}
           </div>
 
           {fileId && (
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+            <div className="rounded-2xl border border-secondary/40 bg-secondary/15 px-4 py-3 text-sm text-ink">
               uploadId: {fileId}
             </div>
           )}
 
           {progress && (
-            <div className="rounded-2xl border border-border bg-zinc-900/40 px-4 py-3 text-sm text-zinc-200">
+            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm text-ink">
               {progress}
             </div>
           )}
@@ -288,7 +288,7 @@ CLAS`
         <CardHeader className="flex items-center justify-between">
           <div>
             <div className="text-base font-semibold">Mail</div>
-            <div className="mt-1 text-sm text-zinc-400">送信前に確認モーダルを表示します</div>
+            <div className="mt-1 text-sm text-inkMuted">送信前に確認モーダルを表示します</div>
           </div>
           <Button variant="secondary" onClick={() => setShowMail((v) => !v)}>
             {showMail ? "閉じる" : "開く"}
@@ -325,7 +325,7 @@ CLAS`
               disabled={busy}
             />
 
-            <div className="text-xs text-zinc-500">
+            <div className="text-xs text-inkMuted">
               添付：{fileId ? fileId : "（未アップロード）"}
             </div>
 
@@ -333,7 +333,7 @@ CLAS`
               {busy ? "送信中…" : "送信する（確認）"}
             </Button>
 
-            <div className="text-xs text-zinc-500">
+            <div className="text-xs text-inkMuted">
               ※ MAIL_PROVIDER=disabled の場合は送信失敗しますが、監査ログ（emails）は保存されます。
             </div>
           </CardContent>
@@ -348,25 +348,25 @@ CLAS`
               <DialogDescription>
                 宛先・件名・添付を確認して送信してください。
               </DialogDescription>
-            </div>
-            <DialogClose asChild>
-              <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-zinc-200" type="button" aria-label="閉じる">✕</button>
-            </DialogClose>
           </div>
+          <DialogClose asChild>
+            <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+          </DialogClose>
+        </div>
 
-          <div className="mt-4 space-y-3 text-sm">
-            <div className="rounded-2xl border border-border bg-zinc-900/35 p-3">
-              <div className="text-xs text-zinc-400">To</div>
-              <div className="mt-1 break-all">{to}</div>
-            </div>
-            <div className="rounded-2xl border border-border bg-zinc-900/35 p-3">
-              <div className="text-xs text-zinc-400">Subject</div>
-              <div className="mt-1">{subject}</div>
-            </div>
-            <div className="rounded-2xl border border-border bg-zinc-900/35 p-3">
-              <div className="text-xs text-zinc-400">Attachment</div>
-              <div className="mt-1 break-all">{fileId}</div>
-            </div>
+        <div className="mt-4 space-y-3 text-sm">
+          <div className="rounded-2xl border border-line bg-base p-3">
+            <div className="text-xs text-inkMuted">To</div>
+            <div className="mt-1 break-all">{to}</div>
+          </div>
+          <div className="rounded-2xl border border-line bg-base p-3">
+            <div className="text-xs text-inkMuted">Subject</div>
+            <div className="mt-1">{subject}</div>
+          </div>
+          <div className="rounded-2xl border border-line bg-base p-3">
+            <div className="text-xs text-inkMuted">Attachment</div>
+            <div className="mt-1 break-all">{fileId}</div>
+          </div>
 
             <div className="flex justify-end gap-2 pt-2">
               <DialogClose asChild>

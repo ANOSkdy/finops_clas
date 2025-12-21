@@ -5,10 +5,10 @@
 :root {
   color-scheme: light;
 
-  --base: 250 250 252;       /* #FAFAFC */
-  --ink: 30 41 59;           /* #1E293B */
-  --inkMuted: 100 116 139;   /* #64748B */
-  --line: 226 232 240;       /* #E2E8F0 */
+  --base: 244 247 255;       /* #F4F7FF */
+  --ink: 15 23 42;           /* #0F172A */
+  --inkMuted: 85 96 122;     /* #55607A */
+  --line: 215 222 242;       /* #D7DEF2 */
   --focus: 65 105 225;       /* #4169E1 */
 }
 
@@ -18,7 +18,7 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji",
     "Segoe UI Emoji";
-  background: rgb(var(--base));
+  background: linear-gradient(180deg, rgb(var(--base)) 0%, #eef2ff 100%);
   color: rgb(var(--ink));
 }
 
@@ -41,12 +41,12 @@ body {
 
 /* Surface style (keep using className="glass") */
 .glass {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(65, 105, 225, 0.12);
   box-shadow:
-    inset 0 1px 0px rgba(255, 255, 255, 0.9),
-    0 8px 32px -8px rgb(var(--focus) / 0.15),
-    0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    inset 0 1px 0px rgba(255, 255, 255, 0.95),
+    0 16px 40px -14px rgb(var(--focus) / 0.25),
+    0 4px 10px -2px rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }

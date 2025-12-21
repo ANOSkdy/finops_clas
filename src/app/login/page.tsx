@@ -107,9 +107,9 @@ export default function LoginPage() {
                 <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="h-12 rounded-2xl border border-border/40 bg-white/5" />
-                <div className="h-12 rounded-2xl border border-border/40 bg-white/5" />
-                <div className="h-12 rounded-2xl border border-border/40 bg-white/5" />
+                <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
+                <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
+                <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
               </CardContent>
             </Card>
           </div>

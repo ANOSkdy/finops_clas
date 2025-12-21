@@ -171,7 +171,7 @@ export default function RatingPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">Rating</div>
-        <div className="mt-1 text-sm text-zinc-400">
+        <div className="mt-1 text-sm text-inkMuted">
           決算書をアップロードし、スコア・グレード・AIコメントを表示します。
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function RatingPage() {
         <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">会社が選択されていません</div>
-            <div className="mt-1 text-sm text-zinc-400">先に会社を選択してください。</div>
+            <div className="mt-1 text-sm text-inkMuted">先に会社を選択してください。</div>
           </CardHeader>
           <CardContent>
             <a href="/selectcompany"><Button>会社を選択</Button></a>
@@ -191,13 +191,13 @@ export default function RatingPage() {
       <Card className="glass">
         <CardHeader>
           <div className="text-base font-semibold">Input</div>
-          <div className="mt-1 text-sm text-zinc-400">Active: {companyName ?? "未選択"}</div>
+          <div className="mt-1 text-sm text-inkMuted">Active: {companyName ?? "未選択"}</div>
         </CardHeader>
         <CardContent className="space-y-3">
           <input
             ref={inputRef}
             type="file"
-            className="ring-focus tap-44 w-full rounded-xl border border-border bg-zinc-900/40 px-3 py-2 text-sm text-zinc-100"
+            className="ring-focus tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
             accept={accept}
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             disabled={busy}
@@ -212,7 +212,7 @@ export default function RatingPage() {
           />
 
           {msg && (
-            <div className="rounded-2xl border border-border bg-zinc-900/40 px-4 py-3 text-sm text-zinc-200">
+            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm text-ink">
               {msg}
             </div>
           )}
@@ -230,7 +230,7 @@ export default function RatingPage() {
             </Button>
           </div>
 
-          <div className="text-xs text-zinc-500">
+          <div className="text-xs text-inkMuted">
             ※ Blobは public URL です。URLを外部共有しない運用にしてください。
           </div>
         </CardContent>
@@ -238,34 +238,34 @@ export default function RatingPage() {
 
       {result && (
         <Card className="glass">
-          <CardHeader>
-            <div className="text-base font-semibold">Result</div>
-            <div className="mt-1 text-sm text-zinc-400">Score / Grade / AI comment</div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl border border-border bg-zinc-900/35 px-4 py-3 text-sm">
-                <div className="text-xs text-zinc-400">Grade</div>
-                <div className="text-xl font-semibold">{result.grade}</div>
-              </div>
-              <div className="rounded-2xl border border-border bg-zinc-900/35 px-4 py-3 text-sm">
-                <div className="text-xs text-zinc-400">Score</div>
-                <div className="text-xl font-semibold">{result.score}</div>
-              </div>
+        <CardHeader>
+          <div className="text-base font-semibold">Result</div>
+          <div className="mt-1 text-sm text-inkMuted">Score / Grade / AI comment</div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
+              <div className="text-xs text-inkMuted">Grade</div>
+              <div className="text-xl font-semibold">{result.grade}</div>
             </div>
+            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
+              <div className="text-xs text-inkMuted">Score</div>
+              <div className="text-xl font-semibold">{result.score}</div>
+            </div>
+          </div>
 
-            <div className="rounded-2xl border border-border bg-zinc-900/35 px-4 py-4">
-              <div className="text-sm font-medium">AI Comment</div>
-              <pre className="mt-2 whitespace-pre-wrap text-sm text-zinc-200">{result.aiComment}</pre>
-            </div>
+          <div className="rounded-2xl border border-line bg-base px-4 py-4">
+            <div className="text-sm font-medium">AI Comment</div>
+            <pre className="mt-2 whitespace-pre-wrap text-sm text-ink">{result.aiComment}</pre>
+          </div>
 
             {result.highlights?.length > 0 && (
               <div className="space-y-2">
                 <div className="text-sm font-medium">Highlights</div>
                 {result.highlights.map((h, idx) => (
-                  <div key={idx} className="rounded-2xl border border-border bg-zinc-900/35 px-4 py-3">
+                  <div key={idx} className="rounded-2xl border border-line bg-base px-4 py-3">
                     <div className="text-sm font-semibold">{h.title}</div>
-                    <div className="mt-1 text-sm text-zinc-300">{h.detail}</div>
+                    <div className="mt-1 text-sm text-inkMuted">{h.detail}</div>
                   </div>
                 ))}
               </div>
@@ -282,11 +282,11 @@ export default function RatingPage() {
               <DialogDescription>
                 ファイルをアップロードして格付けします。既存fileIdがある場合はそれを優先します。
               </DialogDescription>
-            </div>
-            <DialogClose asChild>
-              <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-zinc-200" type="button" aria-label="閉じる">✕</button>
-            </DialogClose>
           </div>
+          <DialogClose asChild>
+            <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+          </DialogClose>
+        </div>
 
           <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>
