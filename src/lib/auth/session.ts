@@ -12,7 +12,9 @@ export const SESSION_COOKIE_NAMES =
 
 export const SESSION_COOKIE_NAME_TO_SET = SESSION_COOKIE_NAMES[0];
 
-const SESSION_TTL_DAYS = 30;
+const SESSION_TTL_DAYS = 14;
+
+export const SESSION_TTL_SECONDS = SESSION_TTL_DAYS * 24 * 60 * 60;
 
 function requireSessionSecret(): string {
   const secret = process.env.AUTH_SESSION_SECRET;

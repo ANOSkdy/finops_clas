@@ -21,6 +21,15 @@ function isProtected(pathname: string) {
 export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
+  if (pathname === "/") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    const r = NextResponse.redirect(url);
+    r.headers.set("x-mw-hit", "1");
+    r.headers.set("x-mw-path", pathname);
+    return r;
+  }
+
   // next internals / static / auth api / debug api are not protected
   if (
     pathname.startsWith("/_next") ||
