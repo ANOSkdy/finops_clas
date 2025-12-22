@@ -52,7 +52,7 @@ function LoginForm() {
           <CardHeader className="px-10 pt-6">
             <div className="text-xl font-semibold tracking-tight">ログイン</div>
           </CardHeader>
-          <CardContent className="space-y-8 px-10 pb-10">
+          <CardContent className="space-y-8 px-10 pb-10 pt-8">
             {error && (
               <div role="alert" className="rounded-2xl border border-accent2/30 bg-accent2/10 px-4 py-3 text-sm text-ink">
                 {error}
@@ -113,7 +113,7 @@ export default function LoginPage() {
                 <div className="text-xl font-semibold tracking-tight">ログイン</div>
                 <div className="mt-1 text-sm text-white/80">読み込み中…</div>
               </CardHeader>
-              <CardContent className="space-y-8 px-10 pb-10">
+              <CardContent className="space-y-8 px-10 pb-10 pt-8">
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
