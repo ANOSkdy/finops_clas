@@ -51,9 +51,6 @@ function LoginForm() {
         <Card className="border-transparent bg-[royalblue] text-white">
           <CardHeader>
             <div className="text-xl font-semibold tracking-tight">ログイン</div>
-            <div className="mt-1 text-sm text-white/80">
-              デモ：admin / password
-            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             {error && (
