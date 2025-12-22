@@ -138,18 +138,6 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="glass">
-            <CardHeader>
-              <div className="text-base font-semibold">Quick Access</div>
-              <div className="mt-1 text-sm text-inkMuted">よく使う機能へ</div>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-3">
-              <a href="/schedule" className="ring-focus tap-44 rounded-2xl border border-primary/30 bg-base px-4 py-4 text-sm text-primary hover:bg-primary/10">Schedule</a>
-              <a href="/upload" className="ring-focus tap-44 rounded-2xl border border-primary/30 bg-base px-4 py-4 text-sm text-primary hover:bg-primary/10">Upload</a>
-              <a href="/manual" className="ring-focus tap-44 rounded-2xl border border-primary/30 bg-base px-4 py-4 text-sm text-primary hover:bg-primary/10">Manual</a>
-              <a href="/settings" className="ring-focus tap-44 rounded-2xl border border-primary/30 bg-base px-4 py-4 text-sm text-primary hover:bg-primary/10">Settings</a>
-            </CardContent>
-          </Card>
         </>
       )}
     </div>
