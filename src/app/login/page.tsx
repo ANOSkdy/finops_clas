@@ -48,7 +48,7 @@ function LoginForm() {
   return (
     <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-xl">
-        <Card className="glass border-transparent bg-[royalblue] text-white">
+        <Card className="border-transparent bg-[royalblue] text-white">
           <CardHeader>
             <div className="text-xl font-semibold tracking-tight">ログイン</div>
             <div className="mt-1 text-sm text-white/80">
@@ -101,7 +101,7 @@ export default function LoginPage() {
       fallback={
         <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-xl">
-            <Card className="glass border-transparent bg-[royalblue] text-white">
+            <Card className="border-transparent bg-[royalblue] text-white">
               <CardHeader>
                 <div className="text-xl font-semibold tracking-tight">ログイン</div>
                 <div className="mt-1 text-sm text-white/80">読み込み中…</div>
