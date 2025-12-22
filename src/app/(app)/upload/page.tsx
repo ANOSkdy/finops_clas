@@ -218,8 +218,8 @@ export default function UploadPage() {
               onClick={() => setPurpose("trial_balance")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "trial_balance"
-                  ? "border-primary bg-primary/20 text-primary shadow-softSm"
-                  : "border-primary/50 bg-base text-primary hover:bg-primary/10"
+                  ? "border-secondary bg-secondary/20 text-ink shadow-softSm"
+                  : "border-secondary/50 bg-base text-ink hover:bg-secondary/10"
               }`}
             >
               試算表（trial_balance）
@@ -239,6 +239,7 @@ export default function UploadPage() {
               />
               <Button
                 variant="secondary"
+                className="whitespace-nowrap"
                 onClick={() => { setFile(null); setResult(null); setFinalize(null); if (inputRef.current) inputRef.current.value = ""; }}
                 disabled={busy}
               >
