@@ -26,7 +26,7 @@ export function BottomNav() {
     );
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-white/88 backdrop-blur safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-base/95 backdrop-blur safe-bottom">
       <div className="mx-auto grid h-16 max-w-xl grid-cols-5 items-center px-2 safe-x">
         {left.map((it) => (
           <a
@@ -46,7 +46,7 @@ export function BottomNav() {
           aria-label="Upload"
           className={cn(
             "ring-focus tap-44 col-span-1 mx-auto grid h-12 w-12 place-items-center rounded-2xl",
-            "bg-primary text-white shadow-soft active:translate-y-px"
+            "border border-primary/30 bg-base text-primary shadow-soft active:translate-y-px"
           )}
         >
           <span aria-hidden="true">⬆</span>

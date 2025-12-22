@@ -86,9 +86,9 @@ export function useToast() {
 }
 
 function tone(variant: ToastVariant) {
-  if (variant === "success") return "border-emerald-500/30 bg-emerald-500/10 text-emerald-50";
-  if (variant === "error") return "border-salmon-500/30 bg-salmon-500/10 text-salmon-50";
-  return "border-border bg-zinc-900/60 text-zinc-100";
+  if (variant === "success") return "border-secondary/40 bg-secondary/15 text-ink";
+  if (variant === "error") return "border-accent2/40 bg-accent2/10 text-ink";
+  return "border-line bg-white/90 text-ink";
 }
 
 function ToastViewport({

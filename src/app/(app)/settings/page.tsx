@@ -29,19 +29,19 @@ export default function SettingsPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">Settings</div>
-        <div className="mt-1 text-sm text-zinc-400">アカウントとセキュリティ</div>
+        <div className="mt-1 text-sm text-inkMuted">アカウントとセキュリティ</div>
       </div>
 
       <Card className="glass">
         <CardHeader>
           <div className="text-base font-semibold">セッション</div>
-          <div className="mt-1 text-sm text-zinc-400">ログアウトは確認モーダル付き</div>
+          <div className="mt-1 text-sm text-inkMuted">ログアウトは確認モーダル付き</div>
         </CardHeader>
         <CardContent className="flex items-center gap-3">
           <Button variant="danger" onClick={() => setOpen(true)} disabled={busy}>
             ログアウト
           </Button>
-          <a className="ring-focus tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-zinc-300 underline" href="/manual">
+          <a className="ring-focus tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline" href="/manual">
             マニュアル
           </a>
         </CardContent>
@@ -53,11 +53,11 @@ export default function SettingsPage() {
             <div>
               <DialogTitle>ログアウトしますか？</DialogTitle>
               <DialogDescription>セッションCookieを破棄してログイン画面へ戻ります。</DialogDescription>
-            </div>
-            <DialogClose asChild>
-              <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-zinc-200" type="button" aria-label="閉じる">✕</button>
-            </DialogClose>
           </div>
+          <DialogClose asChild>
+            <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+          </DialogClose>
+        </div>
 
           <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>

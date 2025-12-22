@@ -33,10 +33,10 @@ export function AppHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-white/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-line bg-base/90 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-xl items-center justify-between px-4 safe-x">
         <div className="flex items-center gap-3">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-white shadow-softSm">
+          <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-base shadow-softSm">
             C
           </div>
           <div className="leading-tight">

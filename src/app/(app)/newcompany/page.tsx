@@ -72,13 +72,13 @@ export default function NewCompanyPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">会社を登録</div>
-        <div className="mt-1 text-sm text-zinc-400">
+        <div className="mt-1 text-sm text-inkMuted">
           個人事業主の場合、決算月は12月固定です（サーバ側でも強制）。
         </div>
       </div>
 
       {error && (
-        <div role="alert" className="rounded-2xl border border-salmon-500/30 bg-salmon-500/10 px-4 py-3 text-sm text-salmon-50">
+        <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
           {error}
         </div>
       )}
@@ -94,8 +94,8 @@ export default function NewCompanyPage() {
               onClick={() => setLegalForm("sole")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "sole"
-                  ? "border-zinc-200 bg-zinc-100 text-zinc-900"
-                  : "border-border bg-zinc-900/35 text-zinc-200 hover:bg-zinc-900/55"
+                  ? "border-primary bg-primary/20 text-primary shadow-softSm"
+                  : "border-primary/50 bg-base text-primary hover:bg-primary/10"
               }`}
             >
               個人事業主
@@ -105,8 +105,8 @@ export default function NewCompanyPage() {
               onClick={() => setLegalForm("corporation")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "corporation"
-                  ? "border-zinc-200 bg-zinc-100 text-zinc-900"
-                  : "border-border bg-zinc-900/35 text-zinc-200 hover:bg-zinc-900/55"
+                  ? "border-primary bg-primary/20 text-primary shadow-softSm"
+                  : "border-primary/50 bg-base text-primary hover:bg-primary/10"
               }`}
             >
               法人
@@ -171,7 +171,7 @@ export default function NewCompanyPage() {
             <Button onClick={onSubmit} disabled={busy}>
               {busy ? "登録中…" : "登録する"}
             </Button>
-            <a href="/selectcompany" className="ring-focus tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-zinc-300 underline">
+            <a href="/selectcompany" className="ring-focus tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline">
               会社選択へ
             </a>
           </div>
