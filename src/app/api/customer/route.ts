@@ -27,7 +27,14 @@ export async function GET(req: NextRequest) {
   if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
   if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
 
-  return NextResponse.json({ company: shapeCompany(scoped.company) }, { status: 200 });
+  return NextResponse.json(
+    {
+      company: shapeCompany(scoped.company),
+      roleInCompany: scoped.membership.roleInCompany,
+      userRole: scoped.auth.user.role,
+    },
+    { status: 200 }
+  );
 }
 
 export async function PUT(req: NextRequest) {
@@ -37,7 +44,7 @@ export async function PUT(req: NextRequest) {
   if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
   if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
 
-  // admin/owner only (membership role). system admin も許可する
+  // admin only (membership role). system admin も許可する
   const isSystemAdmin = scoped.auth.user.role === "admin";
   if (!isSystemAdmin && !canEditCompany(scoped.membership.roleInCompany)) {
     return jsonError(403, "FORBIDDEN", "編集権限がありません");

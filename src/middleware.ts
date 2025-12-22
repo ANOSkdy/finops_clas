@@ -6,6 +6,7 @@ const protectedPaths = [
   "/upload",
   "/manual",
   "/settings",
+  "/company_edit",
   "/selectcompany",
   "/newcompany",
   "/rating",
