@@ -69,6 +69,7 @@ function LoginForm() {
               spellCheck={false}
               inputMode="text"
               disabled={busy}
+              inputClassName="bg-white text-ink"
             />
 
             <Field
@@ -80,6 +81,7 @@ function LoginForm() {
               autoComplete="current-password"
               disabled={busy}
               onKeyDown={(e) => { if (e.key === "Enter") onSubmit(); }}
+              inputClassName="bg-white text-ink"
             />
 
             <Button onClick={onSubmit} disabled={busy} className="w-full">

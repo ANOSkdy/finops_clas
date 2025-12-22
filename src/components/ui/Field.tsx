@@ -8,6 +8,7 @@ type Common = {
   required?: boolean;
   hint?: string;
   error?: string | null;
+  inputClassName?: string;
 };
 
 type TextFieldProps = Common &
@@ -18,6 +19,7 @@ export function Field({
   required,
   hint,
   error,
+  inputClassName,
   className,
   ...props
 }: TextFieldProps) {
@@ -38,7 +40,8 @@ export function Field({
             "ring-focus peer h-11 w-full rounded-xl border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
             "border-line focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
-            "placeholder:text-transparent shadow-softSm"
+            "placeholder:text-transparent shadow-softSm",
+            inputClassName
           )}
           {...props}
         />
@@ -68,6 +71,7 @@ export function TextareaField({
   required,
   hint,
   error,
+  inputClassName,
   className,
   ...props
 }: TextareaFieldProps) {
@@ -88,7 +92,8 @@ export function TextareaField({
             "ring-focus peer min-h-[140px] w-full rounded-xl border bg-panel px-3 pt-6 pb-3 text-sm text-ink",
             "border-line focus:border-primary resize-y shadow-softSm",
             error ? "border-accent2 focus:border-accent2" : "",
-            "placeholder:text-transparent"
+            "placeholder:text-transparent",
+            inputClassName
           )}
           {...props}
         />
