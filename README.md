@@ -20,6 +20,12 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## 運用メモ（キャッシュ再検証）
+
+- マニュアル一覧は `src/lib/manual/getManualDocs.ts` で `revalidate: 60` とタグ `manual` を設定しています。
+- 最新性優先のため `src/app/(app)/manual/page.tsx` に `export const revalidate = 60` を付与しています。
+- マニュアル更新後は、保存 API / 管理画面のサーバー処理側で `revalidateTag("manual")` を呼び出して再検証してください。
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
