@@ -8,6 +8,8 @@ type Common = {
   required?: boolean;
   hint?: string;
   error?: string | null;
+  inputClassName?: string;
+  labelClassName?: string;
 };
 
 type TextFieldProps = Common &
@@ -18,6 +20,8 @@ export function Field({
   required,
   hint,
   error,
+  inputClassName,
+  labelClassName,
   className,
   ...props
 }: TextFieldProps) {
@@ -38,7 +42,8 @@ export function Field({
             "ring-focus peer h-11 w-full rounded-xl border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
             "border-line focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
-            "placeholder:text-transparent shadow-softSm"
+            "placeholder:text-transparent shadow-softSm",
+            inputClassName
           )}
           {...props}
         />
@@ -47,7 +52,8 @@ export function Field({
           className={cn(
             "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
             "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink"
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink",
+            labelClassName
           )}
         >
           {label}{required ? <span className="text-accent2"> *</span> : null}
@@ -68,6 +74,8 @@ export function TextareaField({
   required,
   hint,
   error,
+  inputClassName,
+  labelClassName,
   className,
   ...props
 }: TextareaFieldProps) {
@@ -88,7 +96,8 @@ export function TextareaField({
             "ring-focus peer min-h-[140px] w-full rounded-xl border bg-panel px-3 pt-6 pb-3 text-sm text-ink",
             "border-line focus:border-primary resize-y shadow-softSm",
             error ? "border-accent2 focus:border-accent2" : "",
-            "placeholder:text-transparent"
+            "placeholder:text-transparent",
+            inputClassName
           )}
           {...props}
         />
@@ -97,7 +106,8 @@ export function TextareaField({
           className={cn(
             "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
             "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink"
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink",
+            labelClassName
           )}
         >
           {label}{required ? <span className="text-accent2"> *</span> : null}

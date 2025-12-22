@@ -46,24 +46,23 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen bg-base text-ink">
-      <div className="mx-auto w-full max-w-xl px-4 py-10">
-        <Card className="glass">
-          <CardHeader>
+    <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-3xl">
+        <Card className="min-h-[420px] border-transparent bg-[royalblue] text-white">
+          <CardHeader className="px-10 pt-6">
             <div className="text-xl font-semibold tracking-tight">ログイン</div>
-            <div className="mt-1 text-sm text-inkMuted">
-              デモ：admin / password
-            </div>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-8 px-10 pb-10 pt-8">
             {error && (
               <div role="alert" className="rounded-2xl border border-accent2/30 bg-accent2/10 px-4 py-3 text-sm text-ink">
                 {error}
               </div>
             )}
 
+            <div className="space-y-2">
+              <div className="text-sm font-semibold text-white">ログインID</div>
             <Field
-              label="Login ID"
+              label="ログインID"
               required
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
@@ -72,10 +71,15 @@ function LoginForm() {
               spellCheck={false}
               inputMode="text"
               disabled={busy}
+              inputClassName="bg-white text-black"
+              labelClassName="text-white/90 peer-placeholder-shown:text-white/90 peer-focus:text-white"
             />
+            </div>
 
+            <div className="space-y-2">
+              <div className="text-sm font-semibold text-white">パスワード</div>
             <Field
-              label="Password"
+              label="パスワード"
               required
               type="password"
               value={password}
@@ -83,7 +87,10 @@ function LoginForm() {
               autoComplete="current-password"
               disabled={busy}
               onKeyDown={(e) => { if (e.key === "Enter") onSubmit(); }}
+              inputClassName="bg-white text-black"
+              labelClassName="text-white/90 peer-placeholder-shown:text-white/90 peer-focus:text-white"
             />
+            </div>
 
             <Button onClick={onSubmit} disabled={busy} className="w-full">
               {busy ? "ログイン中…" : "ログイン"}
@@ -99,14 +106,14 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-base text-ink">
-          <div className="mx-auto w-full max-w-xl px-4 py-10">
-            <Card className="glass">
-              <CardHeader>
+        <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
+          <div className="w-full max-w-3xl">
+            <Card className="min-h-[420px] border-transparent bg-[royalblue] text-white">
+              <CardHeader className="px-10 pt-6">
                 <div className="text-xl font-semibold tracking-tight">ログイン</div>
-                <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
+                <div className="mt-1 text-sm text-white/80">読み込み中…</div>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-8 px-10 pb-10 pt-8">
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
