@@ -100,12 +100,12 @@ export default function HomePage() {
         <>
           <Card className="glass">
             <CardHeader>
-              <div className="text-base font-semibold">Alerts</div>
+              <div className="text-base font-semibold">リマインダー</div>
               <div className="mt-1 text-sm text-inkMuted">期限前/期限切れの通知</div>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-3 py-1">
               {data.alerts.map((a, i) => (
-                <div key={i} className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
+                <div key={i} className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-4 text-sm text-ink">
                   {a.message}
                 </div>
               ))}
@@ -117,19 +117,18 @@ export default function HomePage() {
               <div className="text-base font-semibold">期限が近いタスク</div>
               <div className="mt-1 text-sm text-inkMuted">直近14日</div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3 py-1">
               {data.upcomingTasks.length === 0 ? (
                 <div className="text-sm text-inkMuted">該当タスクはありません。</div>
               ) : (
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {data.upcomingTasks.map((t) => (
-                    <li key={t.taskId} className="rounded-2xl border border-line bg-white/85 px-4 py-3">
+                    <li key={t.taskId} className="rounded-2xl border border-line bg-white/85 px-4 py-4">
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <div className="text-sm font-medium">{t.title}</div>
                           <div className="mt-1 text-xs text-inkMuted">期限: {t.dueDate}</div>
                         </div>
-                        <div className="text-xs text-inkMuted" aria-hidden="true">→</div>
                       </div>
                     </li>
                   ))}
