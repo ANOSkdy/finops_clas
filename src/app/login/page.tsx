@@ -12,12 +12,14 @@ function LoginForm() {
   const next = useMemo(() => sp.get("next") || "/selectcompany", [sp]);
   const { toast } = useToast();
 
-  const [loginId, setLoginId] = useState("admin");
-  const [password, setPassword] = useState("password");
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isDisabled = busy || loginId.trim().length === 0 || password.trim().length === 0;
 
   async function onSubmit() {
+    if (isDisabled) return;
     try {
       setBusy(true);
       setError(null);
@@ -92,7 +94,11 @@ function LoginForm() {
             />
             </div>
 
-            <Button onClick={onSubmit} disabled={busy} className="w-full">
+            <Button
+              onClick={onSubmit}
+              disabled={isDisabled}
+              className="w-full border border-white/70"
+            >
               {busy ? "ログイン中…" : "ログイン"}
             </Button>
           </CardContent>
