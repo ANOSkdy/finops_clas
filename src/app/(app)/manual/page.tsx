@@ -77,7 +77,7 @@ export default function ManualPage() {
       </div>
 
       <div className="grid gap-4">
-        <Card>
+        <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">目次</div>
           </CardHeader>
@@ -102,7 +102,7 @@ export default function ManualPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">{doc?.title}</div>
             <div className="mt-1 text-sm text-inkMuted">本文（v1：ローカル同梱）</div>
@@ -114,7 +114,7 @@ export default function ManualPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="glass">
           <CardHeader className="flex items-center justify-between gap-3">
             <div>
               <div className="text-base font-semibold">AI要約</div>
