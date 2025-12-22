@@ -18,6 +18,11 @@ const right: Item[] = [
 export function BottomNav() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  const isSelectCompany = pathname === "/selectcompany" || pathname.startsWith("/selectcompany/");
+
+  if (isSelectCompany) {
+    return null;
+  }
 
   const itemClass = (active: boolean) =>
     cn(
