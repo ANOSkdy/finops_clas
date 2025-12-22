@@ -9,6 +9,7 @@ type Common = {
   hint?: string;
   error?: string | null;
   inputClassName?: string;
+  labelClassName?: string;
 };
 
 type TextFieldProps = Common &
@@ -20,6 +21,7 @@ export function Field({
   hint,
   error,
   inputClassName,
+  labelClassName,
   className,
   ...props
 }: TextFieldProps) {
@@ -50,7 +52,8 @@ export function Field({
           className={cn(
             "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
             "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink"
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink",
+            labelClassName
           )}
         >
           {label}{required ? <span className="text-accent2"> *</span> : null}
@@ -72,6 +75,7 @@ export function TextareaField({
   hint,
   error,
   inputClassName,
+  labelClassName,
   className,
   ...props
 }: TextareaFieldProps) {
@@ -102,7 +106,8 @@ export function TextareaField({
           className={cn(
             "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
             "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink"
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink",
+            labelClassName
           )}
         >
           {label}{required ? <span className="text-accent2"> *</span> : null}
