@@ -46,12 +46,12 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen bg-base text-ink">
-      <div className="mx-auto w-full max-w-xl px-4 py-10">
-        <Card className="glass">
+    <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-xl">
+        <Card className="glass border-transparent bg-[royalblue] text-white">
           <CardHeader>
             <div className="text-xl font-semibold tracking-tight">ログイン</div>
-            <div className="mt-1 text-sm text-inkMuted">
+            <div className="mt-1 text-sm text-white/80">
               デモ：admin / password
             </div>
           </CardHeader>
@@ -99,12 +99,12 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-base text-ink">
-          <div className="mx-auto w-full max-w-xl px-4 py-10">
-            <Card className="glass">
+        <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
+          <div className="w-full max-w-xl">
+            <Card className="glass border-transparent bg-[royalblue] text-white">
               <CardHeader>
                 <div className="text-xl font-semibold tracking-tight">ログイン</div>
-                <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
+                <div className="mt-1 text-sm text-white/80">読み込み中…</div>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
