@@ -207,8 +207,8 @@ export default function UploadPage() {
               onClick={() => setPurpose("rating")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "rating"
-                  ? "border-primary bg-primary/20 text-primary shadow-softSm"
-                  : "border-primary/50 bg-base text-primary hover:bg-primary/10"
+                  ? "border-primary bg-primary/25 text-primary shadow-softSm ring-2 ring-primary/30"
+                  : "border-line bg-white/80 text-ink hover:bg-primary/10"
               }`}
             >
               格付け（rating）
@@ -218,8 +218,8 @@ export default function UploadPage() {
               onClick={() => setPurpose("trial_balance")}
               className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "trial_balance"
-                  ? "border-secondary bg-secondary/20 text-ink shadow-softSm"
-                  : "border-secondary/50 bg-base text-ink hover:bg-secondary/10"
+                  ? "border-secondary bg-secondary/25 text-ink shadow-softSm ring-2 ring-secondary/30"
+                  : "border-line bg-white/80 text-ink hover:bg-secondary/10"
               }`}
             >
               試算表（trial_balance）
