@@ -234,7 +234,7 @@ CLAS`
       )}
 
       {inlineError && (
-        <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
+        <div role="alert" className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink">
           {inlineError}
         </div>
       )}
@@ -248,7 +248,7 @@ CLAS`
           <input
             ref={inputRef}
             type="file"
-            className="focus-ring tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
+            className="focus-ring tap-44 w-full rounded-xl border border-line bg-panel/90 px-3 py-2 text-sm text-ink"
             accept={accept}
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             disabled={busy}
@@ -258,13 +258,13 @@ CLAS`
           </div>
 
           {fileId && (
-            <div className="rounded-2xl border border-secondary/40 bg-secondary/15 px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-secondary/40 bg-panel px-4 py-3 text-sm text-ink">
               ファイルID: {fileId}
             </div>
           )}
 
           {progress && (
-            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-line bg-panel px-4 py-3 text-sm text-ink">
               {progress}
             </div>
           )}
@@ -355,15 +355,15 @@ CLAS`
         </div>
 
         <div className="mt-4 space-y-3 text-sm">
-          <div className="rounded-2xl border border-line bg-base p-3">
+          <div className="rounded-2xl border border-line bg-panel p-3">
             <div className="text-xs text-inkMuted">宛先</div>
             <div className="mt-1 break-all">{to}</div>
           </div>
-          <div className="rounded-2xl border border-line bg-base p-3">
+          <div className="rounded-2xl border border-line bg-panel p-3">
             <div className="text-xs text-inkMuted">件名</div>
             <div className="mt-1">{subject}</div>
           </div>
-          <div className="rounded-2xl border border-line bg-base p-3">
+          <div className="rounded-2xl border border-line bg-panel p-3">
             <div className="text-xs text-inkMuted">添付</div>
             <div className="mt-1 break-all">{fileId}</div>
           </div>

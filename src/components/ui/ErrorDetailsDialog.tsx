@@ -31,7 +31,7 @@ export function ErrorDetailsDialog({
           </DialogClose>
         </div>
 
-        <pre className="mt-4 max-h-[50vh] overflow-auto rounded-2xl border border-line bg-base p-3 text-xs text-ink whitespace-pre-wrap">
+        <pre className="mt-4 max-h-[50vh] overflow-auto rounded-2xl border border-line bg-panel p-3 text-xs text-ink whitespace-pre-wrap">
 {details}
         </pre>
 

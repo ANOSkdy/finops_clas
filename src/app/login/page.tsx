@@ -56,7 +56,7 @@ function LoginForm() {
           </CardHeader>
           <CardContent className="space-y-6 px-8 pb-8 pt-6">
             {error && (
-              <div role="alert" className="rounded-2xl border border-accent2/30 bg-accent2/10 px-4 py-3 text-sm text-ink">
+              <div role="alert" className="rounded-2xl border border-accent2/30 bg-panel px-4 py-3 text-sm text-ink">
                 {error}
               </div>
             )}
@@ -73,7 +73,7 @@ function LoginForm() {
               spellCheck={false}
               inputMode="text"
               disabled={busy}
-              inputClassName="bg-white text-black h-12"
+              inputClassName="bg-panel text-black h-12"
               labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
             />
             </div>
@@ -89,7 +89,7 @@ function LoginForm() {
               autoComplete="current-password"
               disabled={busy}
               onKeyDown={(e) => { if (e.key === "Enter") onSubmit(); }}
-              inputClassName="bg-white text-black h-12"
+              inputClassName="bg-panel text-black h-12"
               labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
             />
             </div>
@@ -116,9 +116,9 @@ export default function LoginPage() {
                 <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
               </CardHeader>
               <CardContent className="space-y-6 px-8 pb-8 pt-6">
-                <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
-                <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
-                <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />
+                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
+                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
+                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
               </CardContent>
             </Card>
           </div>

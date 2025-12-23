@@ -207,8 +207,8 @@ export default function UploadPage() {
               onClick={() => setPurpose("rating")}
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "rating"
-                  ? "border-primary bg-primary/25 text-primary shadow-softSm ring-2 ring-primary/30"
-                  : "border-line bg-white/80 text-ink hover:bg-primary/10"
+                  ? "border-primary bg-panel text-primary shadow-softSm ring-2 ring-primary/30"
+                  : "border-line bg-panel/80 text-ink hover:bg-primary/10"
               }`}
             >
               格付け（rating）
@@ -218,21 +218,21 @@ export default function UploadPage() {
               onClick={() => setPurpose("trial_balance")}
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "trial_balance"
-                  ? "border-secondary bg-secondary/25 text-ink shadow-softSm ring-2 ring-secondary/30"
-                  : "border-line bg-white/80 text-ink hover:bg-secondary/10"
+                  ? "border-secondary bg-panel text-ink shadow-softSm ring-2 ring-secondary/30"
+                  : "border-line bg-panel/80 text-ink hover:bg-secondary/10"
               }`}
             >
               試算表（trial_balance）
             </button>
           </div>
 
-          <div className="rounded-2xl border border-line bg-base p-4">
+          <div className="rounded-2xl border border-line bg-panel p-4">
             <div className="text-sm font-medium">ファイル</div>
             <div className="mt-2 flex items-center gap-3">
               <input
                 ref={inputRef}
                 type="file"
-                className="focus-ring tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
+                className="focus-ring tap-44 w-full rounded-xl border border-line bg-panel/90 px-3 py-2 text-sm text-ink"
                 accept={accept}
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
                 disabled={busy}
@@ -252,19 +252,19 @@ export default function UploadPage() {
           </div>
 
           {progressMsg && (
-            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-line bg-panel px-4 py-3 text-sm text-ink">
               {progressMsg}
             </div>
           )}
 
           {error && (
-            <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
+            <div role="alert" className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink">
               {error}
             </div>
           )}
 
           {result && (
-            <div className="rounded-2xl border border-secondary/40 bg-secondary/15 px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-secondary/40 bg-panel px-4 py-3 text-sm text-ink">
               <div>ファイルID: {result.fileId}{result.reused ? "（既存再利用）" : ""}</div>
               <div className="mt-1 break-all text-xs opacity-90">URL: {result.url}</div>
             </div>
@@ -296,17 +296,17 @@ export default function UploadPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
+            <div className="rounded-2xl border border-line bg-panel px-4 py-3 text-sm">
               <div className="text-xs text-inkMuted">グレード</div>
               <div className="text-xl font-semibold">{finalize.grade}</div>
             </div>
-            <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
+            <div className="rounded-2xl border border-line bg-panel px-4 py-3 text-sm">
               <div className="text-xs text-inkMuted">スコア</div>
               <div className="text-xl font-semibold">{finalize.score}</div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-line bg-base px-4 py-4">
+          <div className="rounded-2xl border border-line bg-panel px-4 py-4">
             <div className="text-sm font-medium">AIコメント</div>
             <pre className="mt-2 whitespace-pre-wrap text-sm text-ink">{finalize.aiComment}</pre>
           </div>
@@ -315,7 +315,7 @@ export default function UploadPage() {
               <div className="space-y-2">
                 <div className="text-sm font-medium">注目ポイント</div>
                 {finalize.highlights.map((h, idx) => (
-                  <div key={idx} className="rounded-2xl border border-line bg-base px-4 py-3">
+                  <div key={idx} className="rounded-2xl border border-line bg-panel px-4 py-3">
                     <div className="text-sm font-semibold">{h.title}</div>
                     <div className="mt-1 text-sm text-inkMuted">{h.detail}</div>
                   </div>

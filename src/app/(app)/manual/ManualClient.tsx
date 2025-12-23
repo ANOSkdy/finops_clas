@@ -95,8 +95,8 @@ export function ManualClient({ docs }: ManualClientProps) {
                   key={d.slug}
                   className={`focus-ring rounded-xl border px-3 py-2 text-sm ${
                     d.slug === slug
-                      ? "border-primary bg-primary/20 text-primary shadow-softSm"
-                      : "border-primary/50 bg-base text-primary hover:bg-primary/10"
+                      ? "border-primary bg-panel text-primary shadow-softSm ring-1 ring-primary/30"
+                      : "border-primary/50 bg-panel text-primary hover:bg-primary/10"
                   }`}
                   onClick={() => {
                     setSlug(d.slug);
@@ -160,7 +160,7 @@ export function ManualClient({ docs }: ManualClientProps) {
             {error && (
               <div
                 role="alert"
-                className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink"
+                className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink"
               >
                 {error}
               </div>

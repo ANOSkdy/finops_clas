@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-base font-sans text-ink">
       <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-16">
-        <div className="w-full rounded-3xl border border-line bg-white/90 p-10 text-center shadow-soft sm:p-14">
+        <div className="w-full rounded-3xl border border-line bg-panel/90 p-10 text-center shadow-soft sm:p-14">
           <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-6">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-base shadow-softSm">
               C

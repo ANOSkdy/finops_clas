@@ -9,7 +9,7 @@ type Task = {
 };
 
 function Badge({ status }: { status: Task["status"] }) {
-  const base = "rounded-full border border-line bg-white px-2 py-0.5 text-[11px] font-medium text-ink";
+  const base = "rounded-full border border-line bg-panel px-2 py-0.5 text-[11px] font-medium text-ink";
 
   if (status === "done") return <span className={base}>完了</span>;
   if (status === "overdue") return <span className={base}>期限切れ</span>;
@@ -27,7 +27,7 @@ function Section({ title, items }: { title: string; items: Task[] }) {
         {items.map((t) => (
           <li
             key={t.taskId}
-            className="rounded-2xl border border-line bg-white/85 shadow-softSm px-4 py-3"
+            className="rounded-2xl border border-line bg-panel/85 shadow-softSm px-4 py-3"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -50,7 +50,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
 
   if (tasks.length === 0) {
     return (
-      <div className="rounded-2xl border border-line bg-white/85 shadow-softSm px-4 py-6 text-sm text-ink">
+      <div className="rounded-2xl border border-line bg-panel/85 shadow-softSm px-4 py-6 text-sm text-ink">
         タスクがまだありません。
       </div>
     );
