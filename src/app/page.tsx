@@ -20,13 +20,13 @@ export default function Home() {
 
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
               <a
-                className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-base shadow-softSm hover:bg-primary/90"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-button shadow-softSm hover:bg-[color:rgb(var(--button))]/90"
                 href="/login"
               >
                 ログインへ進む
               </a>
               <a
-                className="inline-flex h-12 items-center justify-center rounded-full border border-primary/30 px-6 text-sm font-medium text-primary hover:bg-primary/10"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-[color:rgb(var(--button))]/30 bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-button shadow-softSm hover:bg-[color:rgb(var(--button))]/90"
                 href="/manual"
               >
                 マニュアルを見る

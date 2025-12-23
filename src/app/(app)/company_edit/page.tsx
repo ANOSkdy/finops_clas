@@ -294,7 +294,10 @@ export default function CompanyEditPage() {
             <Button onClick={onSubmit} disabled={busy || !canEdit}>
               {busy ? "更新中…" : "更新する"}
             </Button>
-            <a href="/settings" className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline">
+            <a
+              href="/settings"
+              className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+            >
               設定へ戻る
             </a>
           </div>

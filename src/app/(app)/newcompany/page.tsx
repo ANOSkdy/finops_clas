@@ -171,7 +171,10 @@ export default function NewCompanyPage() {
             <Button onClick={onSubmit} disabled={busy}>
               {busy ? "登録中…" : "登録する"}
             </Button>
-            <a href="/selectcompany" className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline">
+            <a
+              href="/selectcompany"
+              className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+            >
               会社選択へ
             </a>
           </div>

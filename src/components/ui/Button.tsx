@@ -18,21 +18,21 @@ export function Button({
 
   const variants =
     variant === "primary"
-      ? "bg-[color:var(--primary)] text-white shadow-sm hover:bg-[color:var(--primary)]/90"
+      ? "bg-[color:rgb(var(--button))] text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
       : variant === "secondary"
-        ? "border border-line bg-panel text-ink shadow-sm hover:bg-[color:var(--primary)]/10"
+        ? "border border-line bg-panel text-ink shadow-sm hover:bg-[color:rgb(var(--button))]/10"
         : variant === "outline"
-          ? "border border-line bg-panel text-ink shadow-sm hover:bg-[color:var(--primary)]/10"
+          ? "border border-line bg-panel text-ink shadow-sm hover:bg-[color:rgb(var(--button))]/10"
         : variant === "danger"
-          ? "bg-accent2 text-white shadow-sm hover:bg-accent2/90"
-          : "border border-transparent bg-transparent text-ink hover:bg-[color:var(--primary)]/10";
+          ? "bg-accent2 text-button shadow-sm hover:bg-accent2/90"
+          : "border border-transparent bg-transparent text-ink hover:bg-[color:rgb(var(--button))]/10";
 
   const disabled =
     variant === "outline" || variant === "ghost"
-      ? "disabled:bg-[color:var(--primary)]/10 disabled:text-inkMuted disabled:border-line"
+      ? "disabled:bg-[color:rgb(var(--button))]/10 disabled:text-inkMuted disabled:border-line"
       : variant === "secondary"
         ? "disabled:bg-panel/70 disabled:text-inkMuted disabled:shadow-none"
-        : "disabled:bg-[color:var(--primary)]/60 disabled:text-white/90 disabled:shadow-none";
+        : "disabled:bg-[color:rgb(var(--button))]/60 disabled:text-[color:rgb(var(--button-text))]/90 disabled:shadow-none";
 
   return (
     <button
