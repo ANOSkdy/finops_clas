@@ -18,9 +18,7 @@ export function BottomNav() {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
   const isSelectCompany = pathname === "/selectcompany" || pathname.startsWith("/selectcompany/");
 
-  if (isSelectCompany) {
-    return null;
-  }
+  if (isSelectCompany) return null;
 
   const itemClass = (active: boolean) =>
     cn(
@@ -40,7 +38,9 @@ export function BottomNav() {
               aria-current={active ? "page" : undefined}
               className={itemClass(active)}
             >
-              <div className="text-lg" aria-hidden="true">{it.icon}</div>
+              <div className="text-lg" aria-hidden="true">
+                {it.icon}
+              </div>
               <div className="mt-0.5">{it.label}</div>
               <span
                 aria-hidden="true"
@@ -56,3 +56,5 @@ export function BottomNav() {
     </nav>
   );
 }
+
+export default BottomNav;

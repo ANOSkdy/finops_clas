@@ -1,25 +1,53 @@
 @import "tailwindcss";
 @source "../**/*.{js,ts,jsx,tsx,mdx}";
 
-/* Keep-like baseline */
+/* Baseline */
 :root {
   color-scheme: light;
 
-  --primary: 251 188 4;           /* #FBBC04 */
-  --primary-pressed: 242 153 0;   /* #F29900 */
-  --primary-container: 254 239 195; /* #FEEFC3 */
-  --secondary: 254 239 195;       /* #FEEFC3 */
+  /*
+    Design Palette
+    - ベース:      #F9F9F9 (249 249 249)
+    - プライマリ:  #4A90E2 (74 144 226)  ※ボトムナビ等の既存primary用
+    - セカンダリ:  #50E3C2 (80 227 194)
+    - アクセント1: #FFD166 (255 209 102)
+    - アクセント2: #F25F5C (242 95 92)
+    - アクセント3: #9D59EC (157 89 236)
 
-  --base: 255 247 214;            /* #FFF7D6 */
-  --surface: 255 255 255;         /* #FFFFFF */
-  --panel: 255 255 255;           /* #FFFFFF */
-  --text: 32 33 36;               /* #202124 */
-  --text-muted: 95 99 104;        /* #5F6368 */
-  --outline: 154 160 166;         /* #9AA0A6 */
-  --border: 154 160 166;          /* #9AA0A6 */
-  --focus: 66 133 244;            /* #4285F4 */
-  --danger: 244 91 105;           /* #F45B69 */
+    Button unified color (exclude bottom nav)
+    - #4169E1 (65 105 225)
+  */
 
+  /* Base / Surfaces */
+  --base: 249 249 249;              /* #F9F9F9 */
+  --surface: 255 255 255;           /* #FFFFFF */
+  --panel: 255 255 255;             /* #FFFFFF */
+
+  /* Primary / Secondary */
+  --primary: 74 144 226;            /* #4A90E2 */
+  --primary-pressed: 63 122 192;    /* #3F7AC0 */
+  --primary-container: 229 240 252; /* #E5F0FC */
+
+  --secondary: 80 227 194;          /* #50E3C2 */
+  --secondary-container: 219 250 245; /* #DBFAF5 */
+
+  /* Accents */
+  --accent1: 255 209 102;           /* #FFD166 */
+  --danger: 242 95 92;              /* #F25F5C (accent-2) */
+  --accent3: 157 89 236;            /* #9D59EC */
+
+  /* Buttons (unify here; do NOT touch --primary) */
+  --button: 65 105 225;             /* #4169E1 */
+  --button-pressed: 54 86 189;      /* #3656BD */
+
+  /* Text / Lines (ALL BLACK) */
+  --text: 0 0 0;                    /* #000000 */
+  --text-muted: 0 0 0;              /* #000000 (要求どおり全部黒) */
+  --outline: 220 224 229;           /* #DCE0E5 */
+  --border: 220 224 229;            /* #DCE0E5 */
+  --focus: 65 105 225;              /* match button for focus ring */
+
+  /* Memo palette (existing; keep for memo tones) */
   --memo-red: 242 139 130;         /* #F28B82 */
   --memo-orange: 251 188 5;        /* #FBBC05 */
   --memo-yellow: 255 244 117;      /* #FFF475 */
@@ -40,8 +68,8 @@ body {
     "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji",
     "Segoe UI Emoji";
   background:
-    radial-gradient(circle at top, rgb(var(--primary-container)) 0%, transparent 60%),
-    linear-gradient(180deg, rgb(var(--base)) 0%, rgb(var(--primary-container) / 0.55) 140%);
+    radial-gradient(circle at top, rgb(var(--primary-container)) 0%, transparent 55%),
+    linear-gradient(180deg, rgb(var(--base)) 0%, rgb(var(--primary-container) / 0.22) 140%);
   color: rgb(var(--text));
 }
 
@@ -59,10 +87,10 @@ body {
   outline: none;
   box-shadow:
     0 0 0 2px rgb(var(--base)),
-    0 0 0 4px rgb(var(--focus) / 0.8);
+    0 0 0 4px rgb(var(--focus) / 0.85);
 }
 
-/* Navigation indicator */
+/* Navigation indicator (BottomNav uses --primary on purpose) */
 .nav-indicator {
   background: rgb(var(--primary));
 }
@@ -70,8 +98,8 @@ body {
 /* Surface style (keep using className="glass") */
 .surface-card,
 .glass {
-  background: rgb(var(--primary-container));
-  border: 1px solid rgb(var(--outline) / 0.45);
+  background: rgb(var(--panel) / 0.92);
+  border: 1px solid rgb(var(--border) / 0.55);
   box-shadow:
     0 1px 2px rgba(60, 64, 67, 0.12),
     0 1px 3px rgba(60, 64, 67, 0.16);
@@ -123,4 +151,9 @@ body {
   .memo-grid {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
+}
+
+/* Safety net: force any Tailwind "text-white" (incl. text-white/90 etc) to black */
+[class*="text-white"] {
+  color: rgb(var(--text)) !important;
 }

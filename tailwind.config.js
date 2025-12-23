@@ -7,9 +7,13 @@ module.exports = {
         base: "rgb(var(--base) / <alpha-value>)",
         primary: "rgb(var(--primary) / <alpha-value>)",
         secondary: "rgb(var(--secondary) / <alpha-value>)",
-        accent1: "#FFC857",
-        accent2: "rgb(var(--danger) / <alpha-value>)",
-        accent3: "#8D7CF6",
+
+        // Accents (design palette)
+        accent1: "rgb(var(--accent1) / <alpha-value>)",
+        accent2: "rgb(var(--danger) / <alpha-value>)", // Accent-2 (#F25F5C) is mapped to --danger
+        accent3: "rgb(var(--accent3) / <alpha-value>)",
+
+        // Text & UI tokens
         ink: "rgb(var(--text) / <alpha-value>)",
         inkMuted: "rgb(var(--text-muted) / <alpha-value>)",
         line: "rgb(var(--border) / <alpha-value>)",
