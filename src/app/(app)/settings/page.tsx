@@ -38,7 +38,7 @@ export default function SettingsPage() {
           <div className="mt-1 text-sm text-inkMuted">ログアウトは確認モーダル付き</div>
         </CardHeader>
         <CardContent className="flex items-center gap-3">
-          <Button variant="danger" onClick={() => setOpen(true)} disabled={busy}>
+          <Button onClick={() => setOpen(true)} disabled={busy}>
             ログアウト
           </Button>
           <a
@@ -57,7 +57,7 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <a href="/company_edit">
-            <Button variant="secondary">会社情報を修正</Button>
+            <Button>会社情報を修正</Button>
           </a>
         </CardContent>
       </Card>
@@ -78,7 +78,7 @@ export default function SettingsPage() {
             <DialogClose asChild>
               <Button variant="secondary" type="button" disabled={busy}>キャンセル</Button>
             </DialogClose>
-            <Button variant="danger" type="button" onClick={logout} disabled={busy}>
+            <Button type="button" onClick={logout} disabled={busy}>
               {busy ? "処理中…" : "ログアウト"}
             </Button>
           </div>
