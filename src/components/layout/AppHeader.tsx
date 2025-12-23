@@ -57,7 +57,7 @@ export function AppHeader() {
       <div className="mx-auto w-full max-w-5xl px-4 safe-x sm:px-6">
         <div
           data-scrolled={scrolled}
-          className="flex h-16 items-center justify-between transition-[height] data-[scrolled=true]:h-12"
+          className="flex h-14 items-center justify-between transition-[height] data-[scrolled=true]:h-12"
         >
           <div className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-xl bg-[color:var(--primary)] text-base text-white shadow-softSm">
@@ -71,21 +71,15 @@ export function AppHeader() {
             </div>
           </div>
 
-          <a href="/selectcompany">
-            <Button variant="secondary" size="md">
+          <a href="/selectcompany" className="mr-2">
+            <Button
+              variant="secondary"
+              size="md"
+              className="border-transparent bg-[#4169e1] !text-white hover:bg-[#3559c9] hover:!text-white focus-visible:!text-white active:!text-white"
+            >
               会社切替
             </Button>
           </a>
-        </div>
-
-        <div
-          data-scrolled={scrolled}
-          className="overflow-hidden pb-3 transition-all duration-200 data-[scrolled=true]:max-h-0 data-[scrolled=true]:pb-0 data-[scrolled=true]:opacity-0"
-        >
-          <div className="surface-card rounded-lg px-3 py-2 text-xs text-ink md:inline-flex md:items-center md:gap-2 md:opacity-80">
-            <span className="font-semibold">今日の重点</span>
-            <span className="text-inkMuted">期限が近いタスクを確認</span>
-          </div>
         </div>
       </div>
     </header>
