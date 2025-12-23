@@ -5,11 +5,16 @@
 :root {
   color-scheme: light;
 
-  --base: 244 247 255;       /* #F4F7FF */
-  --ink: 15 23 42;           /* #0F172A */
-  --inkMuted: 85 96 122;     /* #55607A */
-  --line: 215 222 242;       /* #D7DEF2 */
-  --focus: 65 105 225;       /* #4169E1 */
+  --primary: 255 140 0;      /* #ff8c00 */
+  --secondary: 197 180 192;  /* #c5b4c0 */
+
+  --base: 247 248 251;       /* #f7f8fb */
+  --panel: 255 255 255;      /* #ffffff */
+  --border: 220 226 235;     /* #dce2eb */
+  --text: 17 24 39;          /* #111827 */
+  --text-muted: 107 114 128; /* #6b7280 */
+  --focus: 55 65 81;         /* #374151 */
+  --danger: 244 91 105;      /* #F45B69 */
 }
 
 html, body { height: 100%; }
@@ -18,8 +23,8 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji",
     "Segoe UI Emoji";
-  background: linear-gradient(180deg, rgb(var(--base)) 0%, #eef2ff 100%);
-  color: rgb(var(--ink));
+  background: linear-gradient(180deg, rgb(var(--base)) 0%, #f1f3f7 100%);
+  color: rgb(var(--text));
 }
 
 /* Safe area + spacing utilities */
@@ -32,21 +37,39 @@ body {
 }
 
 /* Focus ring */
-.ring-focus:focus-visible {
+.focus-ring:focus-visible {
   outline: none;
   box-shadow:
     0 0 0 2px rgb(var(--base)),
     0 0 0 4px rgb(var(--focus) / 0.8);
 }
 
+/* Navigation indicator */
+.nav-indicator {
+  background: rgb(var(--primary));
+}
+
 /* Surface style (keep using className="glass") */
+.surface-card,
 .glass {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(65, 105, 225, 0.12);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 140, 0, 0.82) 0%,
+    rgba(255, 140, 0, 0.95) 100%
+  );
+  border: 1px solid rgb(var(--primary));
   box-shadow:
-    inset 0 1px 0px rgba(255, 255, 255, 0.95),
-    0 16px 40px -14px rgb(var(--focus) / 0.25),
-    0 4px 10px -2px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+    0 18px 36px -24px rgba(15, 23, 42, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+@media (hover: hover) {
+  .surface-card:hover,
+  .glass:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 16px 32px -12px rgba(17, 17, 17, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
 }

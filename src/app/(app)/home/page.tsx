@@ -89,7 +89,7 @@ export default function HomePage() {
           </CardHeader>
           <CardContent className="flex items-center gap-3">
             <Button onClick={load}>再試行</Button>
-            <a href="/manual" className="ring-focus tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline">
+            <a href="/manual" className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline">
               マニュアル
             </a>
           </CardContent>

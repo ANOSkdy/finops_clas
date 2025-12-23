@@ -50,7 +50,7 @@ function LoginForm() {
   return (
     <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-3xl">
-        <Card className="min-h-[360px] border-transparent bg-[royalblue] text-white">
+        <Card className="min-h-[360px] surface-card text-ink">
           <CardHeader className="px-8 pt-5">
             <div className="text-xl font-semibold tracking-tight">ログイン</div>
           </CardHeader>
@@ -62,7 +62,7 @@ function LoginForm() {
             )}
 
             <div className="space-y-2">
-              <div className="text-sm font-semibold text-white">ログインID</div>
+              <div className="text-sm font-semibold text-ink">ログインID</div>
             <Field
               label="ログインID"
               required
@@ -74,12 +74,12 @@ function LoginForm() {
               inputMode="text"
               disabled={busy}
               inputClassName="bg-white text-black h-12"
-              labelClassName="text-white/90 peer-placeholder-shown:text-white/90 peer-focus:text-white"
+              labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
             />
             </div>
 
             <div className="space-y-2">
-              <div className="text-sm font-semibold text-white">パスワード</div>
+              <div className="text-sm font-semibold text-ink">パスワード</div>
             <Field
               label="パスワード"
               required
@@ -90,15 +90,11 @@ function LoginForm() {
               disabled={busy}
               onKeyDown={(e) => { if (e.key === "Enter") onSubmit(); }}
               inputClassName="bg-white text-black h-12"
-              labelClassName="text-white/90 peer-placeholder-shown:text-white/90 peer-focus:text-white"
+              labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
             />
             </div>
 
-            <Button
-              onClick={onSubmit}
-              disabled={isDisabled}
-              className="w-full border border-white/70"
-            >
+            <Button onClick={onSubmit} disabled={isDisabled} className="w-full">
               {busy ? "ログイン中…" : "ログイン"}
             </Button>
           </CardContent>
@@ -114,10 +110,10 @@ export default function LoginPage() {
       fallback={
         <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-3xl">
-            <Card className="min-h-[360px] border-transparent bg-[royalblue] text-white">
+            <Card className="min-h-[360px] surface-card text-ink">
               <CardHeader className="px-8 pt-5">
                 <div className="text-xl font-semibold tracking-tight">ログイン</div>
-                <div className="mt-1 text-sm text-white/80">読み込み中…</div>
+                <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
               </CardHeader>
               <CardContent className="space-y-6 px-8 pb-8 pt-6">
                 <div className="h-12 rounded-2xl border border-line/60 bg-base/80" />

@@ -205,7 +205,7 @@ export default function UploadPage() {
             <button
               type="button"
               onClick={() => setPurpose("rating")}
-              className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
+              className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "rating"
                   ? "border-primary bg-primary/25 text-primary shadow-softSm ring-2 ring-primary/30"
                   : "border-line bg-white/80 text-ink hover:bg-primary/10"
@@ -216,7 +216,7 @@ export default function UploadPage() {
             <button
               type="button"
               onClick={() => setPurpose("trial_balance")}
-              className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
+              className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "trial_balance"
                   ? "border-secondary bg-secondary/25 text-ink shadow-softSm ring-2 ring-secondary/30"
                   : "border-line bg-white/80 text-ink hover:bg-secondary/10"
@@ -232,7 +232,7 @@ export default function UploadPage() {
               <input
                 ref={inputRef}
                 type="file"
-                className="ring-focus tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
+                className="focus-ring tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
                 accept={accept}
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
                 disabled={busy}
@@ -336,7 +336,7 @@ export default function UploadPage() {
               </DialogDescription>
           </div>
           <DialogClose asChild>
-            <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+            <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
           </DialogClose>
         </div>
 

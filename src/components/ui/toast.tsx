@@ -118,7 +118,7 @@ function ToastViewport({
               </div>
 
               <button
-                className="ring-focus tap-44 grid place-items-center rounded-xl text-sm opacity-80 hover:opacity-100"
+                className="focus-ring tap-44 grid place-items-center rounded-xl text-sm opacity-80 hover:opacity-100"
                 onClick={() => onDismiss(t.id)}
                 aria-label="閉じる"
                 type="button"

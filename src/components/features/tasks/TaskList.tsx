@@ -9,16 +9,11 @@ type Task = {
 };
 
 function Badge({ status }: { status: Task["status"] }) {
-  const base = "rounded-full border px-2 py-0.5 text-[11px] font-medium";
+  const base = "rounded-full border border-line bg-white px-2 py-0.5 text-[11px] font-medium text-ink";
 
-  // 一旦「全テキスト黒」方針なので、バッジも ink に寄せる
-  if (status === "done")
-    return <span className={`${base} border-secondary/40 bg-secondary/25 text-ink`}>完了</span>;
-
-  if (status === "overdue")
-    return <span className={`${base} border-accent2/40 bg-accent2/15 text-ink`}>期限切れ</span>;
-
-  return <span className={`${base} border-line bg-base text-ink`}>未完</span>;
+  if (status === "done") return <span className={base}>完了</span>;
+  if (status === "overdue") return <span className={base}>期限切れ</span>;
+  return <span className={base}>未完</span>;
 }
 
 function Section({ title, items }: { title: string; items: Task[] }) {
