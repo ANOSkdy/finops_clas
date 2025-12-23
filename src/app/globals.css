@@ -5,7 +5,7 @@
 :root {
   color-scheme: light;
 
-  --primary: 139 107 124;    /* #8b6b7c */
+  --primary: 255 140 0;      /* #ff8c00 */
   --secondary: 197 180 192;  /* #c5b4c0 */
 
   --base: 247 248 251;       /* #f7f8fb */
@@ -46,11 +46,7 @@ body {
 
 /* Navigation indicator */
 .nav-indicator {
-  background: linear-gradient(
-    90deg,
-    rgb(var(--primary)) 0%,
-    rgb(var(--secondary)) 100%
-  );
+  background: rgb(var(--primary));
 }
 
 /* Surface style (keep using className="glass") */
@@ -59,10 +55,10 @@ body {
   background: linear-gradient(
     135deg,
     #ffffff 0%,
-    rgba(139, 107, 124, 0.12) 45%,
-    rgba(197, 180, 192, 0.12) 100%
+    rgba(255, 140, 0, 0.1) 45%,
+    rgba(255, 255, 255, 0.1) 100%
   );
-  border: 1px solid rgb(var(--border));
+  border: 1px solid rgb(var(--primary) / 0.2);
   box-shadow:
     0 18px 36px -24px rgba(15, 23, 42, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
