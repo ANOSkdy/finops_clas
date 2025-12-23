@@ -35,18 +35,11 @@ export default function SettingsPage() {
       <Card className="glass">
         <CardHeader>
           <div className="text-base font-semibold">セッション</div>
-          <div className="mt-1 text-sm text-inkMuted">ログアウトは確認モーダル付き</div>
         </CardHeader>
-        <CardContent className="flex items-center gap-3">
-          <Button onClick={() => setOpen(true)} disabled={busy}>
+        <CardContent className="flex justify-center">
+          <Button className="w-48" onClick={() => setOpen(true)} disabled={busy}>
             ログアウト
           </Button>
-          <a
-            className="focus-ring tap-44 inline-flex items-center justify-center rounded-full bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
-            href="/manual"
-          >
-            マニュアル
-          </a>
         </CardContent>
       </Card>
 
@@ -55,9 +48,9 @@ export default function SettingsPage() {
           <div className="text-base font-semibold">会社情報</div>
           <div className="mt-1 text-sm text-inkMuted">登録済みの会社情報を修正します</div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex justify-center">
           <a href="/company_edit">
-            <Button>会社情報を修正</Button>
+            <Button className="w-48">会社情報を修正</Button>
           </a>
         </CardContent>
       </Card>
