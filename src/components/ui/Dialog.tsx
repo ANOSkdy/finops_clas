@@ -18,7 +18,7 @@ export function DialogContent({
       <DialogPrimitive.Content
         className={cn(
           "fixed left-1/2 top-1/2 z-[80] w-[min(92vw,520px)] -translate-x-1/2 -translate-y-1/2",
-          "rounded-2xl border border-line bg-white/95 text-ink backdrop-blur p-4 shadow-soft focus-ring outline-none",
+          "rounded-2xl border border-line bg-panel/95 text-ink backdrop-blur p-4 shadow-soft focus-ring outline-none",
           className
         )}
         {...props}

@@ -20,9 +20,9 @@ export function Button({
     variant === "primary"
       ? "bg-[color:var(--primary)] text-white shadow-sm hover:bg-[color:var(--primary)]/90"
       : variant === "secondary"
-        ? "bg-[color:var(--secondary)] text-white shadow-sm hover:bg-[color:var(--secondary)]/90"
+        ? "border border-line bg-panel text-ink shadow-sm hover:bg-[color:var(--primary)]/10"
         : variant === "outline"
-          ? "border border-line bg-white text-ink shadow-sm hover:bg-[color:var(--primary)]/10"
+          ? "border border-line bg-panel text-ink shadow-sm hover:bg-[color:var(--primary)]/10"
         : variant === "danger"
           ? "bg-accent2 text-white shadow-sm hover:bg-accent2/90"
           : "border border-transparent bg-transparent text-ink hover:bg-[color:var(--primary)]/10";
@@ -31,7 +31,7 @@ export function Button({
     variant === "outline" || variant === "ghost"
       ? "disabled:bg-[color:var(--primary)]/10 disabled:text-inkMuted disabled:border-line"
       : variant === "secondary"
-        ? "disabled:bg-[color:var(--secondary)]/60 disabled:text-white/90 disabled:shadow-none"
+        ? "disabled:bg-panel/70 disabled:text-inkMuted disabled:shadow-none"
         : "disabled:bg-[color:var(--primary)]/60 disabled:text-white/90 disabled:shadow-none";
 
   return (

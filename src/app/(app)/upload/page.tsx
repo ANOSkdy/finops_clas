@@ -207,7 +207,7 @@ export default function UploadPage() {
               onClick={() => setPurpose("rating")}
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "rating"
-                  ? "border-primary bg-primary/25 text-primary shadow-softSm ring-2 ring-primary/30"
+                  ? "border-primary bg-panel text-primary shadow-softSm ring-2 ring-primary/30"
                   : "border-line bg-panel/80 text-ink hover:bg-primary/10"
               }`}
             >
@@ -218,7 +218,7 @@ export default function UploadPage() {
               onClick={() => setPurpose("trial_balance")}
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 purpose === "trial_balance"
-                  ? "border-secondary bg-secondary/25 text-ink shadow-softSm ring-2 ring-secondary/30"
+                  ? "border-secondary bg-panel text-ink shadow-softSm ring-2 ring-secondary/30"
                   : "border-line bg-panel/80 text-ink hover:bg-secondary/10"
               }`}
             >
@@ -258,13 +258,13 @@ export default function UploadPage() {
           )}
 
           {error && (
-            <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
+            <div role="alert" className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink">
               {error}
             </div>
           )}
 
           {result && (
-            <div className="rounded-2xl border border-secondary/40 bg-secondary/15 px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-secondary/40 bg-panel px-4 py-3 text-sm text-ink">
               <div>ファイルID: {result.fileId}{result.reused ? "（既存再利用）" : ""}</div>
               <div className="mt-1 break-all text-xs opacity-90">URL: {result.url}</div>
             </div>

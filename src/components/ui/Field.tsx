@@ -39,7 +39,7 @@ export function Field({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-11 w-full rounded-lg border bg-white px-3 pt-5 pb-2 text-sm text-ink",
+            "focus-ring peer h-11 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
             "border-line focus:border-[color:var(--primary)]",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent shadow-softSm",
@@ -99,7 +99,7 @@ export function SelectField({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-11 w-full rounded-lg border bg-white px-3 pt-5 pb-2 text-sm text-ink",
+            "focus-ring peer h-11 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
             "border-line focus:border-[color:var(--primary)]",
             error ? "border-accent2 focus:border-accent2" : "",
             "shadow-softSm",
@@ -156,7 +156,7 @@ export function TextareaField({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer min-h-[140px] w-full rounded-lg border bg-white px-3 pt-6 pb-3 text-sm text-ink",
+            "focus-ring peer min-h-[140px] w-full rounded-lg border bg-panel px-3 pt-6 pb-3 text-sm text-ink",
             "border-line focus:border-[color:var(--primary)] resize-y shadow-softSm",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent",

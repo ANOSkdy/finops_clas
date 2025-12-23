@@ -78,7 +78,7 @@ export default function NewCompanyPage() {
       </div>
 
       {error && (
-        <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
+        <div role="alert" className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink">
           {error}
         </div>
       )}
@@ -94,7 +94,7 @@ export default function NewCompanyPage() {
               onClick={() => setLegalForm("sole")}
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "sole"
-                  ? "border-primary bg-primary/20 text-primary shadow-softSm"
+                  ? "border-primary bg-panel text-primary shadow-softSm ring-1 ring-primary/30"
                   : "border-primary/50 bg-panel text-primary hover:bg-primary/10"
               }`}
             >
@@ -105,7 +105,7 @@ export default function NewCompanyPage() {
               onClick={() => setLegalForm("corporation")}
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "corporation"
-                  ? "border-primary bg-primary/20 text-primary shadow-softSm"
+                  ? "border-primary bg-panel text-primary shadow-softSm ring-1 ring-primary/30"
                   : "border-primary/50 bg-panel text-primary hover:bg-primary/10"
               }`}
             >

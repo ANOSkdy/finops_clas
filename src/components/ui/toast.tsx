@@ -88,7 +88,7 @@ export function useToast() {
 function tone(variant: ToastVariant) {
   if (variant === "success") return "border-secondary/40 bg-secondary/15 text-ink";
   if (variant === "error") return "border-accent2/40 bg-accent2/10 text-ink";
-  return "border-line bg-white/90 text-ink";
+  return "border-line bg-panel/90 text-ink";
 }
 
 function ToastViewport({

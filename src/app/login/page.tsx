@@ -56,7 +56,7 @@ function LoginForm() {
           </CardHeader>
           <CardContent className="space-y-6 px-8 pb-8 pt-6">
             {error && (
-              <div role="alert" className="rounded-2xl border border-accent2/30 bg-accent2/10 px-4 py-3 text-sm text-ink">
+              <div role="alert" className="rounded-2xl border border-accent2/30 bg-panel px-4 py-3 text-sm text-ink">
                 {error}
               </div>
             )}

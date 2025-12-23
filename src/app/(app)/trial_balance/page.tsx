@@ -234,7 +234,7 @@ CLAS`
       )}
 
       {inlineError && (
-        <div role="alert" className="rounded-2xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
+        <div role="alert" className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink">
           {inlineError}
         </div>
       )}
@@ -258,7 +258,7 @@ CLAS`
           </div>
 
           {fileId && (
-            <div className="rounded-2xl border border-secondary/40 bg-secondary/15 px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-secondary/40 bg-panel px-4 py-3 text-sm text-ink">
               ファイルID: {fileId}
             </div>
           )}
