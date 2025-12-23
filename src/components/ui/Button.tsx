@@ -18,9 +18,9 @@ export function Button({
 
   const variants =
     variant === "primary"
-      ? "bg-[color:var(--primary)] text-ink shadow-sm hover:bg-[color:var(--primary)]/90"
+      ? "bg-[color:var(--primary)] text-white shadow-sm hover:bg-[color:var(--primary)]/90"
       : variant === "secondary"
-        ? "bg-[color:var(--secondary)] text-ink shadow-sm hover:bg-[color:var(--secondary)]/90"
+        ? "bg-[color:var(--secondary)] text-white shadow-sm hover:bg-[color:var(--secondary)]/90"
         : variant === "outline"
           ? "border border-line bg-white text-ink shadow-sm hover:bg-[color:var(--primary)]/10"
         : variant === "danger"
@@ -31,8 +31,8 @@ export function Button({
     variant === "outline" || variant === "ghost"
       ? "disabled:bg-[color:var(--primary)]/10 disabled:text-inkMuted disabled:border-line"
       : variant === "secondary"
-        ? "disabled:bg-[color:var(--secondary)]/60 disabled:text-ink disabled:shadow-none"
-        : "disabled:bg-[color:var(--primary)]/60 disabled:text-ink disabled:shadow-none";
+        ? "disabled:bg-[color:var(--secondary)]/60 disabled:text-white/90 disabled:shadow-none"
+        : "disabled:bg-[color:var(--primary)]/60 disabled:text-white/90 disabled:shadow-none";
 
   return (
     <button

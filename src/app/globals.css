@@ -5,15 +5,15 @@
 :root {
   color-scheme: light;
 
-  --primary: 255 140 0;      /* #ff8c00 */
-  --secondary: 255 215 0;    /* #ffd700 */
+  --primary: 139 107 124;    /* #8b6b7c */
+  --secondary: 197 180 192;  /* #c5b4c0 */
 
-  --base: 255 255 255;       /* #ffffff */
+  --base: 247 248 251;       /* #f7f8fb */
   --panel: 255 255 255;      /* #ffffff */
-  --border: 209 213 219;     /* #D1D5DB */
-  --text: 17 17 17;          /* #111111 */
-  --text-muted: 85 96 122;   /* #55607A */
-  --focus: 31 41 55;         /* #1f2937 */
+  --border: 220 226 235;     /* #dce2eb */
+  --text: 17 24 39;          /* #111827 */
+  --text-muted: 107 114 128; /* #6b7280 */
+  --focus: 55 65 81;         /* #374151 */
   --danger: 244 91 105;      /* #F45B69 */
 }
 
@@ -23,7 +23,7 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji",
     "Segoe UI Emoji";
-  background: linear-gradient(180deg, rgb(var(--base)) 0%, #fff6f6 100%);
+  background: linear-gradient(180deg, rgb(var(--base)) 0%, #f1f3f7 100%);
   color: rgb(var(--text));
 }
 
@@ -37,7 +37,6 @@ body {
 }
 
 /* Focus ring */
-.focus-ring:focus-visible,
 .focus-ring:focus-visible {
   outline: none;
   box-shadow:
@@ -60,12 +59,12 @@ body {
   background: linear-gradient(
     135deg,
     #ffffff 0%,
-    rgba(255, 140, 0, 0.12) 45%,
-    rgba(255, 215, 0, 0.12) 100%
+    rgba(139, 107, 124, 0.12) 45%,
+    rgba(197, 180, 192, 0.12) 100%
   );
   border: 1px solid rgb(var(--border));
   box-shadow:
-    0 12px 24px -12px rgba(17, 17, 17, 0.18),
+    0 18px 36px -24px rgba(15, 23, 42, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
   transition: transform 150ms ease, box-shadow 150ms ease;
 }
