@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/toast";
-import { MemoCard, MemoGrid } from "@/components/ui/MemoCard";
+import { MemoCard, MemoGrid, type MemoTone } from "@/components/ui/MemoCard";
 
 type Summary = {
   alerts: Array<{ type: "warning"; message: string }>;
@@ -44,6 +44,9 @@ export default function HomePage() {
       <Skeleton className="h-32" />
     </div>
   );
+
+  const alertTones: MemoTone[] = ["yellow", "orange", "red", "pink", "purple"];
+  const taskTones: MemoTone[] = ["blue", "teal", "green", "cyan", "gray"];
 
   return (
     <div className="space-y-4">
@@ -107,7 +110,7 @@ export default function HomePage() {
             <CardContent className="py-1">
               <MemoGrid>
                 {data.alerts.map((a, i) => (
-                  <MemoCard key={i} tone="yellow" className="text-sm text-ink">
+                  <MemoCard key={i} tone={alertTones[i % alertTones.length]} className="text-sm text-ink">
                     {a.message}
                   </MemoCard>
                 ))}
@@ -125,8 +128,8 @@ export default function HomePage() {
                 <div className="text-sm text-inkMuted">該当タスクはありません。</div>
               ) : (
                 <MemoGrid>
-                  {data.upcomingTasks.map((t) => (
-                    <MemoCard key={t.taskId} tone="blue">
+                  {data.upcomingTasks.map((t, i) => (
+                    <MemoCard key={t.taskId} tone={taskTones[i % taskTones.length]}>
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <div className="text-sm font-medium">{t.title}</div>

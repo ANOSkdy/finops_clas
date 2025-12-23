@@ -39,7 +39,9 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji",
     "Segoe UI Emoji";
-  background: rgb(var(--base));
+  background:
+    radial-gradient(circle at top, rgb(var(--primary-container)) 0%, transparent 55%),
+    linear-gradient(180deg, rgb(var(--base)) 0%, rgb(var(--primary-container) / 0.35) 120%);
   color: rgb(var(--text));
 }
 
@@ -68,7 +70,8 @@ body {
 /* Surface style (keep using className="glass") */
 .surface-card,
 .glass {
-  background: rgb(var(--surface));
+  background:
+    linear-gradient(180deg, rgb(var(--surface)) 0%, rgb(var(--primary-container) / 0.45) 160%);
   border: 1px solid rgb(var(--outline) / 0.45);
   box-shadow:
     0 1px 2px rgba(60, 64, 67, 0.12),
@@ -89,7 +92,7 @@ body {
 .memo-card {
   border-radius: 1rem;
   border: 1px solid rgb(var(--outline) / 0.55);
-  background: rgb(var(--memo-bg, var(--surface)));
+  background: rgb(var(--memo-bg, var(--primary-container)));
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.18);
   padding: 1rem 1.25rem;
   transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
