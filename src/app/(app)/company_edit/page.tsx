@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Field } from "@/components/ui/Field";
+import { Field, SelectField } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/toast";
 
 type LegalForm = "corporation" | "sole";
+type PaymentSchedule = "monthly" | "special";
 
 type CompanyResponse = {
   company: {
@@ -18,6 +19,10 @@ type CompanyResponse = {
     representativeName: string | null;
     contactEmail: string | null;
     contactPhone: string | null;
+    corporateNumber: string | null;
+    establishedOn: string | null;
+    withholdingIncomeTaxPaymentSchedule: PaymentSchedule | null;
+    residentTaxPaymentSchedule: PaymentSchedule | null;
   };
   roleInCompany?: string | null;
   userRole?: string | null;
@@ -37,6 +42,14 @@ export default function CompanyEditPage() {
   const [representativeName, setRepresentativeName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
+  const [corporateNumber, setCorporateNumber] = useState("");
+  const [establishedOn, setEstablishedOn] = useState("");
+  const [withholdingIncomeTaxPaymentSchedule, setWithholdingIncomeTaxPaymentSchedule] = useState<
+    PaymentSchedule | ""
+  >("");
+  const [residentTaxPaymentSchedule, setResidentTaxPaymentSchedule] = useState<
+    PaymentSchedule | ""
+  >("");
 
   useEffect(() => {
     (async () => {
@@ -62,6 +75,12 @@ export default function CompanyEditPage() {
         setRepresentativeName(company.representativeName ?? "");
         setContactEmail(company.contactEmail ?? "");
         setContactPhone(company.contactPhone ?? "");
+        setCorporateNumber(company.corporateNumber ?? "");
+        setEstablishedOn(company.establishedOn ?? "");
+        setWithholdingIncomeTaxPaymentSchedule(
+          company.withholdingIncomeTaxPaymentSchedule ?? ""
+        );
+        setResidentTaxPaymentSchedule(company.residentTaxPaymentSchedule ?? "");
         const isAdmin = data.userRole === "admin" || data.roleInCompany === "admin";
         setCanEdit(isAdmin);
         if (!isAdmin) {
@@ -77,6 +96,8 @@ export default function CompanyEditPage() {
 
   const monthDisabled = useMemo(() => legalForm === "sole", [legalForm]);
   const monthValue = monthDisabled ? 12 : fiscalClosingMonth;
+  const corporateNumberValid =
+    !corporateNumber || /^[0-9]{13}$/.test(corporateNumber);
 
   async function onSubmit() {
     if (!canEdit) return;
@@ -87,6 +108,12 @@ export default function CompanyEditPage() {
       if (!name.trim()) {
         setError("会社名は必須です。");
         toast({ variant: "error", description: "会社名を入力してください" });
+        return;
+      }
+
+      if (!corporateNumberValid) {
+        setError("法人番号は13桁の数字で入力してください。");
+        toast({ variant: "error", description: "法人番号は13桁の数字で入力してください" });
         return;
       }
 
@@ -102,6 +129,11 @@ export default function CompanyEditPage() {
             representativeName: representativeName || null,
             contactEmail: contactEmail || null,
             contactPhone: contactPhone || null,
+            corporateNumber: corporateNumber || null,
+            establishedOn: establishedOn || null,
+            withholdingIncomeTaxPaymentSchedule:
+              withholdingIncomeTaxPaymentSchedule || null,
+            residentTaxPaymentSchedule: residentTaxPaymentSchedule || null,
           },
         }),
       });
@@ -174,6 +206,24 @@ export default function CompanyEditPage() {
           />
 
           <Field
+            label="法人番号"
+            inputMode="numeric"
+            maxLength={13}
+            value={corporateNumber}
+            onChange={(e) => setCorporateNumber(e.target.value)}
+            disabled={busy || !canEdit}
+            error={corporateNumberValid ? null : "13桁の数字で入力してください"}
+          />
+
+          <Field
+            label="設立年月日"
+            type="date"
+            value={establishedOn}
+            onChange={(e) => setEstablishedOn(e.target.value)}
+            disabled={busy || !canEdit}
+          />
+
+          <Field
             label="決算月"
             type="number"
             inputMode="numeric"
@@ -211,6 +261,34 @@ export default function CompanyEditPage() {
             onChange={(e) => setContactPhone(e.target.value)}
             disabled={busy || !canEdit}
           />
+
+          <SelectField
+            label="源泉所得税 納付特例"
+            value={withholdingIncomeTaxPaymentSchedule}
+            onChange={(e) =>
+              setWithholdingIncomeTaxPaymentSchedule(
+                e.target.value as PaymentSchedule | ""
+              )
+            }
+            disabled={busy || !canEdit}
+            placeholder="選択してください"
+          >
+            <option value="monthly">毎月納付</option>
+            <option value="special">納期特例（年2回）</option>
+          </SelectField>
+
+          <SelectField
+            label="住民税 納付特例"
+            value={residentTaxPaymentSchedule}
+            onChange={(e) =>
+              setResidentTaxPaymentSchedule(e.target.value as PaymentSchedule | "")
+            }
+            disabled={busy || !canEdit}
+            placeholder="選択してください"
+          >
+            <option value="monthly">毎月納付</option>
+            <option value="special">納期特例（年2回）</option>
+          </SelectField>
 
           <div className="flex items-center gap-3 pt-1">
             <Button onClick={onSubmit} disabled={busy || !canEdit}>

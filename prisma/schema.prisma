@@ -32,6 +32,10 @@ model Company {
   representativeName String?  @map("representative_name")
   contactEmail       String?  @map("contact_email")
   contactPhone       String?  @map("contact_phone")
+  corporateNumber    String?  @map("corporate_number") @db.VarChar(13)
+  establishedOn      DateTime? @map("established_on") @db.Date
+  withholdingIncomeTaxPaymentSchedule String? @map("withholding_income_tax_payment_schedule")
+  residentTaxPaymentSchedule  String? @map("resident_tax_payment_schedule")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 

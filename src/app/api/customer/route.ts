@@ -7,6 +7,10 @@ import { canEditCompany } from "@/lib/auth/rbac";
 
 export const runtime = "nodejs";
 
+function formatDate(date: Date | null) {
+  return date ? date.toISOString().slice(0, 10) : null;
+}
+
 function shapeCompany(c: any) {
   return {
     companyId: c.id,
@@ -17,6 +21,10 @@ function shapeCompany(c: any) {
     representativeName: c.representativeName ?? null,
     contactEmail: c.contactEmail ?? null,
     contactPhone: c.contactPhone ?? null,
+    corporateNumber: c.corporateNumber ?? null,
+    establishedOn: formatDate(c.establishedOn ?? null),
+    withholdingIncomeTaxPaymentSchedule: c.withholdingIncomeTaxPaymentSchedule ?? null,
+    residentTaxPaymentSchedule: c.residentTaxPaymentSchedule ?? null,
   };
 }
 
@@ -83,6 +91,11 @@ export async function PUT(req: NextRequest) {
       representativeName: v.representativeName ?? null,
       contactEmail: v.contactEmail ?? null,
       contactPhone: v.contactPhone ?? null,
+      corporateNumber: v.corporateNumber ?? null,
+      establishedOn: v.establishedOn ? new Date(v.establishedOn) : null,
+      withholdingIncomeTaxPaymentSchedule:
+        v.withholdingIncomeTaxPaymentSchedule ?? null,
+      residentTaxPaymentSchedule: v.residentTaxPaymentSchedule ?? null,
       updatedAt: new Date(),
     },
   });
