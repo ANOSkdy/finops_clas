@@ -63,35 +63,37 @@ function LoginForm() {
 
             <div className="space-y-2">
               <div className="text-sm font-semibold text-ink">ログインID</div>
-            <Field
-              label="ログインID"
-              required
-              value={loginId}
-              onChange={(e) => setLoginId(e.target.value)}
-              autoComplete="username"
-              autoCapitalize="none"
-              spellCheck={false}
-              inputMode="text"
-              disabled={busy}
-              inputClassName="bg-panel text-black h-12"
-              labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
-            />
+              <Field
+                label=""
+                aria-label="ログインID"
+                value={loginId}
+                onChange={(e) => setLoginId(e.target.value)}
+                autoComplete="username"
+                autoCapitalize="none"
+                spellCheck={false}
+                inputMode="text"
+                disabled={busy}
+                inputClassName="bg-panel text-black h-12"
+                labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
+              />
             </div>
 
             <div className="space-y-2">
               <div className="text-sm font-semibold text-ink">パスワード</div>
-            <Field
-              label="パスワード"
-              required
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              disabled={busy}
-              onKeyDown={(e) => { if (e.key === "Enter") onSubmit(); }}
-              inputClassName="bg-panel text-black h-12"
-              labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
-            />
+              <Field
+                label=""
+                aria-label="パスワード"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                disabled={busy}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onSubmit();
+                }}
+                inputClassName="bg-panel text-black h-12"
+                labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
+              />
             </div>
 
             <Button onClick={onSubmit} disabled={isDisabled} className="w-full">
