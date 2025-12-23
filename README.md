@@ -40,3 +40,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 管理者向けアカウント管理  手動確認メモ
+
+1. 管理者ユーザーでログインする。
+2. `/admin/accounts` を開き、一覧が表示されることを確認する（403 になる場合はロールを確認）。
+3. 「新規ユーザー発行」で login_id・name・password（8文字以上）を入力し、作成成功を確認する。
+4. 作成されたユーザーの「削除」を押し、依存サマリーが表示されることを確認する。uploads/emails がある場合は削除ボタンが無効になることを確認。
+5. 依存が 0 のユーザーで削除を実行し、一覧から消えることを確認する。

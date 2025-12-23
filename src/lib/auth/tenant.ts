@@ -26,3 +26,10 @@ export async function requireActiveCompany(req: NextRequest) {
   const company = await prisma.company.findUnique({ where: { id: companyId } });
   return { auth, companyId, membership, company };
 }
+
+export async function requireAdmin(req: NextRequest) {
+  const auth = await getSession(req);
+  if (!auth) return { ok: false as const, status: 401 as const };
+  if (auth.user.role !== "admin") return { ok: false as const, status: 403 as const, auth };
+  return { ok: true as const, auth };
+}

@@ -10,6 +10,7 @@ const protectedPaths = [
   "/selectcompany",
   "/newcompany",
   "/rating",
+  "/admin",
 ];
 
 function isProtected(pathname: string) {

@@ -12,7 +12,8 @@ model User {
   loginId      String   @unique @map("login_id")
   passwordHash String   @map("password_hash")
   name         String
-  role         String   @default("user") // 'admin'|'user'繝ｻ繝ｻB陋幢ｽｴCHECK邵ｺ・ｯmigration邵ｺ・ｧ髴托ｽｽ陷会｣ｰ繝ｻ繝ｻ  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  role         String   @default("user") // 'admin'|'user'
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   memberships Membership[]
