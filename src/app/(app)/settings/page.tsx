@@ -41,7 +41,10 @@ export default function SettingsPage() {
           <Button variant="danger" onClick={() => setOpen(true)} disabled={busy}>
             ログアウト
           </Button>
-          <a className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline" href="/manual">
+          <a
+            className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+            href="/manual"
+          >
             マニュアル
           </a>
         </CardContent>

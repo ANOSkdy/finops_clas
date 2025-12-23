@@ -39,6 +39,7 @@
   /* Buttons (unify here; do NOT touch --primary) */
   --button: 65 105 225;             /* #4169E1 */
   --button-pressed: 54 86 189;      /* #3656BD */
+  --button-text: 255 255 255;       /* #FFFFFF */
 
   /* Text / Lines (ALL BLACK) */
   --text: 0 0 0;                    /* #000000 */
@@ -80,6 +81,7 @@ body {
   .safe-x { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
   .pb-safe-nav { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
   .tap-44 { min-height: 44px; min-width: 44px; }
+  .text-button { color: rgb(var(--button-text)); }
 }
 
 /* Focus ring */

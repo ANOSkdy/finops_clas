@@ -20,7 +20,10 @@ export default async function ManualDetailPage({ params }: ManualDetailPageProps
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Link className="text-sm text-primary underline" href="/manual">
+        <Link
+          className="focus-ring inline-flex items-center rounded-lg bg-[color:rgb(var(--button))] px-2 py-1 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+          href="/manual"
+        >
           ← 一覧に戻る
         </Link>
         <div className="text-xl font-semibold tracking-tight">{doc.title}</div>
