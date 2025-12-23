@@ -7,6 +7,14 @@ export const customerSelectSchema = z.object({
 });
 
 export const legalFormSchema = z.enum(["corporation", "sole"]);
+export const paymentScheduleSchema = z.enum(["monthly", "special"]);
+export const corporateNumberSchema = z
+  .string()
+  .regex(/^[0-9]{13}$/, "法人番号は13桁の数字で入力してください");
+const establishedOnSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "設立年月日はYYYY-MM-DD形式で入力してください")
+  .refine((v) => !Number.isNaN(Date.parse(v)), "設立年月日が不正です");
 
 export const customerNewSchema = z
   .object({
@@ -37,6 +45,10 @@ export const customerUpdateSchema = z
       representativeName: z.string().max(200).optional().nullable(),
       contactEmail: z.string().email().optional().nullable(),
       contactPhone: z.string().max(50).optional().nullable(),
+      corporateNumber: corporateNumberSchema.optional().nullable(),
+      establishedOn: establishedOnSchema.optional().nullable(),
+      withholdingIncomeTaxPaymentSchedule: paymentScheduleSchema.optional().nullable(),
+      residentTaxPaymentSchedule: paymentScheduleSchema.optional().nullable(),
     }),
   })
   .superRefine((v, ctx) => {

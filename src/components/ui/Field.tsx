@@ -66,6 +66,69 @@ export function Field({
   );
 }
 
+type SelectFieldProps = Common &
+  Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "placeholder"> & {
+    placeholder?: string;
+  };
+
+export function SelectField({
+  label,
+  required,
+  hint,
+  error,
+  inputClassName,
+  labelClassName,
+  className,
+  placeholder,
+  children,
+  value,
+  ...props
+}: SelectFieldProps) {
+  const id = React.useId();
+  const hintId = hint ? `${id}-hint` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+  const isEmpty = value === undefined || value === null || value === "";
+
+  return (
+    <div className={cn("space-y-1", className)}>
+      <div className="relative group">
+        <select
+          id={id}
+          value={value}
+          aria-invalid={!!error}
+          aria-describedby={describedBy}
+          className={cn(
+            "focus-ring peer h-11 w-full rounded-lg border bg-white px-3 pt-5 pb-2 text-sm text-ink",
+            "border-line focus:border-[color:var(--primary)]",
+            error ? "border-accent2 focus:border-accent2" : "",
+            "shadow-softSm",
+            inputClassName
+          )}
+          {...props}
+        >
+          {placeholder ? <option value="">{placeholder}</option> : null}
+          {children}
+        </select>
+        <label
+          htmlFor={id}
+          className={cn(
+            "pointer-events-none absolute left-3 text-xs text-ink transition-all",
+            isEmpty ? "top-3 text-sm text-inkMuted" : "top-2",
+            "group-focus-within:top-2 group-focus-within:text-xs group-focus-within:text-ink",
+            labelClassName
+          )}
+        >
+          {label}{required ? <span className="text-accent2"> *</span> : null}
+        </label>
+      </div>
+
+      {hint && <p id={hintId} className="text-xs text-inkMuted">{hint}</p>}
+      {error && <p id={errorId} role="alert" className="text-xs text-accent2">{error}</p>}
+    </div>
+  );
+}
+
 type TextareaFieldProps = Common &
   Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "placeholder">;
 
