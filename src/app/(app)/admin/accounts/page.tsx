@@ -245,7 +245,6 @@ export default function AccountAdminPage() {
                       <td className="px-2 py-2 text-right">
                         <Button
                           variant="secondary"
-                          size="sm"
                           onClick={() => openDeleteDialog(u)}
                         >
                           削除
