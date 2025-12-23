@@ -75,7 +75,7 @@ export function AppHeader() {
             <Button
               variant="secondary"
               size="md"
-              className="border-transparent bg-[#4169e1] text-white hover:bg-[#3559c9] hover:text-white"
+              className="border-transparent bg-[#4169e1] !text-white hover:bg-[#3559c9] hover:!text-white focus-visible:!text-white active:!text-white"
             >
               会社切替
             </Button>
