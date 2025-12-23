@@ -93,7 +93,7 @@ export function ManualClient({ docs }: ManualClientProps) {
               docs.map((d) => (
                 <button
                   key={d.slug}
-                  className={`ring-focus rounded-xl border px-3 py-2 text-sm ${
+                  className={`focus-ring rounded-xl border px-3 py-2 text-sm ${
                     d.slug === slug
                       ? "border-primary bg-primary/20 text-primary shadow-softSm"
                       : "border-primary/50 bg-base text-primary hover:bg-primary/10"
@@ -136,14 +136,20 @@ export function ManualClient({ docs }: ManualClientProps) {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Input
-                type="number"
-                min={200}
-                max={2000}
-                value={maxLength}
-                onChange={(e) => setMaxLength(Number(e.target.value))}
-                className="w-24"
-              />
+              <div className="space-y-1">
+                <label htmlFor="summary-length" className="text-xs text-inkMuted">
+                  文字数
+                </label>
+                <Input
+                  id="summary-length"
+                  type="number"
+                  min={200}
+                  max={2000}
+                  value={maxLength}
+                  onChange={(e) => setMaxLength(Number(e.target.value))}
+                  className="w-24"
+                />
+              </div>
               <Button onClick={onSummarize} disabled={busy || !contentText}>
                 {busy ? "要約中…" : "要約する"}
               </Button>

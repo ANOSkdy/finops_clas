@@ -92,7 +92,7 @@ export default function NewCompanyPage() {
             <button
               type="button"
               onClick={() => setLegalForm("sole")}
-              className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
+              className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "sole"
                   ? "border-primary bg-primary/20 text-primary shadow-softSm"
                   : "border-primary/50 bg-base text-primary hover:bg-primary/10"
@@ -103,7 +103,7 @@ export default function NewCompanyPage() {
             <button
               type="button"
               onClick={() => setLegalForm("corporation")}
-              className={`ring-focus tap-44 rounded-xl border px-3 py-2 text-sm ${
+              className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "corporation"
                   ? "border-primary bg-primary/20 text-primary shadow-softSm"
                   : "border-primary/50 bg-base text-primary hover:bg-primary/10"
@@ -171,7 +171,7 @@ export default function NewCompanyPage() {
             <Button onClick={onSubmit} disabled={busy}>
               {busy ? "登録中…" : "登録する"}
             </Button>
-            <a href="/selectcompany" className="ring-focus tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline">
+            <a href="/selectcompany" className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline">
               会社選択へ
             </a>
           </div>

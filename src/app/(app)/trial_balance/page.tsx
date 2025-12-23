@@ -248,7 +248,7 @@ CLAS`
           <input
             ref={inputRef}
             type="file"
-            className="ring-focus tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
+            className="focus-ring tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
             accept={accept}
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             disabled={busy}
@@ -350,7 +350,7 @@ CLAS`
               </DialogDescription>
           </div>
           <DialogClose asChild>
-            <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+            <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
           </DialogClose>
         </div>
 

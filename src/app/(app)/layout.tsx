@@ -7,14 +7,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <>
       <a
         href="#main"
-        className="ring-focus sr-only fixed left-3 top-3 z-[90] rounded-xl bg-base/90 px-3 py-2 text-sm text-primary focus:not-sr-only"
+        className="focus-ring sr-only fixed left-3 top-3 z-[90] rounded-xl bg-base/90 px-3 py-2 text-sm text-primary focus:not-sr-only"
       >
         本文へスキップ
       </a>
 
       <div className="min-h-screen">
         <AppHeader />
-        <main id="main" className="mx-auto w-full max-w-xl px-4 pt-6 pb-safe-nav">
+        <main
+          id="main"
+          className="mx-auto w-full max-w-5xl px-4 pt-6 pb-safe-nav sm:px-6"
+        >
           {children}
         </main>
         <BottomNav />

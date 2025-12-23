@@ -25,7 +25,7 @@ export function ErrorDetailsDialog({
             <DialogDescription>{description}</DialogDescription>
           </div>
           <DialogClose asChild>
-            <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">
+            <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">
               ✕
             </button>
           </DialogClose>

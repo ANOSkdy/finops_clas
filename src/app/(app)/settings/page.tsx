@@ -41,7 +41,7 @@ export default function SettingsPage() {
           <Button variant="danger" onClick={() => setOpen(true)} disabled={busy}>
             ログアウト
           </Button>
-          <a className="ring-focus tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline" href="/manual">
+          <a className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl px-3 text-sm text-primary underline" href="/manual">
             マニュアル
           </a>
         </CardContent>
@@ -67,7 +67,7 @@ export default function SettingsPage() {
               <DialogDescription>セッションCookieを破棄してログイン画面へ戻ります。</DialogDescription>
             </div>
             <DialogClose asChild>
-              <button className="ring-focus tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+              <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
             </DialogClose>
           </div>
 

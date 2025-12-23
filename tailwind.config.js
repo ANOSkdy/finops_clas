@@ -4,16 +4,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        base: "#F4F7FF",
-        primary: "#4169E1",
-        secondary: "#5BC0EB",
+        base: "rgb(var(--base) / <alpha-value>)",
+        primary: "rgb(var(--plum-700) / <alpha-value>)",
+        secondary: "rgb(var(--salmon-700) / <alpha-value>)",
         accent1: "#FFC857",
-        accent2: "#F45B69",
+        accent2: "rgb(var(--danger) / <alpha-value>)",
         accent3: "#8D7CF6",
-        ink: "#0F172A",
-        inkMuted: "#55607A",
-        line: "#D7DEF2",
-        panel: "#FFFFFF",
+        ink: "rgb(var(--text) / <alpha-value>)",
+        inkMuted: "rgb(var(--text-muted) / <alpha-value>)",
+        line: "rgb(var(--border) / <alpha-value>)",
+        panel: "rgb(var(--panel) / <alpha-value>)",
       },
       boxShadow: {
         soft: "0 20px 48px rgba(15,23,42,0.12)",
