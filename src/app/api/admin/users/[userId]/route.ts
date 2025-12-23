@@ -8,8 +8,12 @@ export const runtime = "nodejs";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
+  const resolvedParams = await params;
+  const userId = resolvedParams.userId;
+  if (!userId) return jsonError(400, "VALIDATION_ERROR", "ユーザーIDが不正です");
+
   const admin = await requireAdmin(req);
   if (!admin.ok) {
     const status = admin.status;
@@ -18,7 +22,6 @@ export async function DELETE(
       : jsonError(403, "FORBIDDEN", "管理者権限が必要です");
   }
 
-  const userId = params.userId;
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return jsonError(404, "NOT_FOUND", "ユーザーが見つかりません");
 
