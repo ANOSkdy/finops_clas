@@ -95,7 +95,7 @@ export default function NewCompanyPage() {
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "sole"
                   ? "border-primary bg-primary/20 text-primary shadow-softSm"
-                  : "border-primary/50 bg-base text-primary hover:bg-primary/10"
+                  : "border-primary/50 bg-panel text-primary hover:bg-primary/10"
               }`}
             >
               個人事業主
@@ -106,7 +106,7 @@ export default function NewCompanyPage() {
               className={`focus-ring tap-44 rounded-xl border px-3 py-2 text-sm ${
                 legalForm === "corporation"
                   ? "border-primary bg-primary/20 text-primary shadow-softSm"
-                  : "border-primary/50 bg-base text-primary hover:bg-primary/10"
+                  : "border-primary/50 bg-panel text-primary hover:bg-primary/10"
               }`}
             >
               法人
