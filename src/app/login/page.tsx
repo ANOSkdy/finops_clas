@@ -73,7 +73,7 @@ function LoginForm() {
               spellCheck={false}
               inputMode="text"
               disabled={busy}
-              inputClassName="bg-white text-black h-12"
+              inputClassName="bg-panel text-black h-12"
               labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
             />
             </div>
@@ -89,7 +89,7 @@ function LoginForm() {
               autoComplete="current-password"
               disabled={busy}
               onKeyDown={(e) => { if (e.key === "Enter") onSubmit(); }}
-              inputClassName="bg-white text-black h-12"
+              inputClassName="bg-panel text-black h-12"
               labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
             />
             </div>

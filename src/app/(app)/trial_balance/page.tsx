@@ -248,7 +248,7 @@ CLAS`
           <input
             ref={inputRef}
             type="file"
-            className="focus-ring tap-44 w-full rounded-xl border border-line bg-white/90 px-3 py-2 text-sm text-ink"
+            className="focus-ring tap-44 w-full rounded-xl border border-line bg-panel/90 px-3 py-2 text-sm text-ink"
             accept={accept}
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             disabled={busy}

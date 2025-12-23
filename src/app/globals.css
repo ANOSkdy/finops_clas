@@ -10,9 +10,9 @@
   --primary-container: 254 239 195; /* #FEEFC3 */
   --secondary: 254 239 195;       /* #FEEFC3 */
 
-  --base: 241 243 244;            /* #F1F3F4 */
+  --base: 255 247 214;            /* #FFF7D6 */
   --surface: 255 255 255;         /* #FFFFFF */
-  --panel: 255 255 255;           /* #FFFFFF */
+  --panel: 254 239 195;           /* #FEEFC3 */
   --text: 32 33 36;               /* #202124 */
   --text-muted: 95 99 104;        /* #5F6368 */
   --outline: 154 160 166;         /* #9AA0A6 */
@@ -40,8 +40,8 @@ body {
     "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji",
     "Segoe UI Emoji";
   background:
-    radial-gradient(circle at top, rgb(var(--primary-container)) 0%, transparent 55%),
-    linear-gradient(180deg, rgb(var(--base)) 0%, rgb(var(--primary-container) / 0.35) 120%);
+    radial-gradient(circle at top, rgb(var(--primary-container)) 0%, transparent 60%),
+    linear-gradient(180deg, rgb(var(--base)) 0%, rgb(var(--primary-container) / 0.55) 140%);
   color: rgb(var(--text));
 }
 
@@ -70,8 +70,7 @@ body {
 /* Surface style (keep using className="glass") */
 .surface-card,
 .glass {
-  background:
-    linear-gradient(180deg, rgb(var(--surface)) 0%, rgb(var(--primary-container) / 0.45) 160%);
+  background: rgb(var(--primary-container));
   border: 1px solid rgb(var(--outline) / 0.45);
   box-shadow:
     0 1px 2px rgba(60, 64, 67, 0.12),
@@ -92,7 +91,7 @@ body {
 .memo-card {
   border-radius: 1rem;
   border: 1px solid rgb(var(--outline) / 0.55);
-  background: rgb(var(--memo-bg, var(--primary-container)));
+  background: rgb(var(--memo-yellow));
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.18);
   padding: 1rem 1.25rem;
   transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
@@ -112,17 +111,7 @@ body {
   }
 }
 
-.memo-card[data-tone="red"] { --memo-bg: var(--memo-red); }
-.memo-card[data-tone="orange"] { --memo-bg: var(--memo-orange); }
 .memo-card[data-tone="yellow"] { --memo-bg: var(--memo-yellow); }
-.memo-card[data-tone="green"] { --memo-bg: var(--memo-green); }
-.memo-card[data-tone="teal"] { --memo-bg: var(--memo-teal); }
-.memo-card[data-tone="cyan"] { --memo-bg: var(--memo-cyan); }
-.memo-card[data-tone="blue"] { --memo-bg: var(--memo-blue); }
-.memo-card[data-tone="purple"] { --memo-bg: var(--memo-purple); }
-.memo-card[data-tone="pink"] { --memo-bg: var(--memo-pink); }
-.memo-card[data-tone="brown"] { --memo-bg: var(--memo-brown); }
-.memo-card[data-tone="gray"] { --memo-bg: var(--memo-gray); }
 
 .memo-grid {
   display: grid;
