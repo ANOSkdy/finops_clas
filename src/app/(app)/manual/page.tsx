@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { getManualDocs } from "@/lib/manual/getManualDocs";
+import type { ManualDocListItem } from "@/lib/manual/docs";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 
 export const revalidate = 60;
 
 export default async function ManualPage() {
-  let docs = [];
+  let docs: ManualDocListItem[] = [];
 
   try {
     docs = await getManualDocs("updatedAtDesc");
