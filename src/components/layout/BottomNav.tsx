@@ -6,13 +6,13 @@ import { cn } from "@/lib/ui/cn";
 type Item = { href: string; label: string; icon: string };
 
 const left: Item[] = [
-  { href: "/home", label: "Home", icon: "⌂" },
-  { href: "/schedule", label: "Schedule", icon: "🗓" },
+  { href: "/home", label: "ホーム", icon: "⌂" },
+  { href: "/schedule", label: "スケジュール", icon: "🗓" },
 ];
 
 const right: Item[] = [
-  { href: "/manual", label: "Manual", icon: "📘" },
-  { href: "/settings", label: "Settings", icon: "⚙" },
+  { href: "/manual", label: "マニュアル", icon: "📘" },
+  { href: "/settings", label: "設定", icon: "⚙" },
 ];
 
 export function BottomNav() {
@@ -48,7 +48,7 @@ export function BottomNav() {
         {/* Center CTA */}
         <a
           href="/upload"
-          aria-label="Upload"
+          aria-label="アップロード"
           className={cn(
             "ring-focus tap-44 col-span-1 mx-auto grid h-12 w-12 place-items-center rounded-2xl",
             "border border-primary/30 bg-base text-primary shadow-soft active:translate-y-px"

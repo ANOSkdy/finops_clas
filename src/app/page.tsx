@@ -36,8 +36,8 @@ export default function Home() {
         </div>
 
         <div className="mt-8 flex items-center gap-3 text-xs text-inkMuted">
-          <Image src="/next.svg" alt="Next.js logo" width={64} height={16} priority />
-          <span>Powered by Next.js</span>
+          <Image src="/next.svg" alt="Next.js ロゴ" width={64} height={16} priority />
+          <span>Next.js で構築</span>
         </div>
       </main>
     </div>

@@ -28,7 +28,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xl font-semibold tracking-tight">Settings</div>
+        <div className="text-xl font-semibold tracking-tight">設定</div>
         <div className="mt-1 text-sm text-inkMuted">アカウントとセキュリティ</div>
       </div>
 

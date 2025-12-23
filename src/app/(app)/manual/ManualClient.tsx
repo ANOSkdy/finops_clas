@@ -77,7 +77,7 @@ export function ManualClient({ docs }: ManualClientProps) {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xl font-semibold tracking-tight">Manual</div>
+        <div className="text-xl font-semibold tracking-tight">マニュアル</div>
         <div className="mt-1 text-sm text-inkMuted">
           目次から選択して閲覧し、必要ならAI要約します。
         </div>
@@ -115,7 +115,7 @@ export function ManualClient({ docs }: ManualClientProps) {
 
         <Card className="glass">
           <CardHeader>
-            <div className="text-base font-semibold">{doc?.title ?? "Manual"}</div>
+            <div className="text-base font-semibold">{doc?.title ?? "マニュアル"}</div>
             <div className="mt-1 text-sm text-inkMuted">本文（v1：DB連携）</div>
           </CardHeader>
           <CardContent>

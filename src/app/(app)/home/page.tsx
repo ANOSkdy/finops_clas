@@ -47,7 +47,7 @@ export default function HomePage() {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xl font-semibold tracking-tight">Home</div>
+        <div className="text-xl font-semibold tracking-tight">ホーム</div>
         <div className="mt-1 text-sm text-inkMuted">アラートと期限の近いタスクを確認します。</div>
       </div>
 
@@ -72,7 +72,7 @@ export default function HomePage() {
         <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">会社が選択されていません</div>
-            <div className="mt-1 text-sm text-inkMuted">会社を選択するとHome/Scheduleが利用できます。</div>
+            <div className="mt-1 text-sm text-inkMuted">会社を選択するとホーム/スケジュールが利用できます。</div>
           </CardHeader>
           <CardContent className="flex items-center gap-3">
             <a href="/selectcompany"><Button>会社を選択</Button></a>

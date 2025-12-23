@@ -138,7 +138,7 @@ CLAS`
 
       setFileId(j.fileId);
       setProgress(null);
-      toast({ variant: "success", title: "アップロード完了", description: `fileId: ${j.fileId}` });
+      toast({ variant: "success", title: "アップロード完了", description: `ファイルID: ${j.fileId}` });
     } catch {
       setProgress(null);
       setInlineError("アップロードに失敗しました（Blob token/ログイン/会社選択を確認してください）。");
@@ -150,13 +150,13 @@ CLAS`
 
   function openConfirm() {
     if (!fileId) {
-      setInlineError("先に試算表をアップロードしてください（fileIdが必要です）。");
+      setInlineError("先に試算表をアップロードしてください（ファイルIDが必要です）。");
       toast({ variant: "error", description: "先にアップロードしてください" });
       return;
     }
     if (!to.trim()) {
-      setInlineError("送信先（to）を入力してください。");
-      toast({ variant: "error", description: "送信先（to）を入力してください" });
+      setInlineError("送信先（宛先）を入力してください。");
+      toast({ variant: "error", description: "送信先（宛先）を入力してください" });
       return;
     }
     if (!subject.trim() || !body.trim()) {
@@ -215,7 +215,7 @@ CLAS`
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xl font-semibold tracking-tight">Trial Balance</div>
+        <div className="text-xl font-semibold tracking-tight">試算表</div>
         <div className="mt-1 text-sm text-inkMuted">
           試算表アップロード → メール作成 → 送信（監査ログ保存）
         </div>
@@ -241,8 +241,8 @@ CLAS`
 
       <Card className="glass">
         <CardHeader>
-          <div className="text-base font-semibold">Upload</div>
-          <div className="mt-1 text-sm text-inkMuted">Active: {companyName ?? "未選択"}</div>
+          <div className="text-base font-semibold">アップロード</div>
+          <div className="mt-1 text-sm text-inkMuted">選択中: {companyName ?? "未選択"}</div>
         </CardHeader>
         <CardContent className="space-y-3">
           <input
@@ -259,7 +259,7 @@ CLAS`
 
           {fileId && (
             <div className="rounded-2xl border border-secondary/40 bg-secondary/15 px-4 py-3 text-sm text-ink">
-              uploadId: {fileId}
+              ファイルID: {fileId}
             </div>
           )}
 
@@ -287,7 +287,7 @@ CLAS`
       <Card className="glass">
         <CardHeader className="flex items-center justify-between">
           <div>
-            <div className="text-base font-semibold">Mail</div>
+            <div className="text-base font-semibold">メール</div>
             <div className="mt-1 text-sm text-inkMuted">送信前に確認モーダルを表示します</div>
           </div>
           <Button variant="secondary" onClick={() => setShowMail((v) => !v)}>
@@ -298,7 +298,7 @@ CLAS`
         {showMail && (
           <CardContent className="space-y-3">
             <Field
-              label="送信先（to）"
+              label="送信先（宛先）"
               required
               type="email"
               inputMode="email"
@@ -356,15 +356,15 @@ CLAS`
 
         <div className="mt-4 space-y-3 text-sm">
           <div className="rounded-2xl border border-line bg-base p-3">
-            <div className="text-xs text-inkMuted">To</div>
+            <div className="text-xs text-inkMuted">宛先</div>
             <div className="mt-1 break-all">{to}</div>
           </div>
           <div className="rounded-2xl border border-line bg-base p-3">
-            <div className="text-xs text-inkMuted">Subject</div>
+            <div className="text-xs text-inkMuted">件名</div>
             <div className="mt-1">{subject}</div>
           </div>
           <div className="rounded-2xl border border-line bg-base p-3">
-            <div className="text-xs text-inkMuted">Attachment</div>
+            <div className="text-xs text-inkMuted">添付</div>
             <div className="mt-1 break-all">{fileId}</div>
           </div>
 
