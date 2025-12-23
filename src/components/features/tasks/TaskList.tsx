@@ -25,10 +25,7 @@ function Section({ title, items }: { title: string; items: Task[] }) {
 
       <ul className="space-y-2">
         {items.map((t) => (
-          <li
-            key={t.taskId}
-            className="rounded-2xl border border-line bg-panel/85 shadow-softSm px-4 py-3"
-          >
+          <li key={t.taskId} className="glass rounded-2xl px-4 py-3">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-sm font-semibold text-ink">{t.title}</div>
@@ -50,7 +47,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
 
   if (tasks.length === 0) {
     return (
-      <div className="rounded-2xl border border-line bg-panel/85 shadow-softSm px-4 py-6 text-sm text-ink">
+      <div className="glass rounded-2xl px-4 py-6 text-sm text-ink">
         タスクがまだありません。
       </div>
     );
