@@ -42,7 +42,7 @@ export default function SettingsPage() {
             ログアウト
           </Button>
           <a
-            className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+            className="focus-ring tap-44 inline-flex items-center justify-center rounded-full bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
             href="/manual"
           >
             マニュアル
