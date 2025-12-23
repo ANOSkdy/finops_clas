@@ -24,7 +24,7 @@ export function BottomNav() {
 
   const itemClass = (active: boolean) =>
     cn(
-      "focus-ring tap-44 col-span-1 flex flex-col items-center justify-center rounded-xl px-2 py-2 text-xs",
+      "focus-ring tap-44 col-span-1 flex flex-col items-center justify-center rounded-xl px-1 py-2 text-[10px] whitespace-nowrap",
       active ? "text-ink font-semibold" : "text-inkMuted"
     );
 
