@@ -29,9 +29,9 @@ export default async function ManualPage() {
           {docs.length > 0 ? (
             <ul className="space-y-2">
               {docs.map((doc) => (
-                <li key={doc.slug}>
+                <li key={doc.slug} className="glass rounded-2xl px-4 py-3">
                   <Link
-                    className="focus-ring inline-flex items-center rounded-lg bg-[color:rgb(var(--button))] px-2 py-1 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+                    className="focus-ring flex w-full items-center text-sm font-semibold text-ink"
                     href={`/manual/${doc.slug}`}
                   >
                     {doc.title}
