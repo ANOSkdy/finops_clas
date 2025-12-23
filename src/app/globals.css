@@ -54,8 +54,8 @@ body {
 .glass {
   background: linear-gradient(
     180deg,
-    rgb(var(--primary)) 0%,
-    rgba(255, 140, 0, 0.9) 100%
+    rgba(255, 140, 0, 0.82) 0%,
+    rgba(255, 140, 0, 0.95) 100%
   );
   border: 1px solid rgb(var(--primary));
   box-shadow:
