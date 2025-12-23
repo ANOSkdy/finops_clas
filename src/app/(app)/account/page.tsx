@@ -239,7 +239,6 @@ export default function AccountPage() {
                     <div className="text-[10px] text-inkMuted">更新: {new Date(u.updatedAt).toLocaleString()}</div>
                     <Button
                       variant="secondary"
-                      size="sm"
                       onClick={() => deleteUser(u.id)}
                       disabled={busyDelete === u.id}
                     >
