@@ -52,7 +52,7 @@ export default function SchedulePage() {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xl font-semibold tracking-tight">Schedule</div>
+        <div className="text-xl font-semibold tracking-tight">スケジュール</div>
         <div className="mt-1 text-sm text-inkMuted">カテゴリ別にタスクを一覧表示します。</div>
       </div>
 

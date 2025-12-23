@@ -141,7 +141,7 @@ export default function UploadPage() {
 
       setResult(complete.data);
       setProgressMsg(null);
-      toast({ variant: "success", title: "アップロード完了", description: `fileId: ${complete.data.fileId}` });
+      toast({ variant: "success", title: "アップロード完了", description: `ファイルID: ${complete.data.fileId}` });
     } catch {
       setError("アップロードに失敗しました。Blob token / ログイン / 会社選択を確認してください。");
       setProgressMsg(null);
@@ -169,7 +169,7 @@ export default function UploadPage() {
     }
 
     setFinalize(res.data);
-    toast({ variant: "success", title: "格付け完了", description: `Grade ${res.data.grade} / Score ${res.data.score}` });
+    toast({ variant: "success", title: "格付け完了", description: `グレード ${res.data.grade} / スコア ${res.data.score}` });
     setProgressMsg(null);
     setBusy(false);
     setConfirmFinalizeOpen(false);
@@ -178,7 +178,7 @@ export default function UploadPage() {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xl font-semibold tracking-tight">Upload</div>
+        <div className="text-xl font-semibold tracking-tight">アップロード</div>
         <div className="mt-1 text-sm text-inkMuted">ブラウザから直接Blobへアップロードします。</div>
       </div>
 
@@ -197,7 +197,7 @@ export default function UploadPage() {
       <Card className="glass">
         <CardHeader>
           <div className="text-base font-semibold">設定</div>
-          <div className="mt-1 text-sm text-inkMuted">Active: {companyName ?? "未選択"}</div>
+          <div className="mt-1 text-sm text-inkMuted">選択中: {companyName ?? "未選択"}</div>
         </CardHeader>
 
         <CardContent className="space-y-3">
@@ -265,8 +265,8 @@ export default function UploadPage() {
 
           {result && (
             <div className="rounded-2xl border border-secondary/40 bg-secondary/15 px-4 py-3 text-sm text-ink">
-              <div>fileId = {result.fileId}{result.reused ? "（既存再利用）" : ""}</div>
-              <div className="mt-1 break-all text-xs opacity-90">url: {result.url}</div>
+              <div>ファイルID: {result.fileId}{result.reused ? "（既存再利用）" : ""}</div>
+              <div className="mt-1 break-all text-xs opacity-90">URL: {result.url}</div>
             </div>
           )}
 
@@ -292,28 +292,28 @@ export default function UploadPage() {
         <Card className="glass">
         <CardHeader>
           <div className="text-base font-semibold">格付け結果</div>
-          <div className="mt-1 text-sm text-inkMuted">Score / Grade / AI comment</div>
+          <div className="mt-1 text-sm text-inkMuted">スコア / グレード / AIコメント</div>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
-              <div className="text-xs text-inkMuted">Grade</div>
+              <div className="text-xs text-inkMuted">グレード</div>
               <div className="text-xl font-semibold">{finalize.grade}</div>
             </div>
             <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
-              <div className="text-xs text-inkMuted">Score</div>
+              <div className="text-xs text-inkMuted">スコア</div>
               <div className="text-xl font-semibold">{finalize.score}</div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-line bg-base px-4 py-4">
-            <div className="text-sm font-medium">AI Comment</div>
+            <div className="text-sm font-medium">AIコメント</div>
             <pre className="mt-2 whitespace-pre-wrap text-sm text-ink">{finalize.aiComment}</pre>
           </div>
 
             {finalize.highlights?.length > 0 && (
               <div className="space-y-2">
-                <div className="text-sm font-medium">Highlights</div>
+                <div className="text-sm font-medium">注目ポイント</div>
                 {finalize.highlights.map((h, idx) => (
                   <div key={idx} className="rounded-2xl border border-line bg-base px-4 py-3">
                     <div className="text-sm font-semibold">{h.title}</div>
@@ -332,7 +332,7 @@ export default function UploadPage() {
             <div>
               <DialogTitle>格付けを実行しますか？</DialogTitle>
               <DialogDescription>
-                fileId を用いてスコア・グレード・AIコメントを生成します。
+                ファイルIDを用いてスコア・グレード・AIコメントを生成します。
               </DialogDescription>
           </div>
           <DialogClose asChild>

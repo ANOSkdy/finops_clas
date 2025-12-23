@@ -94,7 +94,7 @@ export default function RatingPage() {
     setResult(res.data);
     setStage("done");
     setMsg(null);
-    toast({ variant: "success", title: "格付け完了", description: `Grade ${res.data.grade} / Score ${res.data.score}` });
+    toast({ variant: "success", title: "格付け完了", description: `グレード ${res.data.grade} / スコア ${res.data.score}` });
   }
 
   async function onUploadAndFinalize() {
@@ -146,7 +146,7 @@ export default function RatingPage() {
 
       setFileId(complete.data.fileId);
       setStage("uploaded");
-      toast({ variant: "success", title: "アップロード完了", description: `fileId: ${complete.data.fileId}` });
+      toast({ variant: "success", title: "アップロード完了", description: `ファイルID: ${complete.data.fileId}` });
 
       await finalizeWithId(complete.data.fileId);
     } catch {
@@ -161,7 +161,7 @@ export default function RatingPage() {
   function openConfirm() {
     if (!companyId) { setNeedsCompany(true); return; }
     if (!file && !fileId) {
-      toast({ variant: "error", description: "ファイルまたはfileIdを指定してください" });
+      toast({ variant: "error", description: "ファイルまたはファイルIDを指定してください" });
       return;
     }
     setConfirmOpen(true);
@@ -170,7 +170,7 @@ export default function RatingPage() {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-xl font-semibold tracking-tight">Rating</div>
+        <div className="text-xl font-semibold tracking-tight">格付け</div>
         <div className="mt-1 text-sm text-inkMuted">
           決算書をアップロードし、スコア・グレード・AIコメントを表示します。
         </div>
@@ -190,8 +190,8 @@ export default function RatingPage() {
 
       <Card className="glass">
         <CardHeader>
-          <div className="text-base font-semibold">Input</div>
-          <div className="mt-1 text-sm text-inkMuted">Active: {companyName ?? "未選択"}</div>
+          <div className="text-base font-semibold">入力</div>
+          <div className="mt-1 text-sm text-inkMuted">選択中: {companyName ?? "未選択"}</div>
         </CardHeader>
         <CardContent className="space-y-3">
           <input
@@ -204,11 +204,11 @@ export default function RatingPage() {
           />
 
           <Field
-            label="既存のfileId（任意）"
+            label="既存のファイルID（任意）"
             value={fileId}
             onChange={(e) => setFileId(e.target.value)}
             disabled={busy}
-            hint="アップロード済みのfileIdがあれば直接格付けできます"
+            hint="アップロード済みのファイルIDがあれば直接格付けできます"
           />
 
           {msg && (
@@ -239,29 +239,29 @@ export default function RatingPage() {
       {result && (
         <Card className="glass">
         <CardHeader>
-          <div className="text-base font-semibold">Result</div>
-          <div className="mt-1 text-sm text-inkMuted">Score / Grade / AI comment</div>
+          <div className="text-base font-semibold">結果</div>
+          <div className="mt-1 text-sm text-inkMuted">スコア / グレード / AIコメント</div>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
-              <div className="text-xs text-inkMuted">Grade</div>
+              <div className="text-xs text-inkMuted">グレード</div>
               <div className="text-xl font-semibold">{result.grade}</div>
             </div>
             <div className="rounded-2xl border border-line bg-base px-4 py-3 text-sm">
-              <div className="text-xs text-inkMuted">Score</div>
+              <div className="text-xs text-inkMuted">スコア</div>
               <div className="text-xl font-semibold">{result.score}</div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-line bg-base px-4 py-4">
-            <div className="text-sm font-medium">AI Comment</div>
+            <div className="text-sm font-medium">AIコメント</div>
             <pre className="mt-2 whitespace-pre-wrap text-sm text-ink">{result.aiComment}</pre>
           </div>
 
             {result.highlights?.length > 0 && (
               <div className="space-y-2">
-                <div className="text-sm font-medium">Highlights</div>
+                <div className="text-sm font-medium">注目ポイント</div>
                 {result.highlights.map((h, idx) => (
                   <div key={idx} className="rounded-2xl border border-line bg-base px-4 py-3">
                     <div className="text-sm font-semibold">{h.title}</div>
@@ -280,7 +280,7 @@ export default function RatingPage() {
             <div>
               <DialogTitle>格付けを実行しますか？</DialogTitle>
               <DialogDescription>
-                ファイルをアップロードして格付けします。既存fileIdがある場合はそれを優先します。
+                ファイルをアップロードして格付けします。既存のファイルIDがある場合はそれを優先します。
               </DialogDescription>
           </div>
           <DialogClose asChild>
