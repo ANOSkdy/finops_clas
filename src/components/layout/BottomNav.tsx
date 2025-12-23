@@ -6,10 +6,10 @@ import { cn } from "@/lib/ui/cn";
 type Item = { href: string; label: string; icon: string };
 
 const items: Item[] = [
-  { href: "/home", label: "Home", icon: "🏠" },
-  { href: "/schedule", label: "Schedule", icon: "📅" },
-  { href: "/rating", label: "Dashboard", icon: "📊" },
-  { href: "/manual", label: "Docs", icon: "📑" },
+  { href: "/home", label: "ホーム", icon: "🏠" },
+  { href: "/schedule", label: "スケジュール", icon: "📅" },
+  { href: "/upload", label: "アップロード", icon: "📊" },
+  { href: "/manual", label: "マニュアル", icon: "📑" },
 ];
 
 export function BottomNav() {
@@ -28,7 +28,7 @@ export function BottomNav() {
     );
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-base/95 backdrop-blur safe-bottom md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-base/95 backdrop-blur safe-bottom">
       <div className="mx-auto grid h-16 max-w-5xl grid-cols-4 items-center px-2 safe-x">
         {items.map((it) => {
           const active = isActive(it.href);
