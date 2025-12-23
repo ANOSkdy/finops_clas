@@ -1,13 +1,13 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
-import type { ManualDoc } from "@/lib/manual/docs";
+import type { ManualDoc, ManualDocListItem } from "@/lib/manual/docs";
 
 export type ManualDocSort = "updatedAtDesc" | "createdAtAsc";
 
 export const MANUAL_CACHE_TAG = "manual";
 
 const getManualDocsCached = unstable_cache(
-  async (sort: ManualDocSort): Promise<ManualDoc[]> => {
+  async (sort: ManualDocSort): Promise<ManualDocListItem[]> => {
     const orderBy =
       sort === "createdAtAsc" ? { createdAt: "asc" as const } : { updatedAt: "desc" as const };
 
@@ -16,7 +16,6 @@ const getManualDocsCached = unstable_cache(
       select: {
         slug: true,
         title: true,
-        contentMd: true,
       },
     });
   },
@@ -26,6 +25,17 @@ const getManualDocsCached = unstable_cache(
 
 export async function getManualDocs(
   sort: ManualDocSort = "updatedAtDesc"
-): Promise<ManualDoc[]> {
+): Promise<ManualDocListItem[]> {
   return getManualDocsCached(sort);
+}
+
+export async function getManualDocBySlug(slug: string): Promise<ManualDoc | null> {
+  return prisma.manualDocument.findUnique({
+    where: { slug },
+    select: {
+      slug: true,
+      title: true,
+      contentMd: true,
+    },
+  });
 }
