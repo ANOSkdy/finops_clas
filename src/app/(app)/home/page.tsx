@@ -14,6 +14,8 @@ type Summary = {
 
 export default function HomePage() {
   const { toast } = useToast();
+  const cardClassName =
+    "glass [&_a]:text-white [&_button]:text-white [&_.memo-card]:text-white [&_.memo-card_.text-inkMuted]:text-white";
 
   const [data, setData] = useState<Summary | null>(null);
   const [state, setState] = useState<"loading"|"ok"|"needsCompany"|"needsLogin"|"error">("loading");
@@ -55,7 +57,7 @@ export default function HomePage() {
       {state === "loading" && skeleton}
 
       {state === "needsLogin" && (
-        <Card className="glass">
+        <Card className={cardClassName}>
           <CardHeader>
             <div className="text-base font-semibold">ログインが必要です</div>
             <div className="mt-1 text-sm text-inkMuted">セッションが無効です。</div>
@@ -70,7 +72,7 @@ export default function HomePage() {
       )}
 
       {state === "needsCompany" && (
-        <Card className="glass">
+        <Card className={cardClassName}>
           <CardHeader>
             <div className="text-base font-semibold">会社が選択されていません</div>
             <div className="mt-1 text-sm text-inkMuted">会社を選択するとホーム/スケジュールが利用できます。</div>
@@ -83,7 +85,7 @@ export default function HomePage() {
       )}
 
       {state === "error" && (
-        <Card className="glass">
+        <Card className={cardClassName}>
           <CardHeader>
             <div className="text-base font-semibold">読み込みに失敗しました</div>
             <div className="mt-1 text-sm text-inkMuted">ネットワークやログイン状態を確認してください。</div>
@@ -99,7 +101,7 @@ export default function HomePage() {
 
       {state === "ok" && data && (
         <>
-          <Card className="glass">
+          <Card className={cardClassName}>
             <CardHeader>
               <div className="text-base font-semibold">リマインダー</div>
               <div className="mt-1 text-sm text-inkMuted">期限前/期限切れの通知</div>
@@ -115,7 +117,7 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="glass">
+          <Card className={cardClassName}>
             <CardHeader>
               <div className="text-base font-semibold">期限が近いタスク</div>
               <div className="mt-1 text-sm text-inkMuted">直近14日</div>
