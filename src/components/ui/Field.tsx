@@ -40,7 +40,7 @@ export function Field({
           aria-describedby={describedBy}
           className={cn(
             "focus-ring peer h-11 w-full rounded-lg border bg-white px-3 pt-5 pb-2 text-sm text-ink",
-            "border-line focus:border-[color:var(--plum-700)]",
+            "border-line focus:border-[color:var(--primary)]",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent shadow-softSm",
             inputClassName
@@ -94,7 +94,7 @@ export function TextareaField({
           aria-describedby={describedBy}
           className={cn(
             "focus-ring peer min-h-[140px] w-full rounded-lg border bg-white px-3 pt-6 pb-3 text-sm text-ink",
-            "border-line focus:border-[color:var(--plum-700)] resize-y shadow-softSm",
+            "border-line focus:border-[color:var(--primary)] resize-y shadow-softSm",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent",
             inputClassName

@@ -60,7 +60,7 @@ export function AppHeader() {
           className="flex h-16 items-center justify-between transition-[height] data-[scrolled=true]:h-12"
         >
           <div className="flex items-center gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-[color:var(--plum-700)] text-base text-white shadow-softSm">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-[color:var(--primary)] text-base text-ink shadow-softSm">
               C
             </div>
             <div className="leading-tight">
