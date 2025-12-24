@@ -52,8 +52,9 @@ export async function PUT(req: NextRequest) {
   if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
   if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
 
-  // admin only (membership role). system admin も許可する
-  const isSystemAdmin = scoped.auth.user.role === "admin";
+  // admin only (membership role)。システム管理者(global含む)は常に許可
+  const isSystemAdmin =
+    scoped.auth.user.role === "admin" || scoped.auth.user.role === "global";
   if (!isSystemAdmin && !canEditCompany(scoped.membership.roleInCompany)) {
     return jsonError(403, "FORBIDDEN", "編集権限がありません");
   }
