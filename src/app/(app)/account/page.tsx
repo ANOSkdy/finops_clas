@@ -16,11 +16,17 @@ type UserRow = {
   updatedAt: string;
 };
 
+type CompanyOption = {
+  id: string;
+  name: string;
+};
+
 type FormState = {
   loginId: string;
   name: string;
   password: string;
   role: "admin" | "user" | "global";
+  companyId: string;
 };
 
 const emptyForm: FormState = {
@@ -28,6 +34,7 @@ const emptyForm: FormState = {
   name: "",
   password: "",
   role: "user",
+  companyId: "",
 };
 
 export default function AccountPage() {
@@ -35,6 +42,8 @@ export default function AccountPage() {
   const router = useRouter();
   const [users, setUsers] = useState<UserRow[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [companies, setCompanies] = useState<CompanyOption[] | null>(null);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [busyCreate, setBusyCreate] = useState(false);
   const [busyDelete, setBusyDelete] = useState<string | null>(null);
@@ -42,14 +51,16 @@ export default function AccountPage() {
   const [authState, setAuthState] = useState<"checking" | "authorized" | "unauthorized">("checking");
 
   const isCreateDisabled = useMemo(() => {
+    const needsCompanySelection = (companies?.length ?? 0) > 0;
     return (
       busyCreate ||
       !form.loginId.trim() ||
       !form.name.trim() ||
       !form.password ||
-      form.password.length < 8
+      form.password.length < 8 ||
+      (needsCompanySelection && !form.companyId)
     );
-  }, [busyCreate, form]);
+  }, [busyCreate, companies?.length, form]);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,6 +120,30 @@ export default function AccountPage() {
     };
   }, [authState, toast]);
 
+  useEffect(() => {
+    if (authState !== "authorized") return;
+    setCompaniesLoading(true);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/account/companies", { credentials: "include" });
+        if (!res.ok) throw new Error("failed");
+        const data = (await res.json()) as CompanyOption[];
+        if (!cancelled) setCompanies(data);
+      } catch {
+        if (!cancelled) {
+          setCompanies([]);
+          toast({ variant: "error", description: "会社情報の取得に失敗しました" });
+        }
+      } finally {
+        if (!cancelled) setCompaniesLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [authState, toast]);
+
   function handleChange<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
@@ -123,7 +158,7 @@ export default function AccountPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, companyId: form.companyId || null }),
       });
 
       if (res.status === 201) {
@@ -141,9 +176,16 @@ export default function AccountPage() {
           if (d.field === "loginId") nextErrors.loginId = "ログインIDを入力してください";
           if (d.field === "password") nextErrors.password = "パスワードを入力してください";
           if (d.field === "name") nextErrors.name = "氏名を入力してください";
+          if (d.field === "companyId") nextErrors.companyId = "会社を選択してください";
         }
         setErrors(nextErrors);
         toast({ variant: "error", description: "入力内容を確認してください" });
+        return;
+      }
+
+      if (res.status === 404) {
+        setErrors({ companyId: "選択した会社が見つかりませんでした" });
+        toast({ variant: "error", description: "会社の確認に失敗しました" });
         return;
       }
 
@@ -247,6 +289,26 @@ export default function AccountPage() {
             onChange={(e) => handleChange("name", e.target.value)}
             error={errors.name || null}
           />
+          <SelectField
+            label="会社"
+            required={(companies?.length ?? 0) > 0}
+            value={form.companyId}
+            onChange={(e) => handleChange("companyId", e.target.value)}
+            error={errors.companyId || null}
+            disabled={companiesLoading || (companies?.length ?? 0) === 0}
+            placeholder={companiesLoading ? "読み込み中..." : "選択してください"}
+            hint={
+              !companiesLoading && (companies?.length ?? 0) === 0
+                ? "登録済みの会社がありません。先に会社を作成してください。"
+                : undefined
+            }
+          >
+            {companies?.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </SelectField>
           <Field
             label="パスワード"
             required
