@@ -12,7 +12,7 @@ type UserRow = {
   id: string;
   loginId: string;
   name: string;
-  role: "admin" | "user";
+  role: "admin" | "user" | "global";
   updatedAt: string;
 };
 
@@ -20,7 +20,7 @@ type FormState = {
   loginId: string;
   name: string;
   password: string;
-  role: "admin" | "user";
+  role: "admin" | "user" | "global";
 };
 
 const emptyForm: FormState = {
@@ -64,8 +64,8 @@ export default function AccountPage() {
 
         if (!res.ok) throw new Error("failed");
 
-        const data = (await res.json()) as { role: "admin" | "user" };
-        if (data.role !== "admin") {
+        const data = (await res.json()) as { role: "admin" | "user" | "global" };
+        if (data.role !== "global") {
           if (!cancelled) {
             setAuthState("unauthorized");
             toast({ variant: "error", description: "権限がありません" });
@@ -264,6 +264,7 @@ export default function AccountPage() {
           >
             <option value="user">一般ユーザー</option>
             <option value="admin">管理者</option>
+            <option value="global">グローバル管理者</option>
           </SelectField>
 
           <div className="flex justify-end">
