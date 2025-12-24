@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Field, SelectField } from "@/components/ui/Field";
@@ -11,7 +12,7 @@ type UserRow = {
   id: string;
   loginId: string;
   name: string;
-  role: "admin" | "user";
+  role: "admin" | "user" | "global";
   updatedAt: string;
 };
 
@@ -19,7 +20,7 @@ type FormState = {
   loginId: string;
   name: string;
   password: string;
-  role: "admin" | "user";
+  role: "admin" | "user" | "global";
 };
 
 const emptyForm: FormState = {
@@ -31,12 +32,14 @@ const emptyForm: FormState = {
 
 export default function AccountPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [users, setUsers] = useState<UserRow[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [busyCreate, setBusyCreate] = useState(false);
   const [busyDelete, setBusyDelete] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [authState, setAuthState] = useState<"checking" | "authorized" | "unauthorized">("checking");
 
   const isCreateDisabled = useMemo(() => {
     return (
@@ -49,25 +52,69 @@ export default function AccountPage() {
   }, [busyCreate, form]);
 
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+
+        if (res.status === 401) {
+          router.replace("/login?next=/account");
+          return;
+        }
+
+        if (!res.ok) throw new Error("failed");
+
+        const data = (await res.json()) as { role: "admin" | "user" | "global" };
+        if (data.role !== "global") {
+          if (!cancelled) {
+            setAuthState("unauthorized");
+            toast({ variant: "error", description: "権限がありません" });
+          }
+          router.replace("/home");
+          return;
+        }
+
+        if (!cancelled) setAuthState("authorized");
+      } catch {
+        if (!cancelled) {
+          setAuthState("unauthorized");
+          toast({ variant: "error", description: "権限確認に失敗しました" });
+        }
+        router.replace("/home");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [router, toast]);
+
+  useEffect(() => {
+    if (authState !== "authorized") return;
+    setLoading(true);
+    let cancelled = false;
     (async () => {
       try {
         const res = await fetch("/api/account/list", { credentials: "include" });
         if (!res.ok) throw new Error("failed");
         const data = (await res.json()) as UserRow[];
-        setUsers(data);
+        if (!cancelled) setUsers(data);
       } catch {
-        toast({ variant: "error", description: "ユーザー一覧の取得に失敗しました" });
+        if (!cancelled) toast({ variant: "error", description: "ユーザー一覧の取得に失敗しました" });
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     })();
-  }, [toast]);
+    return () => {
+      cancelled = true;
+    };
+  }, [authState, toast]);
 
   function handleChange<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
   async function createUser() {
+    if (authState !== "authorized") return;
     if (isCreateDisabled) return;
     setBusyCreate(true);
     setErrors({});
@@ -115,6 +162,7 @@ export default function AccountPage() {
   }
 
   async function deleteUser(userId: string) {
+    if (authState !== "authorized") return;
     setBusyDelete(userId);
     try {
       const res = await fetch("/api/account/delete", {
@@ -151,6 +199,24 @@ export default function AccountPage() {
     } finally {
       setBusyDelete(null);
     }
+  }
+
+  if (authState === "checking") {
+    return (
+      <div className="space-y-4">
+        <div className="text-xl font-semibold tracking-tight">アカウント管理</div>
+        <div className="text-sm text-inkMuted">権限を確認しています…</div>
+      </div>
+    );
+  }
+
+  if (authState === "unauthorized") {
+    return (
+      <div className="space-y-2">
+        <div className="text-xl font-semibold tracking-tight">アカウント管理</div>
+        <div className="text-sm text-inkMuted">権限がありません。</div>
+      </div>
+    );
   }
 
   return (
@@ -198,6 +264,7 @@ export default function AccountPage() {
           >
             <option value="user">一般ユーザー</option>
             <option value="admin">管理者</option>
+            <option value="global">グローバル管理者</option>
           </SelectField>
 
           <div className="flex justify-end">

@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);
   if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (auth.user.role !== "admin") return jsonError(403, "FORBIDDEN", "権限がありません");
+  if (auth.user.role !== "global") return jsonError(403, "FORBIDDEN", "権限がありません");
 
   const users = await prisma.user.findMany({
     orderBy: { updatedAt: "desc" },
