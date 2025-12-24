@@ -15,19 +15,28 @@ type CompanyCard = {
   legalForm: "corporation" | "sole";
 };
 
+type Role = "admin" | "user" | "global";
+
 export default function SelectCompanyPage() {
   const { toast } = useToast();
 
   const [items, setItems] = useState<CompanyCard[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [state, setState] = useState<"loading"|"ok"|"needsLogin"|"error">("loading");
+  const [state, setState] = useState<"loading" | "ok" | "needsLogin" | "error">("loading");
+  const [role, setRole] = useState<Role | null>(null);
 
   const load = useCallback(async () => {
     setState("loading");
     setItems(null);
     try {
+      const authRes = await fetch("/api/auth/me", { credentials: "include" });
+      if (authRes.status === 401) { setState("needsLogin"); setItems([]); setRole(null); return; }
+      if (!authRes.ok) { setState("error"); setItems([]); setRole(null); return; }
+      const auth = (await authRes.json()) as { role: Role };
+      setRole(auth.role);
+
       const res = await fetch("/api/customer/list", { credentials: "include" });
-      if (res.status === 401) { setState("needsLogin"); setItems([]); return; }
+      if (res.status === 401) { setState("needsLogin"); setItems([]); setRole(null); return; }
       if (!res.ok) { setState("error"); setItems([]); return; }
       const data = (await res.json()) as CompanyCard[];
       setItems(data);
@@ -35,6 +44,7 @@ export default function SelectCompanyPage() {
     } catch {
       setState("error");
       setItems([]);
+      setRole(null);
     }
   }, []);
 
@@ -83,7 +93,9 @@ export default function SelectCompanyPage() {
       </div>
 
       <div className="flex gap-3">
-        <a href="/newcompany"><Button>新しい会社を登録</Button></a>
+        {role === "global" && (
+          <a href="/newcompany"><Button>新しい会社を登録</Button></a>
+        )}
         <Button variant="secondary" onClick={load}>更新</Button>
       </div>
 
