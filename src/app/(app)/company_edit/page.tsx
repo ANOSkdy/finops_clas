@@ -77,14 +77,15 @@ export default function CompanyEditPage() {
         setContactPhone(company.contactPhone ?? "");
         setCorporateNumber(company.corporateNumber ?? "");
         setEstablishedOn(company.establishedOn ?? "");
-        setWithholdingIncomeTaxPaymentSchedule(
-          company.withholdingIncomeTaxPaymentSchedule ?? ""
-        );
+        setWithholdingIncomeTaxPaymentSchedule(company.withholdingIncomeTaxPaymentSchedule ?? "");
         setResidentTaxPaymentSchedule(company.residentTaxPaymentSchedule ?? "");
-        const isAdmin = data.userRole === "admin" || data.roleInCompany === "admin";
-        setCanEdit(isAdmin);
-        if (!isAdmin) {
-          setError("会社情報の修正は管理者のみ実施できます。");
+        const isPrivileged =
+          data.userRole === "global" ||
+          data.userRole === "admin" ||
+          data.roleInCompany === "admin";
+        setCanEdit(isPrivileged);
+        if (!isPrivileged) {
+          setError("会社情報の修正は管理者またはグローバル管理者のみ実施できます。");
         }
       } catch {
         setError("会社情報の取得に失敗しました。");
