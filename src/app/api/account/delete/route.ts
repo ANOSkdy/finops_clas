@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { jsonError } from "@/lib/api/response";
 import { requireAuth } from "@/lib/auth/tenant";
+import { ApiErrorDetail } from "@/lib/api/errors";
 
 export const runtime = "nodejs";
 
@@ -31,10 +32,10 @@ export async function POST(req: NextRequest) {
   ]);
 
   if (uploadsCount > 0 || emailsCount > 0) {
-    return jsonError(409, "CONFLICT", "関連データが残っているため削除できません", [
-      uploadsCount > 0 ? { field: "uploads", reason: `count:${uploadsCount}` } : undefined,
-      emailsCount > 0 ? { field: "emails", reason: `count:${emailsCount}` } : undefined,
-    ].filter(Boolean));
+    const details: ApiErrorDetail[] = [];
+    if (uploadsCount > 0) details.push({ field: "uploads", reason: `count:${uploadsCount}` });
+    if (emailsCount > 0) details.push({ field: "emails", reason: `count:${emailsCount}` });
+    return jsonError(409, "CONFLICT", "関連データが残っているため削除できません", details);
   }
 
   await prisma.user.delete({ where: { id: userId } });
