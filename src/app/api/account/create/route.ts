@@ -30,21 +30,49 @@ export async function POST(req: NextRequest) {
     return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
   }
 
-  const { loginId, name, password, role } = parsed.data;
+  const { loginId, name, password, role, companyId } = parsed.data;
 
   const existing = await prisma.user.findUnique({ where: { loginId } });
   if (existing) return jsonError(409, "CONFLICT", "ログインIDが重複しています");
 
+  let targetCompanyId: string | null = null;
+  if (companyId) {
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+      select: { id: true },
+    });
+    if (!company) {
+      return jsonError(404, "NOT_FOUND", "会社が見つかりません", [
+        { field: "companyId", reason: "not_found" },
+      ]);
+    }
+    targetCompanyId = company.id;
+  }
+
   const passwordHash = await hashPassword(password);
 
-  const user = await prisma.user.create({
-    data: {
-      loginId,
-      name,
-      passwordHash,
-      role,
-    },
-    select: { id: true, loginId: true, name: true, role: true, updatedAt: true },
+  const user = await prisma.$transaction(async (tx) => {
+    const created = await tx.user.create({
+      data: {
+        loginId,
+        name,
+        passwordHash,
+        role,
+      },
+      select: { id: true, loginId: true, name: true, role: true, updatedAt: true },
+    });
+
+    if (targetCompanyId) {
+      await tx.membership.create({
+        data: {
+          userId: created.id,
+          companyId: targetCompanyId,
+          roleInCompany: "member",
+        },
+      });
+    }
+
+    return created;
   });
 
   return NextResponse.json(user, { status: 201 });
