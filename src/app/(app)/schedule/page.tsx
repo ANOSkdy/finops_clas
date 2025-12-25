@@ -19,6 +19,7 @@ export default function SchedulePage() {
   const { toast } = useToast();
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [state, setState] = useState<"loading"|"ok"|"needsCompany"|"needsLogin"|"error">("loading");
+  const [updating, setUpdating] = useState(false);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -41,6 +42,25 @@ export default function SchedulePage() {
 
   useEffect(() => { load(); }, [load]);
 
+  const refreshTasks = useCallback(async () => {
+    setUpdating(true);
+    try {
+      const res = await fetch("/api/schedule/refresh", { method: "POST", credentials: "include" });
+
+      if (res.status === 401) { setState("needsLogin"); setTasks([]); toast({ variant: "error", description: "ログインしてください" }); return; }
+      if (res.status === 404) { setState("needsCompany"); setTasks([]); toast({ variant: "error", description: "会社を選択してください" }); return; }
+      if (!res.ok) { setState("error"); toast({ variant: "error", description: "タスク更新に失敗しました" }); return; }
+
+      toast({ variant: "success", description: "タスクを更新しました" });
+      await load();
+    } catch {
+      setState("error");
+      toast({ variant: "error", description: "タスク更新中にエラーが発生しました" });
+    } finally {
+      setUpdating(false);
+    }
+  }, [load, toast]);
+
   const skeleton = (
     <div aria-busy="true" className="space-y-3">
       <Skeleton className="h-20" />
@@ -55,7 +75,7 @@ export default function SchedulePage() {
         <div className="text-xl font-semibold tracking-tight">スケジュール</div>
         <div className="mt-1 text-sm text-inkMuted">カテゴリ別にタスクを一覧表示します。</div>
         <div className="mt-3 w-full max-w-[360px]">
-          <Button className="w-full" onClick={load}>
+          <Button className="w-full" onClick={refreshTasks} disabled={updating}>
             タスクの更新
           </Button>
         </div>
