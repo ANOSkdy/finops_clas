@@ -34,6 +34,7 @@ model Company {
   contactPhone       String?  @map("contact_phone")
   corporateNumber    String?  @map("corporate_number") @db.VarChar(13)
   establishedOn      DateTime? @map("established_on") @db.Date
+  scheduleSignature  String?  @map("schedule_signature")
   withholdingIncomeTaxPaymentSchedule String? @map("withholding_income_tax_payment_schedule")
   residentTaxPaymentSchedule  String? @map("resident_tax_payment_schedule")
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -79,14 +80,19 @@ model Session {
 }
 
 model Task {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId String   @map("company_id") @db.Uuid
-  category  String // tax|social|other
-  title     String
-  dueDate   DateTime @map("due_date") @db.Date
-  status    String   @default("pending") // pending|done|overdue
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String   @map("company_id") @db.Uuid
+  category        String // tax|social|other
+  title           String
+  dueDate         DateTime @map("due_date") @db.Date
+  status          String   @default("pending") // pending|done|overdue
+  source          String   @default("system")
+  templateKey     String?  @map("template_key")
+  templateVersion Int?     @map("template_version")
+  archivedAt      DateTime? @map("archived_at") @db.Timestamptz(6)
+  meta            Json?    @db.Json
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 

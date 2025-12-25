@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { jsonError } from "@/lib/api/response";
 import { customerNewSchema } from "@/lib/validators/customer";
 import { requireAuth } from "@/lib/auth/tenant";
+import { generateTasksForCompany } from "@/lib/schedule/generator";
 
 export const runtime = "nodejs";
 
@@ -32,30 +33,36 @@ export async function POST(req: NextRequest) {
 
   const fiscalClosingMonth = v.legalForm === "sole" ? 12 : v.fiscalClosingMonth;
 
-  const company = await prisma.company.create({
-    data: {
-      name: v.name,
-      legalForm: v.legalForm,
-      address: v.address ?? null,
-      fiscalClosingMonth,
-      representativeName: v.representativeName ?? null,
-      contactEmail: v.contactEmail ?? null,
-      contactPhone: v.contactPhone ?? null,
-    },
-  });
+  const company = await prisma.$transaction(async (tx) => {
+    const created = await tx.company.create({
+      data: {
+        name: v.name,
+        legalForm: v.legalForm,
+        address: v.address ?? null,
+        fiscalClosingMonth,
+        representativeName: v.representativeName ?? null,
+        contactEmail: v.contactEmail ?? null,
+        contactPhone: v.contactPhone ?? null,
+      },
+    });
 
-  await prisma.membership.create({
-    data: {
-      userId: auth.user.id,
-      companyId: company.id,
-      roleInCompany: "owner",
-    },
-  });
+    await tx.membership.create({
+      data: {
+        userId: auth.user.id,
+        companyId: created.id,
+        roleInCompany: "owner",
+      },
+    });
 
-  // 便利のため、初回は自動でアクティブに（UIが後で home/schedule に入れる）
-  await prisma.session.update({
-    where: { id: auth.session.id },
-    data: { activeCompanyId: company.id },
+    // 便利のため、初回は自動でアクティブに（UIが後で home/schedule に入れる）
+    await tx.session.update({
+      where: { id: auth.session.id },
+      data: { activeCompanyId: created.id },
+    });
+
+    await generateTasksForCompany(tx, created.id, { horizonMonths: 18 });
+
+    return created;
   });
 
   return NextResponse.json({ companyId: company.id }, { status: 200 });

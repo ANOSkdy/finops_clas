@@ -8,7 +8,8 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
-    "dev3010": "next dev --webpack -p 3010"
+    "dev3010": "next dev --webpack -p 3010",
+    "test": "pnpm tsx --test src/lib/schedule/__tests__/*.test.ts"
   },
   "dependencies": {
     "@google/genai": "^1.34.0",
