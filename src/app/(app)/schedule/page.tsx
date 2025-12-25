@@ -54,6 +54,11 @@ export default function SchedulePage() {
       <div>
         <div className="text-xl font-semibold tracking-tight">スケジュール</div>
         <div className="mt-1 text-sm text-inkMuted">カテゴリ別にタスクを一覧表示します。</div>
+        <div className="mt-3 w-full max-w-[360px]">
+          <Button className="w-full" onClick={load}>
+            タスクの更新
+          </Button>
+        </div>
       </div>
 
       {state === "loading" && skeleton}
