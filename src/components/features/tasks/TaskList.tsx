@@ -9,7 +9,8 @@ type Task = {
 };
 
 function Badge({ status }: { status: Task["status"] }) {
-  const base = "rounded-full border border-line bg-panel px-2 py-0.5 text-[11px] font-medium text-ink";
+  const base =
+    "inline-flex h-7 min-w-[52px] items-center justify-center whitespace-nowrap rounded-full border border-line bg-panel px-2 text-[11px] font-medium leading-none text-ink";
 
   if (status === "done") return <span className={base}>完了</span>;
   if (status === "overdue") return <span className={base}>期限切れ</span>;
