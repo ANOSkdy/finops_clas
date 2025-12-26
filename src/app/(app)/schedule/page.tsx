@@ -162,7 +162,7 @@ export default function SchedulePage() {
               </Button>
             )}
             <Button
-              variant={onlyOverdue ? "default" : "secondary"}
+              variant={onlyOverdue ? "primary" : "secondary"}
               onClick={() => {
                 setOnlyOverdue((v) => !v);
                 if (!onlyOverdue) setShowCompleted(false);
