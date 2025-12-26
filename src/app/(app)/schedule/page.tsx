@@ -76,11 +76,19 @@ export default function SchedulePage() {
       : tasks.filter((t) => {
           const due = new Date(t.dueDate);
           const now = new Date();
-          const oneYearLater = new Date(now);
-          oneYearLater.setFullYear(now.getFullYear() + 1);
-          return due <= oneYearLater;
+          const sixMonthsLater = new Date(now);
+          sixMonthsLater.setMonth(now.getMonth() + 6);
+          return due <= sixMonthsLater;
         })
     : null;
+  const hasTasksBeyondSixMonths =
+    tasks?.some((t) => {
+      const due = new Date(t.dueDate);
+      const now = new Date();
+      const sixMonthsLater = new Date(now);
+      sixMonthsLater.setMonth(now.getMonth() + 6);
+      return due > sixMonthsLater;
+    }) ?? false;
 
   return (
     <div className="space-y-4">
@@ -134,10 +142,10 @@ export default function SchedulePage() {
       {state === "ok" && tasks && (
         <div className="space-y-3">
           <TaskList tasks={visibleTasks ?? []} />
-          {tasks.length > 0 && (
+          {tasks.length > 0 && (showAll || hasTasksBeyondSixMonths) && (
             <div className="flex justify-center">
               <Button variant="secondary" onClick={() => setShowAll((v) => !v)}>
-                {showAll ? "1年分のみ表示" : "表示を増やす"}
+                {showAll ? "6ヶ月以内のみ表示" : "表示を増やす"}
               </Button>
             </div>
           )}
