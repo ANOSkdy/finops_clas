@@ -31,14 +31,14 @@ export async function POST(req: NextRequest) {
         ${fiscalYearEndMonth}::int AS fiscal_year_end_month,
         ${withholdingSpecial}::boolean AS withholding_special,
         ${residentTaxSpecial}::boolean AS resident_tax_special
-    ), window AS (
+    ), date_window AS (
       SELECT
         date_trunc('month', current_date)::date AS from_month,
         (date_trunc('month', current_date)::date + interval '36 months')::date AS to_month
     ), due_months AS (
       SELECT (generate_series(
-        (SELECT from_month FROM window) + interval '1 month',
-        (SELECT to_month FROM window),
+        (SELECT from_month FROM date_window) + interval '1 month',
+        (SELECT to_month FROM date_window),
         interval '1 month'
       ))::date AS month_start
     ), years AS (
