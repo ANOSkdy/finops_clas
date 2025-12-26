@@ -15,9 +15,13 @@ export async function GET(req: NextRequest) {
   if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
 
   const now = new Date();
+  const includeDone = req.nextUrl.searchParams.get("includeDone") === "true";
+  const where = includeDone
+    ? { companyId: scoped.companyId }
+    : { companyId: scoped.companyId, status: { not: "done" } };
 
   const tasks = await prisma.task.findMany({
-    where: { companyId: scoped.companyId, status: { not: "done" } },
+    where,
     orderBy: [{ dueDate: "asc" }, { createdAt: "asc" }],
     select: { id: true, category: true, title: true, dueDate: true, status: true },
   });
