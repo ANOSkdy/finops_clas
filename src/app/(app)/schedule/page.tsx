@@ -70,24 +70,24 @@ export default function SchedulePage() {
     </div>
   );
 
+  const threeMonthsLater = (() => {
+    const now = new Date();
+    const limit = new Date(now);
+    limit.setMonth(now.getMonth() + 3);
+    return limit;
+  })();
   const visibleTasks = tasks
     ? showAll
       ? tasks
       : tasks.filter((t) => {
           const due = new Date(t.dueDate);
-          const now = new Date();
-          const sixMonthsLater = new Date(now);
-          sixMonthsLater.setMonth(now.getMonth() + 6);
-          return due <= sixMonthsLater;
+          return due <= threeMonthsLater;
         })
     : null;
-  const hasTasksBeyondSixMonths =
+  const hasTasksBeyondThreeMonths =
     tasks?.some((t) => {
       const due = new Date(t.dueDate);
-      const now = new Date();
-      const sixMonthsLater = new Date(now);
-      sixMonthsLater.setMonth(now.getMonth() + 6);
-      return due > sixMonthsLater;
+      return due > threeMonthsLater;
     }) ?? false;
 
   return (
@@ -142,10 +142,10 @@ export default function SchedulePage() {
       {state === "ok" && tasks && (
         <div className="space-y-3">
           <TaskList tasks={visibleTasks ?? []} />
-          {tasks.length > 0 && (showAll || hasTasksBeyondSixMonths) && (
+          {tasks.length > 0 && (showAll || hasTasksBeyondThreeMonths) && (
             <div className="flex justify-center">
               <Button variant="secondary" onClick={() => setShowAll((v) => !v)}>
-                {showAll ? "6ヶ月以内のみ表示" : "表示を増やす"}
+                {showAll ? "3ヶ月以内のみ表示" : "表示を増やす"}
               </Button>
             </div>
           )}
