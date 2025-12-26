@@ -20,6 +20,7 @@ export default function SchedulePage() {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [state, setState] = useState<"loading"|"ok"|"needsCompany"|"needsLogin"|"error">("loading");
   const [updating, setUpdating] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -68,6 +69,18 @@ export default function SchedulePage() {
       <Skeleton className="h-20" />
     </div>
   );
+
+  const visibleTasks = tasks
+    ? showAll
+      ? tasks
+      : tasks.filter((t) => {
+          const due = new Date(t.dueDate);
+          const now = new Date();
+          const oneYearLater = new Date(now);
+          oneYearLater.setFullYear(now.getFullYear() + 1);
+          return due <= oneYearLater;
+        })
+    : null;
 
   return (
     <div className="space-y-4">
@@ -118,7 +131,18 @@ export default function SchedulePage() {
         </Card>
       )}
 
-      {state === "ok" && tasks && <TaskList tasks={tasks} />}
+      {state === "ok" && tasks && (
+        <div className="space-y-3">
+          <TaskList tasks={visibleTasks ?? []} />
+          {tasks.length > 0 && (
+            <div className="flex justify-center">
+              <Button variant="secondary" onClick={() => setShowAll((v) => !v)}>
+                {showAll ? "1年分のみ表示" : "表示を増やす"}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
