@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { requireActiveCompany } from "@/lib/auth/tenant";
@@ -15,9 +16,14 @@ export async function GET(req: NextRequest) {
   if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
 
   const now = new Date();
+  const includeDone = req.nextUrl.searchParams.get("includeDone") === "true";
+
+  const where: Prisma.TaskWhereInput = includeDone
+    ? { companyId: scoped.companyId }
+    : { companyId: scoped.companyId, status: { not: "done" } };
 
   const tasks = await prisma.task.findMany({
-    where: { companyId: scoped.companyId },
+    where,
     orderBy: [{ dueDate: "asc" }, { createdAt: "asc" }],
     select: { id: true, category: true, title: true, dueDate: true, status: true },
   });

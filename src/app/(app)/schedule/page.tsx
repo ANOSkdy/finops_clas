@@ -21,12 +21,13 @@ export default function SchedulePage() {
   const [state, setState] = useState<"loading"|"ok"|"needsCompany"|"needsLogin"|"error">("loading");
   const [updating, setUpdating] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const load = useCallback(async () => {
     setState("loading");
     setTasks(null);
     try {
-      const res = await fetch("/api/schedule/list", { credentials: "include" });
+      const res = await fetch("/api/schedule/list?includeDone=true", { credentials: "include" });
 
       if (res.status === 401) { setState("needsLogin"); setTasks([]); return; }
       if (res.status === 404) { setState("needsCompany"); setTasks([]); return; }
@@ -76,19 +77,25 @@ export default function SchedulePage() {
     limit.setMonth(now.getMonth() + 3);
     return limit;
   })();
-  const visibleTasks = tasks
-    ? showAll
+  const filteredTasks = tasks
+    ? showCompleted
       ? tasks
-      : tasks.filter((t) => {
+      : tasks.filter((t) => t.status !== "done")
+    : null;
+  const visibleTasks = filteredTasks
+    ? showAll
+      ? filteredTasks
+      : filteredTasks.filter((t) => {
           const due = new Date(t.dueDate);
           return due <= threeMonthsLater;
         })
     : null;
   const hasTasksBeyondThreeMonths =
-    tasks?.some((t) => {
+    filteredTasks?.some((t) => {
       const due = new Date(t.dueDate);
       return due > threeMonthsLater;
     }) ?? false;
+  const hasCompletedTasks = tasks?.some((t) => t.status === "done") ?? false;
 
   return (
     <div className="space-y-4">
@@ -142,13 +149,18 @@ export default function SchedulePage() {
       {state === "ok" && tasks && (
         <div className="space-y-3">
           <TaskList tasks={visibleTasks ?? []} />
-          {tasks.length > 0 && (showAll || hasTasksBeyondThreeMonths) && (
-            <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-3">
+            {hasCompletedTasks && (
+              <Button variant="secondary" onClick={() => setShowCompleted((v) => !v)}>
+                {showCompleted ? "完了を非表示" : "完了を表示"}
+              </Button>
+            )}
+            {(filteredTasks?.length ?? 0) > 0 && (showAll || hasTasksBeyondThreeMonths) && (
               <Button variant="secondary" onClick={() => setShowAll((v) => !v)}>
                 {showAll ? "3ヶ月以内のみ表示" : "表示を増やす"}
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>
