@@ -59,6 +59,7 @@ export default function CompanyMemberPage() {
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [busy, setBusy] = useState(false);
+  const [deletingKey, setDeletingKey] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
 
   const isSubmitDisabled = useMemo(() => {
@@ -178,6 +179,51 @@ export default function CompanyMemberPage() {
     }
   }
 
+  async function onDelete(companyId: string, userId: string) {
+    setDeletingKey(`${companyId}-${userId}`);
+    try {
+      const res = await fetch("/api/company_member", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ companyId, userId }),
+      });
+
+      if (res.status === 204) {
+        setMemberships((prev) => prev?.filter((m) => !(m.companyId === companyId && m.userId === userId)) ?? null);
+        toast({ variant: "success", description: "紐付けを削除しました" });
+        return;
+      }
+
+      if (res.status === 400) {
+        toast({ variant: "error", description: "削除リクエストに誤りがあります" });
+        return;
+      }
+
+      if (res.status === 404) {
+        toast({ variant: "error", description: "紐付けが見つかりません" });
+        return;
+      }
+
+      if (res.status === 401) {
+        router.replace("/login?next=/company_member");
+        return;
+      }
+
+      if (res.status === 403) {
+        toast({ variant: "error", description: "権限がありません" });
+        router.replace("/home");
+        return;
+      }
+
+      toast({ variant: "error", description: "削除に失敗しました" });
+    } catch {
+      toast({ variant: "error", description: "ネットワークエラーが発生しました" });
+    } finally {
+      setDeletingKey(null);
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div>
@@ -290,22 +336,33 @@ export default function CompanyMemberPage() {
 
           {!loading && memberships && memberships.length > 0 && (
             <div className="divide-y divide-line rounded-2xl border border-line bg-panel">
-              {memberships.map((m) => (
-                <div key={`${m.companyId}-${m.userId}`} className="grid gap-2 px-4 py-3 sm:grid-cols-3 sm:items-center">
-                  <div>
-                    <div className="text-sm font-semibold text-ink">{m.companyName}</div>
-                    <div className="text-xs text-inkMuted">{legalFormLabel(m.legalForm)}</div>
+              {memberships.map((m) => {
+                const key = `${m.companyId}-${m.userId}`;
+                return (
+                  <div key={key} className="grid gap-2 px-4 py-3 sm:grid-cols-4 sm:items-center">
+                    <div className="sm:col-span-2">
+                      <div className="text-sm font-semibold text-ink">{m.companyName}</div>
+                      <div className="text-xs text-inkMuted">{legalFormLabel(m.legalForm)}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-ink">{m.userName}</div>
+                      <div className="text-xs text-inkMuted">ID: {m.loginId} / ユーザーロール: {m.userRole}</div>
+                      <div className="text-xs text-inkMuted">会社内ロール: {m.roleInCompany}</div>
+                      <div className="text-[11px] text-inkMuted">登録日: {new Date(m.createdAt).toLocaleString()}</div>
+                    </div>
+                    <div className="flex justify-end sm:items-center">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => onDelete(m.companyId, m.userId)}
+                        disabled={deletingKey === key}
+                      >
+                        {deletingKey === key ? "削除中…" : "削除"}
+                      </Button>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm font-semibold text-ink">{m.userName}</div>
-                    <div className="text-xs text-inkMuted">ID: {m.loginId} / ユーザーロール: {m.userRole}</div>
-                  </div>
-                  <div className="text-xs text-inkMuted sm:text-right">
-                    <div>会社内ロール: {m.roleInCompany}</div>
-                    <div>登録日: {new Date(m.createdAt).toLocaleString()}</div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
