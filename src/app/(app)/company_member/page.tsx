@@ -353,9 +353,9 @@ export default function CompanyMemberPage() {
                     <div className="flex justify-end sm:items-center">
                       <Button
                         variant="secondary"
-                        size="sm"
                         onClick={() => onDelete(m.companyId, m.userId)}
                         disabled={deletingKey === key}
+                        className="h-9 px-3 text-sm"
                       >
                         {deletingKey === key ? "削除中…" : "削除"}
                       </Button>
