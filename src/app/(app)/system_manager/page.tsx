@@ -101,6 +101,18 @@ export default function SystemManagerPage() {
           </a>
         </CardContent>
       </Card>
+
+      <Card className="glass">
+        <CardHeader>
+          <div className="text-base font-semibold">会社メンバー紐付け</div>
+          <div className="mt-1 text-sm text-inkMuted">既存の法人・個人事業主にユーザーを追加します</div>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <a href="/company_member">
+            <Button className="w-48">紐付けページを開く</Button>
+          </a>
+        </CardContent>
+      </Card>
     </div>
   );
 }
