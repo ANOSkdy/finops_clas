@@ -93,9 +93,6 @@ export default function SelectCompanyPage() {
       </div>
 
       <div className="flex gap-3">
-        {role === "global" && (
-          <a href="/newcompany"><Button>新しい会社を登録</Button></a>
-        )}
         <Button variant="secondary" onClick={load}>更新</Button>
       </div>
 
