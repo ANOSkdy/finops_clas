@@ -65,6 +65,18 @@ export default function SettingsPage() {
 
       <Card className="glass">
         <CardHeader>
+          <div className="text-base font-semibold">パスワード</div>
+          <div className="mt-1 text-sm text-inkMuted">ご自身のパスワードを変更します</div>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <a href="/password">
+            <Button className="w-48">パスワードを変更</Button>
+          </a>
+        </CardContent>
+      </Card>
+
+      <Card className="glass">
+        <CardHeader>
           <div className="text-base font-semibold">会社情報</div>
           <div className="mt-1 text-sm text-inkMuted">登録済みの会社情報を修正します</div>
         </CardHeader>
