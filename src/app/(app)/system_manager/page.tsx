@@ -89,6 +89,18 @@ export default function SystemManagerPage() {
           </a>
         </CardContent>
       </Card>
+
+      <Card className="glass">
+        <CardHeader>
+          <div className="text-base font-semibold">新しい会社</div>
+          <div className="mt-1 text-sm text-inkMuted">会社レコードを追加します</div>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <a href="/newcompany">
+            <Button className="w-48">新しい会社を登録</Button>
+          </a>
+        </CardContent>
+      </Card>
     </div>
   );
 }
