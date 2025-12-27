@@ -1,15 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/toast";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/Dialog";
 
+type Role = "admin" | "user" | "global";
+
 export default function SettingsPage() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [role, setRole] = useState<Role | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        if (!res.ok) return;
+        const data = (await res.json()) as { role: Role };
+        if (!cancelled) setRole(data.role);
+      } catch {
+        // noop
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function logout() {
     setBusy(true);
@@ -54,6 +74,20 @@ export default function SettingsPage() {
           </a>
         </CardContent>
       </Card>
+
+      {role === "global" && (
+        <Card className="glass">
+          <CardHeader>
+            <div className="text-base font-semibold">システム管理</div>
+            <div className="mt-1 text-sm text-inkMuted">グローバル権限者向けの設定を表示します</div>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <a href="/system_manager">
+              <Button className="w-48">システム管理</Button>
+            </a>
+          </CardContent>
+        </Card>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
