@@ -54,24 +54,19 @@ export default function SettingsPage() {
 
       <Card className="glass">
         <CardHeader>
-          <div className="text-base font-semibold">セッション</div>
+          <div className="text-base font-semibold">アカウント</div>
         </CardHeader>
         <CardContent className="flex justify-center">
-          <Button className="w-48" onClick={() => setOpen(true)} disabled={busy}>
-            ログアウト
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card className="glass">
-        <CardHeader>
-          <div className="text-base font-semibold">パスワード</div>
-          <div className="mt-1 text-sm text-inkMuted">ご自身のパスワードを変更します</div>
-        </CardHeader>
-        <CardContent className="flex justify-center">
-          <a href="/password">
-            <Button className="w-48">パスワードを変更</Button>
-          </a>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <a href="/password">
+              <Button className="w-48" variant="secondary">
+                パスワード
+              </Button>
+            </a>
+            <Button className="w-48" onClick={() => setOpen(true)} disabled={busy}>
+              ログアウト
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
