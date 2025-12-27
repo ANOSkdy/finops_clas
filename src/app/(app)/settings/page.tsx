@@ -59,7 +59,7 @@ export default function SettingsPage() {
         <CardContent className="flex justify-center">
           <div className="flex flex-col gap-2 sm:flex-row">
             <a href="/password">
-              <Button className="w-48 bg-[#4169e1] text-white hover:bg-[#4169e1]/90 hover:text-white disabled:bg-[#4169e1]/60 disabled:text-white/90">
+              <Button className="w-48 bg-[#4169e1] !text-white hover:bg-[#4169e1]/90 hover:!text-white focus-visible:!text-white active:!text-white disabled:bg-[#4169e1]/60 disabled:!text-white/80">
                 パスワード
               </Button>
             </a>
