@@ -7,7 +7,7 @@ import { companyMemberCreateSchema } from "@/lib/validators/companyMember";
 export const runtime = "nodejs";
 
 function shapeMembership(m: {
-  company: { id: string; name: string; legalForm: "corporation" | "sole" };
+  company: { id: string; name: string; legalForm: string };
   user: { id: string; name: string; loginId: string; role: string };
   roleInCompany: string;
   createdAt: Date;
