@@ -89,10 +89,30 @@ model Task {
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reminderLogs TaskReminderLog[]
 
   @@index([companyId, dueDate])
   @@index([companyId, status])
   @@map("tasks")
+}
+
+model TaskReminderLog {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId        String   @map("company_id") @db.Uuid
+  taskId           String   @map("task_id") @db.Uuid
+  remindDaysBefore Int      @map("remind_days_before")
+  dueDateSnapshot  DateTime @map("due_date_snapshot") @db.Date
+  mailTo           String   @map("mail_to")
+  emailId          String?  @map("email_id") @db.Uuid
+  sentAt           DateTime @default(now()) @map("sent_at") @db.Timestamptz(6)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  task    Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  email   Email?  @relation(fields: [emailId], references: [id], onDelete: SetNull)
+
+  @@unique([taskId, remindDaysBefore, dueDateSnapshot, mailTo])
+  @@index([companyId, sentAt])
+  @@map("task_reminder_logs")
 }
 
 model Upload {
@@ -146,6 +166,7 @@ model Email {
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  taskReminderLogs TaskReminderLog[]
 
   @@index([companyId, createdAt])
   @@map("emails")
