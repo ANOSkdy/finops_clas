@@ -1,41 +1,42 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ActionCard } from "@/components/ui/ActionCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export default function UploadPage() {
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="text-xl font-semibold tracking-tight">アップロード</div>
-        <div className="mt-1 text-sm text-inkMuted">用途を選び、各フロー専用ページに遷移します。</div>
-      </div>
+    <div className="space-y-5">
+      <PageHeader
+        title="アップロード"
+        description="用途を選び、各フロー専用ページに進みます。"
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="glass">
-          <CardHeader>
-            <div className="text-base font-semibold">格付け（rating）</div>
-            <div className="mt-1 text-sm text-inkMuted">決算書アップロードとスコア/グレード/AIコメント生成のフローへ移動します。</div>
-          </CardHeader>
-          <CardContent>
+        <ActionCard
+          icon="📄"
+          title="格付け"
+          description="決算書をアップロードし、スコア・グレード・AIコメントを生成します。"
+          meta="対応: PDF / CSV / Excel"
+          action={
             <Link href="/rating">
               <Button className="w-full">格付けページへ進む</Button>
             </Link>
-          </CardContent>
-        </Card>
+          }
+        />
 
-        <Card className="glass">
-          <CardHeader>
-            <div className="text-base font-semibold">試算表（trial_balance）</div>
-            <div className="mt-1 text-sm text-inkMuted">試算表アップロードとメール送信（監査ログ付き）のフローへ移動します。</div>
-          </CardHeader>
-          <CardContent>
+        <ActionCard
+          icon="📊"
+          title="試算表"
+          description="試算表をアップロードし、メール送信と監査ログ保存に進みます。"
+          meta="対応: CSV / Excel"
+          action={
             <Link href="/trial_balance">
               <Button className="w-full" variant="secondary">試算表ページへ進む</Button>
             </Link>
-          </CardContent>
-        </Card>
+          }
+        />
       </div>
     </div>
   );
