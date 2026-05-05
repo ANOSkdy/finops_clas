@@ -12,14 +12,14 @@ export function PageHeader({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <h1 className="text-lg font-semibold leading-7 tracking-tight text-ink">
+        <h1 className="text-lg font-semibold leading-7 tracking-tight text-ink sm:text-xl sm:leading-8">
           {title}
         </h1>
         {description ? (
-          <p className="mt-1 text-sm leading-5 text-inkMuted">{description}</p>
+          <p className="mt-1 text-sm leading-6 text-inkMuted sm:leading-5">{description}</p>
         ) : null}
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? <div className="w-full shrink-0 sm:w-auto">{action}</div> : null}
     </div>
   );
 }
