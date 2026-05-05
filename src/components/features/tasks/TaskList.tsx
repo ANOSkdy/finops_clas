@@ -11,9 +11,9 @@ type Task = {
 };
 
 function Badge({ status }: { status: Task["status"] }) {
-  if (status === "done") return <StatusBadge tone="success" className="w-16 shrink-0 justify-center px-0">完了</StatusBadge>;
-  if (status === "overdue") return <StatusBadge tone="danger" className="w-16 shrink-0 justify-center px-0">期限切れ</StatusBadge>;
-  return <StatusBadge tone="primary" className="w-16 shrink-0 justify-center px-0">未完</StatusBadge>;
+  if (status === "done") return <StatusBadge tone="success" className="w-20 shrink-0 justify-center px-0">完了</StatusBadge>;
+  if (status === "overdue") return <StatusBadge tone="danger" className="w-20 shrink-0 justify-center px-0">期限切れ</StatusBadge>;
+  return <StatusBadge tone="primary" className="w-20 shrink-0 justify-center px-0">未完</StatusBadge>;
 }
 
 function Section({ title, items }: { title: string; items: Task[] }) {
@@ -25,7 +25,7 @@ function Section({ title, items }: { title: string; items: Task[] }) {
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {items.map((t) => (
           <li key={t.taskId} className="grid min-h-[116px] grid-rows-[1fr_auto] rounded-xl border border-line bg-panel px-4 py-3 shadow-softSm">
-            <div className="grid grid-cols-[minmax(0,1fr)_4rem] items-start gap-3">
+            <div className="grid grid-cols-[minmax(0,1fr)_5rem] items-start gap-3">
               <div className="min-w-0">
                 <div className="line-clamp-2 text-sm font-semibold leading-6 text-ink sm:leading-5">{t.title}</div>
               </div>
