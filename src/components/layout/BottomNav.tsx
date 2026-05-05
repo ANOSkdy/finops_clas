@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/ui/cn";
 
@@ -32,9 +33,10 @@ export function BottomNav() {
         {items.map((it) => {
           const active = isActive(it.href);
           return (
-            <a
+            <Link
               key={it.href}
               href={it.href}
+              prefetch
               aria-current={active ? "page" : undefined}
               className={itemClass(active)}
             >
@@ -49,7 +51,7 @@ export function BottomNav() {
                   active ? "opacity-100" : "opacity-0"
                 )}
               />
-            </a>
+            </Link>
           );
         })}
       </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -7,6 +9,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/toast";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { useDelayedFlag } from "@/lib/ui/useDelayedFlag";
 
 type CompanyCard = {
   companyId: string;
@@ -19,12 +22,16 @@ type CompanyCard = {
 
 type Role = "admin" | "user" | "global";
 
+const COMPANY_CACHE_KEY = "clasz_active_company_name";
+
 export default function SelectCompanyPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [items, setItems] = useState<CompanyCard[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [state, setState] = useState<"loading" | "ok" | "needsLogin" | "error">("loading");
   const [role, setRole] = useState<Role | null>(null);
+  const showLoading = useDelayedFlag(state === "loading", 180);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -50,19 +57,20 @@ export default function SelectCompanyPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  async function onSelect(companyId: string) {
+  async function onSelect(company: CompanyCard) {
     try {
-      setBusyId(companyId);
+      setBusyId(company.companyId);
       const res = await fetch("/api/customer/select", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ companyId }),
+        body: JSON.stringify({ companyId: company.companyId }),
       });
       if (res.status === 401) { toast({ variant: "error", description: "ログインが必要です" }); return; }
       if (!res.ok) { toast({ variant: "error", description: "会社の選択に失敗しました" }); return; }
+      window.localStorage.setItem(COMPANY_CACHE_KEY, company.name);
       toast({ variant: "success", description: "会社を切り替えました" });
-      window.location.href = "/home";
+      router.push("/home");
     } catch {
       toast({ variant: "error", description: "会社の選択に失敗しました" });
     } finally {
@@ -78,12 +86,12 @@ export default function SelectCompanyPage() {
         action={
           <div className="flex gap-2">
             <Button variant="secondary" onClick={load}>更新</Button>
-            {role === "global" || role === "admin" ? <a href="/newcompany"><Button>新規登録</Button></a> : null}
+            {role === "global" || role === "admin" ? <Link href="/newcompany" prefetch><Button>新規登録</Button></Link> : null}
           </div>
         }
       />
 
-      {state === "loading" && (
+      {state === "loading" && showLoading && (
         <div aria-busy="true" className="grid gap-3 md:grid-cols-2">
           <Skeleton className="h-28" />
           <Skeleton className="h-28" />
@@ -94,7 +102,7 @@ export default function SelectCompanyPage() {
         <Card className="glass">
           <CardHeader><div className="text-base font-semibold">ログインが必要です</div></CardHeader>
           <CardContent className="flex flex-wrap gap-3">
-            <a href="/login"><Button>ログインへ</Button></a>
+            <Link href="/login" prefetch><Button>ログインへ</Button></Link>
             <Button variant="secondary" onClick={load}>再試行</Button>
           </CardContent>
         </Card>
@@ -116,7 +124,7 @@ export default function SelectCompanyPage() {
             <div className="text-base font-semibold">会社がありません</div>
             <div className="mt-1 text-sm text-inkMuted">新しい会社を登録してください。</div>
           </CardHeader>
-          <CardContent><a href="/newcompany"><Button>新しい会社を登録</Button></a></CardContent>
+          <CardContent><Link href="/newcompany" prefetch><Button>新しい会社を登録</Button></Link></CardContent>
         </Card>
       )}
 
@@ -138,7 +146,7 @@ export default function SelectCompanyPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
-                <Button className="w-full" disabled={!!busyId} onClick={() => onSelect(c.companyId)}>
+                <Button className="w-full" disabled={!!busyId} onClick={() => onSelect(c)}>
                   {busyId === c.companyId ? "切替中…" : "選択"}
                 </Button>
               </CardContent>
