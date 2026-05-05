@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -7,6 +8,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { TaskList } from "@/components/features/tasks/TaskList";
 import { useToast } from "@/components/ui/toast";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { useDelayedFlag } from "@/lib/ui/useDelayedFlag";
 
 type Task = {
   taskId: string;
@@ -22,6 +24,7 @@ export default function SchedulePage() {
   const [state, setState] = useState<"loading"|"ok"|"needsCompany"|"needsLogin"|"error">("loading");
   const [updating, setUpdating] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const showLoading = useDelayedFlag(state === "loading", 180);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -76,7 +79,7 @@ export default function SchedulePage() {
         action={<Button onClick={refreshTasks} disabled={updating}>{updating ? "更新中…" : "タスクの更新"}</Button>}
       />
 
-      {state === "loading" && (
+      {state === "loading" && showLoading && (
         <div aria-busy="true" className="grid gap-3 md:grid-cols-2">
           <Skeleton className="h-24" />
           <Skeleton className="h-24" />
@@ -88,7 +91,7 @@ export default function SchedulePage() {
         <Card className="glass">
           <CardHeader><div className="text-base font-semibold">ログインが必要です</div></CardHeader>
           <CardContent className="flex flex-wrap gap-3">
-            <a href="/login"><Button>ログインへ</Button></a>
+            <Link href="/login" prefetch><Button>ログインへ</Button></Link>
             <Button variant="secondary" onClick={() => { toast({variant:"default", description:"再試行します"}); load(); }}>再試行</Button>
           </CardContent>
         </Card>
@@ -98,7 +101,7 @@ export default function SchedulePage() {
         <Card className="glass">
           <CardHeader><div className="text-base font-semibold">会社が選択されていません</div></CardHeader>
           <CardContent className="flex flex-wrap gap-3">
-            <a href="/selectcompany"><Button>会社を選択</Button></a>
+            <Link href="/selectcompany" prefetch><Button>会社を選択</Button></Link>
             <Button variant="secondary" onClick={load}>再試行</Button>
           </CardContent>
         </Card>
