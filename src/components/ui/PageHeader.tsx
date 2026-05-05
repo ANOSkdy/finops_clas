@@ -19,7 +19,11 @@ export function PageHeader({
           <p className="mt-1 text-sm leading-6 text-inkMuted sm:leading-5">{description}</p>
         ) : null}
       </div>
-      {action ? <div className="w-full shrink-0 sm:w-auto">{action}</div> : null}
+      {action ? (
+        <div className="w-full shrink-0 [&_a]:block [&_button]:w-full sm:w-auto sm:[&_button]:w-auto">
+          {action}
+        </div>
+      ) : null}
     </div>
   );
 }
