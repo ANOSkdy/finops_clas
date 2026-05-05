@@ -39,10 +39,10 @@ export function Field({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-14 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
-            "border-line focus:border-[color:var(--primary)]",
+            "focus-ring peer h-11 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
+            "border-line focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
-            "placeholder:text-transparent shadow-softSm",
+            "placeholder:text-transparent",
             inputClassName
           )}
           {...props}
@@ -52,7 +52,7 @@ export function Field({
           className={cn(
             "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
             "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink",
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary",
             labelClassName
           )}
         >
@@ -99,10 +99,9 @@ export function SelectField({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-14 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
-            "border-line focus:border-[color:var(--primary)]",
+            "focus-ring peer h-11 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
+            "border-line focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
-            "shadow-softSm",
             inputClassName
           )}
           {...props}
@@ -113,9 +112,9 @@ export function SelectField({
         <label
           htmlFor={id}
           className={cn(
-            "pointer-events-none absolute left-3 text-xs text-ink transition-all",
+            "pointer-events-none absolute left-3 text-xs text-inkMuted transition-all",
             isEmpty ? "top-3 text-sm text-inkMuted" : "top-2",
-            "group-focus-within:top-2 group-focus-within:text-xs group-focus-within:text-ink",
+            "group-focus-within:top-2 group-focus-within:text-xs group-focus-within:text-primary",
             labelClassName
           )}
         >
@@ -157,7 +156,7 @@ export function TextareaField({
           aria-describedby={describedBy}
           className={cn(
             "focus-ring peer min-h-[140px] w-full rounded-lg border bg-panel px-3 pt-6 pb-3 text-sm text-ink",
-            "border-line focus:border-[color:var(--primary)] resize-y shadow-softSm",
+            "border-line focus:border-primary resize-y",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent",
             inputClassName
@@ -169,7 +168,7 @@ export function TextareaField({
           className={cn(
             "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
             "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-ink",
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary",
             labelClassName
           )}
         >
