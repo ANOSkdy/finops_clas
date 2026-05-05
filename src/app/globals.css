@@ -1,77 +1,70 @@
 @import "tailwindcss";
 @source "../**/*.{js,ts,jsx,tsx,mdx}";
 
-/* Baseline */
+/* Cookpad-inspired foundation */
 :root {
   color-scheme: light;
 
-  /*
-    Design Palette
-    - ベース:      #F9F9F9 (249 249 249)
-    - プライマリ:  #4A90E2 (74 144 226)  ※ボトムナビ等の既存primary用
-    - セカンダリ:  #50E3C2 (80 227 194)
-    - アクセント1: #FFD166 (255 209 102)
-    - アクセント2: #F25F5C (242 95 92)
-    - アクセント3: #9D59EC (157 89 236)
-
-    Button unified color (exclude bottom nav)
-    - #4169E1 (65 105 225)
-  */
-
   /* Base / Surfaces */
-  --base: 249 249 249;              /* #F9F9F9 */
-  --surface: 255 255 255;           /* #FFFFFF */
-  --panel: 255 255 255;             /* #FFFFFF */
+  --base: 248 246 242;              /* #f8f6f2 */
+  --surface: 255 255 255;           /* #ffffff */
+  --panel: 255 255 255;             /* #ffffff */
 
-  /* Primary / Secondary */
-  --primary: 74 144 226;            /* #4A90E2 */
-  --primary-pressed: 63 122 192;    /* #3F7AC0 */
-  --primary-container: 229 240 252; /* #E5F0FC */
+  /* Brand */
+  --primary: 242 140 6;             /* #f28c06 */
+  --primary-pressed: 217 122 0;     /* #d97a00 */
+  --primary-container: 255 244 229; /* warm orange tint */
 
-  --secondary: 80 227 194;          /* #50E3C2 */
-  --secondary-container: 219 250 245; /* #DBFAF5 */
+  /* Semantic */
+  --secondary: 67 160 71;           /* #43a047 success */
+  --secondary-container: 232 245 233;
+  --accent1: 249 168 37;            /* #f9a825 warning */
+  --danger: 229 57 53;              /* #e53935 */
+  --accent3: 242 140 6;
 
-  /* Accents */
-  --accent1: 255 209 102;           /* #FFD166 */
-  --danger: 242 95 92;              /* #F25F5C (accent-2) */
-  --accent3: 157 89 236;            /* #9D59EC */
+  /* Buttons */
+  --button: 242 140 6;              /* #f28c06 */
+  --button-pressed: 217 122 0;      /* #d97a00 */
+  --button-text: 255 255 255;       /* #ffffff */
 
-  /* Buttons (unify here; do NOT touch --primary) */
-  --button: 65 105 225;             /* #4169E1 */
-  --button-pressed: 54 86 189;      /* #3656BD */
-  --button-text: 255 255 255;       /* #FFFFFF */
+  /* Text / Lines */
+  --text: 15 15 15;                 /* #0f0f0f */
+  --text-muted: 117 117 117;        /* #757575 */
+  --text-disabled: 189 189 189;     /* #bdbdbd */
+  --outline: 224 224 224;           /* #e0e0e0 */
+  --border: 224 224 224;            /* #e0e0e0 */
+  --focus: 242 140 6;               /* #f28c06 */
 
-  /* Text / Lines (ALL BLACK) */
-  --text: 0 0 0;                    /* #000000 */
-  --text-muted: 0 0 0;              /* #000000 (要求どおり全部黒) */
-  --outline: 220 224 229;           /* #DCE0E5 */
-  --border: 220 224 229;            /* #DCE0E5 */
-  --focus: 65 105 225;              /* match button for focus ring */
-
-  /* Memo palette (existing; keep for memo tones) */
-  --memo-red: 242 139 130;         /* #F28B82 */
-  --memo-orange: 251 188 5;        /* #FBBC05 */
-  --memo-yellow: 255 244 117;      /* #FFF475 */
-  --memo-green: 204 255 144;       /* #CCFF90 */
-  --memo-teal: 167 255 235;        /* #A7FFEB */
-  --memo-cyan: 203 240 248;        /* #CBF0F8 */
-  --memo-blue: 174 203 250;        /* #AECBFA */
-  --memo-purple: 215 174 251;      /* #D7AEFB */
-  --memo-pink: 253 207 232;        /* #FDCFE8 */
-  --memo-brown: 230 201 168;       /* #E6C9A8 */
-  --memo-gray: 232 234 237;        /* #E8EAED */
+  /* Memo palette (keep for memo tones) */
+  --memo-red: 242 139 130;
+  --memo-orange: 251 188 5;
+  --memo-yellow: 255 244 117;
+  --memo-green: 204 255 144;
+  --memo-teal: 167 255 235;
+  --memo-cyan: 203 240 248;
+  --memo-blue: 174 203 250;
+  --memo-purple: 215 174 251;
+  --memo-pink: 253 207 232;
+  --memo-brown: 230 201 168;
+  --memo-gray: 232 234 237;
 }
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji",
-    "Segoe UI Emoji";
-  background:
-    radial-gradient(circle at top, rgb(var(--primary-container)) 0%, transparent 55%),
-    linear-gradient(180deg, rgb(var(--base)) 0%, rgb(var(--primary-container) / 0.22) 140%);
+  background: rgb(var(--base));
   color: rgb(var(--text));
+  font-family: noto-sans, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    arial, sans-serif;
+  font-feature-settings: "liga";
+  letter-spacing: -0.4px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  line-break: strict;
+  word-break: break-all;
 }
 
 /* Safe area + spacing utilities */
@@ -89,55 +82,51 @@ body {
   outline: none;
   box-shadow:
     0 0 0 2px rgb(var(--base)),
-    0 0 0 4px rgb(var(--focus) / 0.85);
+    0 0 0 4px rgb(var(--focus) / 0.78);
 }
 
-/* Navigation indicator (BottomNav uses --primary on purpose) */
+/* Navigation indicator */
 .nav-indicator {
   background: rgb(var(--primary));
 }
 
-/* Surface style (keep using className="glass") */
+/* Cookpad-style surfaces */
 .surface-card,
 .glass {
-  background: rgb(var(--panel) / 0.92);
-  border: 1px solid rgb(var(--border) / 0.55);
-  box-shadow:
-    0 1px 2px rgba(60, 64, 67, 0.12),
-    0 1px 3px rgba(60, 64, 67, 0.16);
-  transition: transform 150ms ease, box-shadow 150ms ease;
+  background: rgb(var(--panel));
+  border: 1px solid rgb(var(--border));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 @media (hover: hover) {
   .surface-card:hover,
   .glass:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 4px 10px rgba(60, 64, 67, 0.2),
-      0 1px 3px rgba(60, 64, 67, 0.24);
+    border-color: rgb(var(--primary) / 0.28);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
 .memo-card {
-  border-radius: 1rem;
-  border: 1px solid rgb(var(--outline) / 0.55);
+  border-radius: 12px;
+  border: 1px solid rgb(var(--outline));
   background: rgb(var(--memo-yellow));
-  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.18);
-  padding: 1rem 1.25rem;
-  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  transition: box-shadow 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
 .memo-card:focus-within {
   border-color: rgb(var(--focus));
   box-shadow:
     0 0 0 1px rgb(var(--focus)),
-    0 3px 10px rgba(66, 133, 244, 0.25);
+    0 4px 8px rgba(242, 140, 6, 0.18);
 }
 
 @media (hover: hover) {
   .memo-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(60, 64, 67, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -153,9 +142,4 @@ body {
   .memo-grid {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
-}
-
-/* Safety net: force any Tailwind "text-white" (incl. text-white/90 etc) to black */
-[class*="text-white"] {
-  color: rgb(var(--text)) !important;
 }
