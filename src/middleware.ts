@@ -11,6 +11,7 @@ const protectedPaths = [
   "/selectcompany",
   "/newcompany",
   "/rating",
+  "/trial_balance",
   "/system_manager",
   "/password",
 ];
@@ -34,7 +35,6 @@ export function middleware(req: NextRequest) {
     return r;
   }
 
-  // next internals / static / auth api / debug api are not protected
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
