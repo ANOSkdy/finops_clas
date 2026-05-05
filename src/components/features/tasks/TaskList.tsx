@@ -11,9 +11,9 @@ type Task = {
 };
 
 function Badge({ status }: { status: Task["status"] }) {
-  if (status === "done") return <StatusBadge tone="success">完了</StatusBadge>;
-  if (status === "overdue") return <StatusBadge tone="danger">期限切れ</StatusBadge>;
-  return <StatusBadge tone="primary">未完</StatusBadge>;
+  if (status === "done") return <StatusBadge tone="success" className="w-16 shrink-0 justify-center px-0">完了</StatusBadge>;
+  if (status === "overdue") return <StatusBadge tone="danger" className="w-16 shrink-0 justify-center px-0">期限切れ</StatusBadge>;
+  return <StatusBadge tone="primary" className="w-16 shrink-0 justify-center px-0">未完</StatusBadge>;
 }
 
 function Section({ title, items }: { title: string; items: Task[] }) {
@@ -22,16 +22,16 @@ function Section({ title, items }: { title: string; items: Task[] }) {
   return (
     <section className="space-y-3">
       <div className="text-sm font-semibold leading-5 text-ink">{title}</div>
-      <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {items.map((t) => (
-          <li key={t.taskId} className="rounded-xl border border-line bg-panel px-4 py-3 shadow-softSm">
-            <div className="flex items-start justify-between gap-3">
+          <li key={t.taskId} className="grid min-h-[116px] grid-rows-[1fr_auto] rounded-xl border border-line bg-panel px-4 py-3 shadow-softSm">
+            <div className="grid grid-cols-[minmax(0,1fr)_4rem] items-start gap-3">
               <div className="min-w-0">
-                <div className="text-sm font-semibold leading-5 text-ink">{t.title}</div>
-                <div className="mt-1 text-xs leading-4 text-inkMuted">期限: {t.dueDate}</div>
+                <div className="line-clamp-2 text-sm font-semibold leading-6 text-ink sm:leading-5">{t.title}</div>
               </div>
               <Badge status={t.status} />
             </div>
+            <div className="mt-3 border-t border-line/70 pt-2 text-xs leading-4 text-inkMuted">期限: {t.dueDate}</div>
           </li>
         ))}
       </ul>
