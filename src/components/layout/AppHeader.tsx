@@ -22,8 +22,7 @@ export function AppHeader() {
           return;
         }
         const data = (await res.json()) as ActiveCompany;
-        // @ts-expect-error
-        const name = data?.company?.name;
+        const name = "company" in data ? data.company?.name : undefined;
         setCompanyName(name || "未選択");
         setLoaded(true);
       } catch {
@@ -52,15 +51,15 @@ export function AppHeader() {
   return (
     <header
       data-scrolled={scrolled}
-      className="sticky top-0 z-40 border-b border-line bg-base/90 backdrop-blur-xl transition-all"
+      className="sticky top-0 z-40 border-b border-line bg-panel/95 backdrop-blur transition-all"
     >
-      <div className="mx-auto w-full max-w-5xl px-4 safe-x sm:px-6">
+      <div className="mx-auto w-full max-w-[1080px] px-4 safe-x sm:px-6">
         <div
           data-scrolled={scrolled}
           className="flex h-14 items-center justify-between transition-[height] data-[scrolled=true]:h-12"
         >
           <div className="flex items-center gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-[color:var(--primary)] text-base text-white shadow-softSm">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-sm font-semibold text-button shadow-softSm">
               C
             </div>
             <div className="leading-tight">
@@ -72,11 +71,7 @@ export function AppHeader() {
           </div>
 
           <a href="/selectcompany" className="mr-2">
-            <Button
-              variant="secondary"
-              size="md"
-              className="border-transparent bg-[#4169e1] !text-white hover:bg-[#3559c9] hover:!text-white focus-visible:!text-white active:!text-white"
-            >
+            <Button variant="primary" size="md">
               会社切替
             </Button>
           </a>

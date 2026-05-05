@@ -22,13 +22,13 @@ export function BottomNav() {
 
   const itemClass = (active: boolean) =>
     cn(
-      "focus-ring tap-44 col-span-1 flex flex-col items-center justify-center rounded-xl px-1 py-2 text-[10px] whitespace-nowrap",
-      active ? "text-ink font-semibold" : "text-inkMuted"
+      "focus-ring tap-44 col-span-1 flex flex-col items-center justify-center rounded-lg px-1 py-2 text-[10px] whitespace-nowrap",
+      active ? "text-primary font-semibold" : "text-inkMuted"
     );
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-base/95 backdrop-blur safe-bottom">
-      <div className="mx-auto grid h-16 max-w-5xl grid-cols-5 items-center px-2 safe-x">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-panel/95 backdrop-blur safe-bottom">
+      <div className="mx-auto grid h-16 max-w-[1080px] grid-cols-5 items-center px-2 safe-x">
         {items.map((it) => {
           const active = isActive(it.href);
           return (
