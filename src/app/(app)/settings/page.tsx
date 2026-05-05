@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { ActionCard } from "@/components/ui/ActionCard";
@@ -9,7 +11,10 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } fr
 
 type Role = "admin" | "user" | "global";
 
+const COMPANY_CACHE_KEY = "clasz_active_company_name";
+
 export default function SettingsPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -32,8 +37,9 @@ export default function SettingsPage() {
     setBusy(true);
     try {
       await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+      window.localStorage.removeItem(COMPANY_CACHE_KEY);
       toast({ variant: "success", description: "ログアウトしました" });
-      window.location.href = "/login";
+      router.replace("/login");
     } catch {
       toast({ variant: "error", description: "ログアウトに失敗しました" });
     } finally {
@@ -47,10 +53,10 @@ export default function SettingsPage() {
       <PageHeader title="設定" description="アカウントと会社情報を管理します。" />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <ActionCard icon="🔐" title="パスワード" description="ログインに使用するパスワードを変更します。" action={<a href="/password"><Button className="w-full">パスワード</Button></a>} />
-        <ActionCard icon="🏢" title="会社情報" description="登録済みの会社情報を修正します。" action={<a href="/company_edit"><Button className="w-full">会社情報を修正</Button></a>} />
+        <ActionCard icon="🔐" title="パスワード" description="ログインに使用するパスワードを変更します。" action={<Link href="/password" prefetch><Button className="w-full">パスワード</Button></Link>} />
+        <ActionCard icon="🏢" title="会社情報" description="登録済みの会社情報を修正します。" action={<Link href="/company_edit" prefetch><Button className="w-full">会社情報を修正</Button></Link>} />
         <ActionCard icon="🚪" title="ログアウト" description="セッションを終了してログイン画面へ戻ります。" action={<Button className="w-full" variant="secondary" onClick={() => setOpen(true)} disabled={busy}>ログアウト</Button>} />
-        {role === "global" && <ActionCard icon="⚙️" title="システム管理" description="グローバル権限者向けの設定を表示します。" action={<a href="/system_manager"><Button className="w-full">システム管理</Button></a>} />}
+        {role === "global" && <ActionCard icon="⚙️" title="システム管理" description="グローバル権限者向けの設定を表示します。" action={<Link href="/system_manager" prefetch><Button className="w-full">システム管理</Button></Link>} />}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
