@@ -20,7 +20,7 @@ export default function UploadPage() {
           description="決算書をアップロードし、スコア・グレード・AIコメントを生成します。"
           meta="対応: PDF / CSV / Excel"
           action={
-            <Link href="/rating">
+            <Link href="/rating" prefetch>
               <Button className="w-full">格付けページへ進む</Button>
             </Link>
           }
@@ -32,7 +32,7 @@ export default function UploadPage() {
           description="試算表をアップロードし、メール送信と監査ログ保存に進みます。"
           meta="対応: CSV / Excel"
           action={
-            <Link href="/trial_balance">
+            <Link href="/trial_balance" prefetch>
               <Button className="w-full" variant="secondary">試算表ページへ進む</Button>
             </Link>
           }
