@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/toast";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 
 type CompanyCard = {
   companyId: string;
@@ -19,7 +21,6 @@ type Role = "admin" | "user" | "global";
 
 export default function SelectCompanyPage() {
   const { toast } = useToast();
-
   const [items, setItems] = useState<CompanyCard[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [state, setState] = useState<"loading" | "ok" | "needsLogin" | "error">("loading");
@@ -38,8 +39,7 @@ export default function SelectCompanyPage() {
       const res = await fetch("/api/customer/list", { credentials: "include" });
       if (res.status === 401) { setState("needsLogin"); setItems([]); setRole(null); return; }
       if (!res.ok) { setState("error"); setItems([]); return; }
-      const data = (await res.json()) as CompanyCard[];
-      setItems(data);
+      setItems((await res.json()) as CompanyCard[]);
       setState("ok");
     } catch {
       setState("error");
@@ -59,16 +59,8 @@ export default function SelectCompanyPage() {
         credentials: "include",
         body: JSON.stringify({ companyId }),
       });
-
-      if (res.status === 401) {
-        toast({ variant: "error", description: "ログインが必要です" });
-        return;
-      }
-      if (!res.ok) {
-        toast({ variant: "error", description: "会社の選択に失敗しました" });
-        return;
-      }
-
+      if (res.status === 401) { toast({ variant: "error", description: "ログインが必要です" }); return; }
+      if (!res.ok) { toast({ variant: "error", description: "会社の選択に失敗しました" }); return; }
       toast({ variant: "success", description: "会社を切り替えました" });
       window.location.href = "/home";
     } catch {
@@ -78,32 +70,30 @@ export default function SelectCompanyPage() {
     }
   }
 
-  const skeleton = (
-    <div aria-busy="true" className="space-y-3">
-      <Skeleton className="h-20" />
-      <Skeleton className="h-20" />
-    </div>
-  );
-
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="text-xl font-semibold tracking-tight">会社を選択</div>
-        <div className="mt-1 text-sm text-inkMuted">所属会社を選択してアクティブに設定します。</div>
-      </div>
+    <div className="space-y-5">
+      <PageHeader
+        title="会社を選択"
+        description="所属会社を選択してアクティブに設定します。"
+        action={
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={load}>更新</Button>
+            {role === "global" || role === "admin" ? <a href="/newcompany"><Button>新規登録</Button></a> : null}
+          </div>
+        }
+      />
 
-      <div className="flex gap-3">
-        <Button variant="secondary" onClick={load}>更新</Button>
-      </div>
-
-      {state === "loading" && skeleton}
+      {state === "loading" && (
+        <div aria-busy="true" className="grid gap-3 md:grid-cols-2">
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+        </div>
+      )}
 
       {state === "needsLogin" && (
         <Card className="glass">
-          <CardHeader>
-            <div className="text-base font-semibold">ログインが必要です</div>
-          </CardHeader>
-          <CardContent className="flex items-center gap-3">
+          <CardHeader><div className="text-base font-semibold">ログインが必要です</div></CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
             <a href="/login"><Button>ログインへ</Button></a>
             <Button variant="secondary" onClick={load}>再試行</Button>
           </CardContent>
@@ -116,9 +106,7 @@ export default function SelectCompanyPage() {
             <div className="text-base font-semibold">読み込みに失敗しました</div>
             <div className="mt-1 text-sm text-inkMuted">ネットワークを確認してください。</div>
           </CardHeader>
-          <CardContent className="flex items-center gap-3">
-            <Button onClick={load}>再試行</Button>
-          </CardContent>
+          <CardContent><Button onClick={load}>再試行</Button></CardContent>
         </Card>
       )}
 
@@ -126,37 +114,34 @@ export default function SelectCompanyPage() {
         <Card className="glass">
           <CardHeader>
             <div className="text-base font-semibold">会社がありません</div>
-            <div className="mt-1 text-sm text-inkMuted">「新しい会社を登録」から作成してください。</div>
+            <div className="mt-1 text-sm text-inkMuted">新しい会社を登録してください。</div>
           </CardHeader>
+          <CardContent><a href="/newcompany"><Button>新しい会社を登録</Button></a></CardContent>
         </Card>
       )}
 
       {state === "ok" && items && items.length > 0 && (
-        <div className="space-y-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {items.map((c) => (
             <Card key={c.companyId} className="glass">
-              <CardHeader className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-base font-semibold">{c.name}</div>
-                  <div className="mt-1 text-xs text-inkMuted">
-                    {c.legalForm === "sole" ? "個人事業主" : "法人"}
-                    {c.representativeName ? ` / 代表: ${c.representativeName}` : ""}
-                  </div>
-                  <div className="mt-2 text-xs text-inkMuted">
-                    {c.contactEmail ?? ""}
-                    {c.contactEmail && c.contactPhone ? " / " : ""}
-                    {c.contactPhone ?? ""}
+              <CardHeader>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-base font-semibold leading-6 text-ink">{c.name}</div>
+                    <div className="mt-2"><StatusBadge tone="primary">{c.legalForm === "sole" ? "個人事業主" : "法人"}</StatusBadge></div>
                   </div>
                 </div>
-
-                <Button
-                  variant="secondary"
-                  disabled={!!busyId}
-                  onClick={() => onSelect(c.companyId)}
-                >
+                <div className="mt-3 space-y-1 text-xs leading-5 text-inkMuted">
+                  {c.representativeName ? <div>代表: {c.representativeName}</div> : null}
+                  {c.contactEmail ? <div className="break-all">{c.contactEmail}</div> : null}
+                  {c.contactPhone ? <div>{c.contactPhone}</div> : null}
+                </div>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <Button className="w-full" disabled={!!busyId} onClick={() => onSelect(c.companyId)}>
                   {busyId === c.companyId ? "切替中…" : "選択"}
                 </Button>
-              </CardHeader>
+              </CardContent>
             </Card>
           ))}
         </div>

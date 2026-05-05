@@ -18,18 +18,18 @@ export function Button({
 
   const variants =
     variant === "primary"
-      ? "bg-action text-button shadow-softSm hover:bg-actionPressed"
+      ? "bg-action text-ink shadow-softSm hover:bg-actionPressed"
       : variant === "secondary"
         ? "border border-line bg-transparent text-ink hover:border-primary/40 hover:bg-primary/10"
         : variant === "outline"
           ? "border border-line bg-panel text-ink hover:border-primary/40 hover:bg-primary/10"
         : variant === "danger"
-          ? "bg-danger text-button shadow-softSm hover:bg-danger/90"
+          ? "bg-danger text-ink shadow-softSm hover:bg-danger/90"
           : "border border-transparent bg-transparent text-ink hover:bg-primary/10";
 
   const disabled =
     variant === "primary" || variant === "danger"
-      ? "disabled:bg-inkMuted/50 disabled:text-button disabled:shadow-none"
+      ? "disabled:bg-inkMuted/50 disabled:text-ink disabled:shadow-none"
       : "disabled:border-line disabled:bg-transparent disabled:text-inkMuted";
 
   return (

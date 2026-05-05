@@ -1,39 +1,37 @@
 "use client";
 
+import { StatusBadge } from "@/components/ui/StatusBadge";
+
 type Task = {
   taskId: string;
   category: "tax" | "social" | "other";
   title: string;
-  dueDate: string; // YYYY-MM-DD
+  dueDate: string;
   status: "pending" | "done" | "overdue";
 };
 
 function Badge({ status }: { status: Task["status"] }) {
-  const base =
-    "inline-flex h-7 min-w-[52px] items-center justify-center whitespace-nowrap rounded-full border border-line bg-panel px-2 text-[11px] font-medium leading-none text-ink";
-
-  if (status === "done") return <span className={base}>完了</span>;
-  if (status === "overdue") return <span className={base}>期限切れ</span>;
-  return <span className={base}>未完</span>;
+  if (status === "done") return <StatusBadge tone="success" className="w-20 shrink-0 justify-center px-0">完了</StatusBadge>;
+  if (status === "overdue") return <StatusBadge tone="danger" className="w-20 shrink-0 justify-center px-0">期限切れ</StatusBadge>;
+  return <StatusBadge tone="primary" className="w-20 shrink-0 justify-center px-0">未完</StatusBadge>;
 }
 
 function Section({ title, items }: { title: string; items: Task[] }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="space-y-2">
-      <div className="text-xs font-semibold tracking-wide text-inkMuted">{title}</div>
-
-      <ul className="space-y-2">
+    <section className="space-y-3">
+      <div className="text-sm font-semibold leading-5 text-ink">{title}</div>
+      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {items.map((t) => (
-          <li key={t.taskId} className="glass rounded-2xl px-4 py-3">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-sm font-semibold text-ink">{t.title}</div>
-                <div className="mt-1 text-xs text-inkMuted">期限: {t.dueDate}</div>
+          <li key={t.taskId} className="grid min-h-[116px] grid-rows-[1fr_auto] rounded-xl border border-line bg-panel px-4 py-3 shadow-softSm">
+            <div className="grid grid-cols-[minmax(0,1fr)_5rem] items-start gap-3">
+              <div className="min-w-0">
+                <div className="line-clamp-2 text-sm font-semibold leading-6 text-ink sm:leading-5">{t.title}</div>
               </div>
               <Badge status={t.status} />
             </div>
+            <div className="mt-3 border-t border-line/70 pt-2 text-xs leading-4 text-inkMuted">期限: {t.dueDate}</div>
           </li>
         ))}
       </ul>
@@ -47,11 +45,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
   const other = tasks.filter((t) => t.category === "other");
 
   if (tasks.length === 0) {
-    return (
-      <div className="glass rounded-2xl px-4 py-6 text-sm text-ink">
-        タスクがまだありません。
-      </div>
-    );
+    return <div className="rounded-xl border border-line bg-panel px-4 py-6 text-sm text-inkMuted">タスクがまだありません。</div>;
   }
 
   return (

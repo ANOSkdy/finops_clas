@@ -48,53 +48,53 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-3xl">
-        <Card className="min-h-[360px] surface-card text-ink">
-          <CardHeader className="px-8 pt-5">
-            <div className="text-xl font-semibold tracking-tight">ログイン</div>
+    <main className="flex min-h-screen items-center justify-center bg-base px-4 py-10 text-ink">
+      <div className="w-full max-w-md">
+        <div className="mb-5 text-center">
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-primary text-base font-semibold text-button shadow-softSm">
+            C
+          </div>
+          <h1 className="mt-4 text-lg font-semibold leading-7 tracking-tight text-ink">CLAS FinOps</h1>
+          <p className="mt-1 text-sm leading-5 text-inkMuted">
+            会社を選択して、アップロードと期限管理を開始します。
+          </p>
+        </div>
+
+        <Card className="surface-card text-ink">
+          <CardHeader className="px-5 pt-5">
+            <div className="text-base font-semibold tracking-tight">ログイン</div>
           </CardHeader>
-          <CardContent className="space-y-6 px-8 pb-8 pt-6">
+          <CardContent className="space-y-5 px-5 pb-5 pt-4">
             {error && (
-              <div role="alert" className="rounded-2xl border border-accent2/30 bg-panel px-4 py-3 text-sm text-ink">
+              <div role="alert" className="rounded-xl border border-accent2/35 bg-accent2/10 px-4 py-3 text-sm text-ink">
                 {error}
               </div>
             )}
 
-            <div className="space-y-2">
-              <div className="text-sm font-semibold text-ink">ログインID</div>
-              <Field
-                label=""
-                aria-label="ログインID"
-                value={loginId}
-                onChange={(e) => setLoginId(e.target.value)}
-                autoComplete="username"
-                autoCapitalize="none"
-                spellCheck={false}
-                inputMode="text"
-                disabled={busy}
-                inputClassName="bg-panel text-black h-12"
-                labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
-              />
-            </div>
+            <Field
+              label="ログインID"
+              aria-label="ログインID"
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              inputMode="text"
+              disabled={busy}
+            />
 
-            <div className="space-y-2">
-              <div className="text-sm font-semibold text-ink">パスワード</div>
-              <Field
-                label=""
-                aria-label="パスワード"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                disabled={busy}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") onSubmit();
-                }}
-                inputClassName="bg-panel text-black h-12"
-                labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
-              />
-            </div>
+            <Field
+              label="パスワード"
+              aria-label="パスワード"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              disabled={busy}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") onSubmit();
+              }}
+            />
 
             <Button onClick={onSubmit} disabled={isDisabled} className="w-full">
               {busy ? "ログイン中…" : "ログイン"}
@@ -110,17 +110,17 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
-          <div className="w-full max-w-3xl">
-            <Card className="min-h-[360px] surface-card text-ink">
-              <CardHeader className="px-8 pt-5">
-                <div className="text-xl font-semibold tracking-tight">ログイン</div>
+        <main className="flex min-h-screen items-center justify-center bg-base px-4 py-10 text-ink">
+          <div className="w-full max-w-md">
+            <Card className="surface-card text-ink">
+              <CardHeader className="px-5 pt-5">
+                <div className="text-base font-semibold tracking-tight">ログイン</div>
                 <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
               </CardHeader>
-              <CardContent className="space-y-6 px-8 pb-8 pt-6">
-                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
-                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
-                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
+              <CardContent className="space-y-4 px-5 pb-5 pt-4">
+                <div className="h-11 rounded-lg border border-line bg-panel" />
+                <div className="h-11 rounded-lg border border-line bg-panel" />
+                <div className="h-11 rounded-lg border border-line bg-primary/10" />
               </CardContent>
             </Card>
           </div>

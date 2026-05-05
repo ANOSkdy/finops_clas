@@ -14,7 +14,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       <div className="min-h-screen">
         <AppHeader />
-        <main id="main" className="mx-auto w-full max-w-[1080px] px-4 pt-6 pb-safe-nav sm:px-6">
+        <main id="main" className="mx-auto w-full max-w-[1080px] px-3 pt-4 pb-safe-nav sm:px-6 sm:pt-6">
           {children}
         </main>
         <BottomNav />
