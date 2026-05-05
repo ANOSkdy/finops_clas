@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ActionCard } from "@/components/ui/ActionCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useToast } from "@/components/ui/toast";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/Dialog";
 
@@ -24,9 +25,7 @@ export default function SettingsPage() {
         if (!cancelled) setRole(data.role);
       } catch {}
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   async function logout() {
@@ -44,53 +43,15 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <div className="text-xl font-semibold tracking-tight">設定</div>
-        <div className="mt-1 text-sm text-inkMuted">アカウントとセキュリティ</div>
+    <div className="space-y-5">
+      <PageHeader title="設定" description="アカウントと会社情報を管理します。" />
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <ActionCard icon="🔐" title="パスワード" description="ログインに使用するパスワードを変更します。" action={<a href="/password"><Button className="w-full">パスワード</Button></a>} />
+        <ActionCard icon="🏢" title="会社情報" description="登録済みの会社情報を修正します。" action={<a href="/company_edit"><Button className="w-full">会社情報を修正</Button></a>} />
+        <ActionCard icon="🚪" title="ログアウト" description="セッションを終了してログイン画面へ戻ります。" action={<Button className="w-full" variant="secondary" onClick={() => setOpen(true)} disabled={busy}>ログアウト</Button>} />
+        {role === "global" && <ActionCard icon="⚙️" title="システム管理" description="グローバル権限者向けの設定を表示します。" action={<a href="/system_manager"><Button className="w-full">システム管理</Button></a>} />}
       </div>
-
-      <Card className="glass">
-        <CardHeader>
-          <div className="text-base font-semibold">アカウント</div>
-        </CardHeader>
-        <CardContent className="flex justify-center">
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <a href="/password">
-              <Button className="w-48">パスワード</Button>
-            </a>
-            <Button className="w-48" onClick={() => setOpen(true)} disabled={busy}>
-              ログアウト
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="glass">
-        <CardHeader>
-          <div className="text-base font-semibold">会社情報</div>
-          <div className="mt-1 text-sm text-inkMuted">登録済みの会社情報を修正します</div>
-        </CardHeader>
-        <CardContent className="flex justify-center">
-          <a href="/company_edit">
-            <Button className="w-48">会社情報を修正</Button>
-          </a>
-        </CardContent>
-      </Card>
-
-      {role === "global" && (
-        <Card className="glass">
-          <CardHeader>
-            <div className="text-base font-semibold">システム管理</div>
-            <div className="mt-1 text-sm text-inkMuted">グローバル権限者向けの設定を表示します</div>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            <a href="/system_manager">
-              <Button className="w-48">システム管理</Button>
-            </a>
-          </CardContent>
-        </Card>
-      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
@@ -104,12 +65,8 @@ export default function SettingsPage() {
             </DialogClose>
           </div>
           <div className="mt-4 flex justify-end gap-2">
-            <DialogClose asChild>
-              <Button variant="secondary" type="button" disabled={busy}>キャンセル</Button>
-            </DialogClose>
-            <Button type="button" onClick={logout} disabled={busy}>
-              {busy ? "処理中…" : "ログアウト"}
-            </Button>
+            <DialogClose asChild><Button variant="secondary" type="button" disabled={busy}>キャンセル</Button></DialogClose>
+            <Button type="button" onClick={logout} disabled={busy}>{busy ? "処理中…" : "ログアウト"}</Button>
           </div>
         </DialogContent>
       </Dialog>
