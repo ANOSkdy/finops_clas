@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/toast";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { useDelayedFlag } from "@/lib/ui/useDelayedFlag";
 
 type Summary = {
   alerts: Array<{ type: "warning"; message: string }>;
@@ -34,6 +35,7 @@ export default function HomePage() {
   const { toast } = useToast();
   const [data, setData] = useState<Summary | null>(null);
   const [state, setState] = useState<"loading" | "ok" | "needsCompany" | "needsLogin" | "error">("loading");
+  const showLoading = useDelayedFlag(state === "loading", 180);
 
   const load = useCallback(async () => {
     setState("loading");
@@ -59,7 +61,7 @@ export default function HomePage() {
         action={<Link href="/upload" prefetch><Button>アップロードへ</Button></Link>}
       />
 
-      {state === "loading" && (
+      {state === "loading" && showLoading && (
         <div aria-busy="true" className="grid gap-4 md:grid-cols-2">
           <Skeleton className="h-28" />
           <Skeleton className="h-28" />
