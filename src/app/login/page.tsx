@@ -1,13 +1,14 @@
 "use client";
 
 import { Suspense, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/toast";
 
 function LoginForm() {
+  const router = useRouter();
   const sp = useSearchParams();
   const next = useMemo(() => sp.get("next") || "/selectcompany", [sp]);
   const { toast } = useToast();
@@ -38,7 +39,7 @@ function LoginForm() {
       }
 
       toast({ variant: "success", description: "ログインしました" });
-      window.location.href = next;
+      router.replace(next);
     } catch {
       setError("ログインに失敗しました。");
       toast({ variant: "error", description: "ネットワークを確認してください" });
