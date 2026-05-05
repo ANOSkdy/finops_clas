@@ -22,9 +22,7 @@ export default function SettingsPage() {
         if (!res.ok) return;
         const data = (await res.json()) as { role: Role };
         if (!cancelled) setRole(data.role);
-      } catch {
-        // noop
-      }
+      } catch {}
     })();
     return () => {
       cancelled = true;
@@ -59,9 +57,7 @@ export default function SettingsPage() {
         <CardContent className="flex justify-center">
           <div className="flex flex-col gap-2 sm:flex-row">
             <a href="/password">
-              <Button className="w-48 bg-[#4169e1] !text-white hover:bg-[#4169e1]/90 hover:!text-white focus-visible:!text-white active:!text-white disabled:bg-[#4169e1]/60 disabled:!text-white/80">
-                パスワード
-              </Button>
+              <Button className="w-48">パスワード</Button>
             </a>
             <Button className="w-48" onClick={() => setOpen(true)} disabled={busy}>
               ログアウト
@@ -101,13 +97,12 @@ export default function SettingsPage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <DialogTitle>ログアウトしますか？</DialogTitle>
-              <DialogDescription>セッションCookieを破棄してログイン画面へ戻ります。</DialogDescription>
+              <DialogDescription>ログイン画面へ戻ります。</DialogDescription>
             </div>
             <DialogClose asChild>
               <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
             </DialogClose>
           </div>
-
           <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>
               <Button variant="secondary" type="button" disabled={busy}>キャンセル</Button>
