@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -9,7 +11,10 @@ import { useToast } from "@/components/ui/toast";
 
 type LegalForm = "corporation" | "sole";
 
+const COMPANY_CACHE_KEY = "clasz_active_company_name";
+
 export default function NewCompanyPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [legalForm, setLegalForm] = useState<LegalForm>("sole");
   const [name, setName] = useState("");
@@ -44,8 +49,9 @@ export default function NewCompanyPage() {
         toast({ variant: "error", title: "登録失敗", description: "入力内容とログイン状態を確認してください" });
         return;
       }
+      window.localStorage.setItem(COMPANY_CACHE_KEY, name.trim());
       toast({ variant: "success", title: "登録完了", description: "会社を登録しました" });
-      window.location.href = "/home";
+      router.replace("/home");
     } catch {
       setError("会社の登録に失敗しました。");
       toast({ variant: "error", title: "登録失敗", description: "ネットワークを確認してください" });
@@ -77,7 +83,7 @@ export default function NewCompanyPage() {
 
           <div className="flex flex-wrap items-center gap-3 pt-1">
             <Button onClick={onSubmit} disabled={busy}>{busy ? "登録中…" : "登録する"}</Button>
-            <a href="/selectcompany"><Button variant="secondary" type="button">会社選択へ</Button></a>
+            <Link href="/selectcompany" prefetch><Button variant="secondary" type="button">会社選択へ</Button></Link>
           </div>
         </CardContent>
       </Card>
