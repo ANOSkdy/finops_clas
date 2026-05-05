@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -55,7 +56,7 @@ export default function HomePage() {
       <PageHeader
         title="ホーム"
         description="アラートと期限の近いタスクを確認します。"
-        action={<a href="/upload"><Button>アップロードへ</Button></a>}
+        action={<Link href="/upload" prefetch><Button>アップロードへ</Button></Link>}
       />
 
       {state === "loading" && (
@@ -70,7 +71,7 @@ export default function HomePage() {
         <Card className="glass">
           <CardHeader><div className="text-base font-semibold">ログインが必要です</div></CardHeader>
           <CardContent className="flex flex-wrap gap-3">
-            <a href="/login"><Button>ログインへ</Button></a>
+            <Link href="/login" prefetch><Button>ログインへ</Button></Link>
             <Button variant="secondary" onClick={() => { toast({ description: "再試行します" }); load(); }}>再試行</Button>
           </CardContent>
         </Card>
@@ -83,7 +84,7 @@ export default function HomePage() {
             <div className="mt-1 text-sm text-inkMuted">会社を選択すると利用できます。</div>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
-            <a href="/selectcompany"><Button>会社を選択</Button></a>
+            <Link href="/selectcompany" prefetch><Button>会社を選択</Button></Link>
             <Button variant="secondary" onClick={load}>再試行</Button>
           </CardContent>
         </Card>
@@ -94,7 +95,7 @@ export default function HomePage() {
           <CardHeader><div className="text-base font-semibold">読み込みに失敗しました</div></CardHeader>
           <CardContent className="flex flex-wrap gap-3">
             <Button onClick={load}>再試行</Button>
-            <a href="/manual"><Button variant="secondary">マニュアル</Button></a>
+            <Link href="/manual" prefetch><Button variant="secondary">マニュアル</Button></Link>
           </CardContent>
         </Card>
       )}
