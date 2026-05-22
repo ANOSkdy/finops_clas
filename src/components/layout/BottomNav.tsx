@@ -1,59 +1,68 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/ui/cn";
 
-type Item = { href: string; label: string; icon: string };
+type Item = { href: string; label: string };
 
 const items: Item[] = [
-  { href: "/home", label: "ホーム", icon: "🏠" },
-  { href: "/schedule", label: "スケジュール", icon: "📅" },
-  { href: "/upload", label: "アップロード", icon: "📊" },
-  { href: "/manual", label: "マニュアル", icon: "📑" },
-  { href: "/settings", label: "設定", icon: "⚙️" },
+  { href: "/home", label: "ホーム" },
+  { href: "/schedule", label: "スケジュール" },
+  { href: "/upload", label: "アップロード" },
+  { href: "/manual", label: "マニュアル" },
+  { href: "/settings", label: "設定" },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
   const isSelectCompany = pathname === "/selectcompany" || pathname.startsWith("/selectcompany/");
 
   if (isSelectCompany) return null;
 
-  const itemClass = (active: boolean) =>
-    cn(
-      "focus-ring tap-44 col-span-1 flex flex-col items-center justify-center rounded-lg px-1 py-2 text-[10px] whitespace-nowrap",
-      active ? "text-primary font-semibold" : "text-inkMuted"
-    );
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-panel/95 backdrop-blur safe-bottom">
-      <div className="mx-auto grid h-16 max-w-[1080px] grid-cols-5 items-center px-2 safe-x">
-        {items.map((it) => {
-          const active = isActive(it.href);
-          return (
-            <a
-              key={it.href}
-              href={it.href}
-              aria-current={active ? "page" : undefined}
-              className={itemClass(active)}
-            >
-              <div className="text-lg" aria-hidden="true">
-                {it.icon}
-              </div>
-              <div className="mt-0.5">{it.label}</div>
-              <span
-                aria-hidden="true"
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="focus-ring fixed left-3 top-[4.25rem] z-50 rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-primary)] shadow-[var(--shadow-elevation-1)]"
+        aria-expanded={open}
+        aria-controls="app-side-nav"
+      >
+        {open ? "ナビを閉じる" : "ナビを開く"}
+      </button>
+
+      <nav
+        id="app-side-nav"
+        className={cn(
+          "fixed left-0 top-0 z-40 h-screen safe-top safe-bottom border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)]/95 px-2 pt-20 backdrop-blur transition-transform duration-200",
+          open ? "translate-x-0" : "-translate-x-[88%]"
+        )}
+      >
+        <div className="w-44 space-y-1">
+          {items.map((it) => {
+            const active = isActive(it.href);
+            return (
+              <a
+                key={it.href}
+                href={it.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "nav-indicator mt-1 h-1 w-8 rounded-full transition-opacity",
-                  active ? "opacity-100" : "opacity-0"
+                  "focus-ring flex min-h-11 items-center rounded-lg px-3 text-sm transition-colors",
+                  active
+                    ? "bg-[var(--color-bg-secondary)] font-semibold text-[var(--color-text-primary)]"
+                    : "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]"
                 )}
-              />
-            </a>
-          );
-        })}
-      </div>
-    </nav>
+              >
+                <span className="truncate">{it.label}</span>
+              </a>
+            );
+          })}
+        </div>
+      </nav>
+    </>
   );
 }
 
