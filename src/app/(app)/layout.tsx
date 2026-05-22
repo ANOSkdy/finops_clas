@@ -1,21 +1,22 @@
 import type { ReactNode } from "react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { MainContainer } from "@/components/ui/MainContainer";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <a
         href="#main"
-        className="focus-ring sr-only fixed left-3 top-3 z-[90] rounded-lg bg-panel px-3 py-2 text-sm text-primary shadow-softSm focus:not-sr-only"
+        className="focus-ring sr-only fixed left-3 top-3 z-[90] rounded-lg border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 py-2 text-sm text-[var(--color-text-primary)] shadow-[var(--shadow-elevation-1)] focus:not-sr-only"
       >
         本文へスキップ
       </a>
 
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-[var(--color-bg-primary)]">
         <AppHeader />
-        <main id="main" className="mx-auto w-full max-w-[1080px] px-4 pt-6 pb-safe-nav sm:px-6">
-          {children}
+        <main id="main" className="pt-6 pb-safe-nav">
+          <MainContainer>{children}</MainContainer>
         </main>
         <BottomNav />
       </div>

@@ -1,41 +1,49 @@
 @import "tailwindcss";
 @source "../**/*.{js,ts,jsx,tsx,mdx}";
 
-/* Cookpad-inspired foundation */
 :root {
   color-scheme: light;
 
-  /* Base / Surfaces */
-  --base: 248 246 242;              /* #f8f6f2 */
-  --surface: 255 255 255;           /* #ffffff */
-  --panel: 255 255 255;             /* #ffffff */
+  --color-brand: #5ac8b8;
 
-  /* Brand */
-  --primary: 242 140 6;             /* #f28c06 */
-  --primary-pressed: 217 122 0;     /* #d97a00 */
-  --primary-container: 255 244 229; /* warm orange tint */
+  --color-text-primary: #08131a;
+  --color-text-secondary: rgba(8, 19, 26, 0.66);
+  --color-text-disabled: rgba(8, 19, 26, 0.5);
+  --color-text-invert: #ffffff;
 
-  /* Semantic */
-  --secondary: 67 160 71;           /* #43a047 success */
-  --secondary-container: 232 245 233;
-  --accent1: 249 168 37;            /* #f9a825 warning */
-  --danger: 229 57 53;              /* #e53935 */
-  --accent3: 242 140 6;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f8fa;
 
-  /* Buttons */
-  --button: 242 140 6;              /* #f28c06 */
-  --button-pressed: 217 122 0;      /* #d97a00 */
-  --button-text: 255 255 255;       /* #ffffff */
+  --color-surface-normal: #ffffff;
+  --color-surface-primary: #08131a;
+  --color-surface-primary-hover: #202a30;
+  --color-surface-quaternary: #f5f8fa;
 
-  /* Text / Lines */
-  --text: 15 15 15;                 /* #0f0f0f */
-  --text-muted: 117 117 117;        /* #757575 */
-  --text-disabled: 189 189 189;     /* #bdbdbd */
-  --outline: 224 224 224;           /* #e0e0e0 */
-  --border: 224 224 224;            /* #e0e0e0 */
-  --focus: 242 140 6;               /* #f28c06 */
+  --color-border-default: rgba(8, 19, 26, 0.14);
+  --color-border-strong: rgba(8, 19, 26, 0.22);
+  --color-border-focus: #292d9e;
 
-  /* Memo palette (keep for memo tones) */
+  --color-success: #1e7b65;
+  --color-success-subdued: #e6f6f2;
+  --color-danger: #b22323;
+  --color-danger-subdued: #fdf3f3;
+  --color-caution: #916626;
+  --color-caution-subdued: #fefbea;
+
+  --shadow-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.14),
+    0px 1px 2px 0px rgba(0, 0, 0, 0.22);
+  --shadow-elevation-4: 0px 4px 8px 3px rgba(0, 0, 0, 0.14),
+    0px 1px 3px 0px rgba(0, 0, 0, 0.22);
+  --shadow-elevation-6: 0px 6px 10px 4px rgba(0, 0, 0, 0.14),
+    0px 2px 3px 0px rgba(0, 0, 0, 0.22);
+
+  --font-sans: "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Arial,
+    "Noto Sans JP", Meiryo, sans-serif;
+  --font-serif: "Hiragino Mincho ProN", "Hiragino Mincho Pro", HGSMinchoE,
+    "Yu Mincho", YuMincho, "MS PMincho", serif;
+  --font-mono: SFMono-Regular, Consolas, Menlo, Courier, monospace;
+
+  /* Compatibility variables used by existing screens before PR2 migration */
   --memo-red: 242 139 130;
   --memo-orange: 251 188 5;
   --memo-yellow: 255 244 117;
@@ -55,78 +63,67 @@ body {
 }
 
 body {
-  background: rgb(var(--base));
-  color: rgb(var(--text));
-  font-family: noto-sans, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
-    arial, sans-serif;
-  font-feature-settings: "liga";
-  letter-spacing: -0.4px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
   line-height: 1.5;
   overflow-wrap: break-word;
-  line-break: strict;
-  word-break: break-all;
 }
 
-/* Safe area + spacing utilities */
 @layer utilities {
   .safe-top { padding-top: env(safe-area-inset-top); }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   .safe-x { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
   .pb-safe-nav { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
   .tap-44 { min-height: 44px; min-width: 44px; }
-  .text-button { color: rgb(var(--button-text)); }
 }
 
-/* Focus ring */
 .focus-ring:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px rgb(var(--base)),
-    0 0 0 4px rgb(var(--focus) / 0.78);
+    0 0 0 2px var(--color-bg-primary),
+    0 0 0 4px color-mix(in srgb, var(--color-border-focus) 78%, transparent);
 }
 
-/* Navigation indicator */
 .nav-indicator {
-  background: rgb(var(--primary));
+  background: var(--color-surface-primary);
 }
 
-/* Cookpad-style surfaces */
 .surface-card,
 .glass {
-  background: rgb(var(--panel));
-  border: 1px solid rgb(var(--border));
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  background: var(--color-surface-normal);
+  border: 1px solid var(--color-border-default);
+  box-shadow: var(--shadow-elevation-1);
 }
 
 @media (hover: hover) {
   .surface-card:hover,
   .glass:hover {
-    border-color: rgb(var(--primary) / 0.28);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-elevation-4);
   }
 }
 
 .memo-card {
   border-radius: 12px;
-  border: 1px solid rgb(var(--outline));
+  border: 1px solid var(--color-border-default);
   background: rgb(var(--memo-yellow));
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-elevation-1);
   padding: 1rem;
   transition: box-shadow 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
 .memo-card:focus-within {
-  border-color: rgb(var(--focus));
+  border-color: var(--color-border-focus);
   box-shadow:
-    0 0 0 1px rgb(var(--focus)),
-    0 4px 8px rgba(242, 140, 6, 0.18);
+    0 0 0 1px var(--color-border-focus),
+    var(--shadow-elevation-4);
 }
 
 @media (hover: hover) {
   .memo-card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-elevation-4);
   }
 }
 

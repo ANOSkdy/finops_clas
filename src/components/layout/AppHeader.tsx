@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { MainContainer } from "@/components/ui/MainContainer";
 
 type ActiveCompany =
   | { company: { companyId: string; name: string } }
@@ -51,32 +52,27 @@ export function AppHeader() {
   return (
     <header
       data-scrolled={scrolled}
-      className="sticky top-0 z-40 border-b border-line bg-panel/95 backdrop-blur transition-all"
+      className="sticky top-0 z-40 border-b border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur transition-all"
     >
-      <div className="mx-auto w-full max-w-[1080px] px-4 safe-x sm:px-6">
+      <MainContainer className="safe-x">
         <div
           data-scrolled={scrolled}
           className="flex h-14 items-center justify-between transition-[height] data-[scrolled=true]:h-12"
         >
-          <div className="flex items-center gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-sm font-semibold text-button shadow-softSm">
-              C
-            </div>
-            <div className="leading-tight">
-              <div className="text-sm font-semibold tracking-tight text-ink">CLAS</div>
-              <div className="text-xs text-inkMuted">
-                {loaded ? companyName : "読み込み中…"}
-              </div>
+          <div className="leading-tight">
+            <div className="text-base font-semibold text-[var(--color-text-primary)]">CLAS FinOps</div>
+            <div className="text-xs text-[var(--color-text-secondary)]">
+              {loaded ? companyName : "読み込み中…"}
             </div>
           </div>
 
           <a href="/selectcompany" className="mr-2">
-            <Button variant="primary" size="md">
+            <Button variant="outline" size="md">
               会社切替
             </Button>
           </a>
         </div>
-      </div>
+      </MainContainer>
     </header>
   );
 }
