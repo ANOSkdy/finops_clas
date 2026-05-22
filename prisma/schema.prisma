@@ -46,6 +46,7 @@ model Company {
   emails      Email[]
   sessions    Session[]
   taxSetting  CompanyTaxSetting?
+  recurringTaxDueDates CompanyRecurringTaxDueDate[]
 
   @@map("companies")
 }
@@ -67,6 +68,27 @@ model CompanyTaxSetting {
   @@map("company_tax_settings")
 }
 
+
+
+model CompanyRecurringTaxDueDate {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId        String   @map("company_id") @db.Uuid
+  taxType          String   @map("tax_type")
+  title            String
+  installmentLabel String?  @map("installment_label")
+  month            Int
+  day              Int
+  enabled          Boolean  @default(true)
+  sortOrder        Int      @default(0) @map("sort_order")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, enabled])
+  @@index([companyId, taxType])
+  @@map("company_recurring_tax_due_dates")
+}
 model Membership {
   userId        String   @map("user_id") @db.Uuid
   companyId     String   @map("company_id") @db.Uuid

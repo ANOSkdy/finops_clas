@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { requireActiveCompany } from "@/lib/auth/tenant";
-import { generateTaxScheduleTasks } from "@/lib/tasks/taxSchedule";
+import { generateRecurringTaxDueDateTasks, generateTaxScheduleTasks } from "@/lib/tasks/taxSchedule";
 
 export const runtime = "nodejs";
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     where: { companyId: scoped.companyId },
   });
 
-  const generatedTasks = generateTaxScheduleTasks({
+  const generatedTaxTasks = generateTaxScheduleTasks({
     company: {
       legalForm: scoped.company.legalForm,
       fiscalClosingMonth:
@@ -36,6 +36,19 @@ export async function POST(req: NextRequest) {
       previousConsumptionTaxNationalAmountYen: taxSetting?.previousConsumptionTaxNationalAmountYen ?? null,
     },
   });
+
+
+
+  const recurringDueDates = await prisma.companyRecurringTaxDueDate.findMany({
+    where: { companyId: scoped.companyId, enabled: true },
+    select: { id: true, taxType: true, title: true, installmentLabel: true, month: true, day: true, enabled: true },
+  });
+
+  const generatedRecurringTasks = generateRecurringTaxDueDateTasks({
+    dueDates: recurringDueDates,
+  });
+
+  const generatedTasks = [...generatedTaxTasks, ...generatedRecurringTasks];
 
   await prisma.task.createMany({
     data: generatedTasks.map((task) => ({
