@@ -83,8 +83,11 @@ model Task {
   companyId String   @map("company_id") @db.Uuid
   category  String // tax|social|other
   title     String
-  dueDate   DateTime @map("due_date") @db.Date
-  status    String   @default("pending") // pending|done|overdue
+  dueDate   DateTime  @map("due_date") @db.Date
+  taskKey   String?   @map("task_key")
+  periodStart DateTime? @map("period_start") @db.Date
+  periodEnd DateTime? @map("period_end") @db.Date
+  status    String    @default("pending") // pending|done|overdue
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
@@ -92,6 +95,7 @@ model Task {
 
   @@index([companyId, dueDate])
   @@index([companyId, status])
+  @@index([companyId, taskKey])
   @@map("tasks")
 }
 
