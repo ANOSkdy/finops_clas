@@ -27,7 +27,7 @@ export function BottomNav() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="focus-ring fixed left-3 top-[4.25rem] z-50 rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-primary)] shadow-[var(--shadow-elevation-1)]"
+        className="focus-ring fixed left-3 top-[calc(var(--app-header-height)+0.75rem)] z-50 rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-primary)] shadow-[var(--shadow-elevation-1)]"
         aria-expanded={open}
         aria-controls="app-side-nav"
       >
@@ -37,8 +37,8 @@ export function BottomNav() {
       <nav
         id="app-side-nav"
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen safe-top safe-bottom border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)]/95 px-2 pt-20 backdrop-blur transition-transform duration-200",
-          open ? "translate-x-0" : "-translate-x-[88%]"
+          "t-panel fixed left-0 top-[var(--app-header-height)] z-40 h-[calc(100dvh-var(--app-header-height))] safe-bottom border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)]/95 px-2 pt-16 backdrop-blur",
+          open ? "t-panel-open" : "t-panel-closed"
         )}
       >
         <div className="w-44 space-y-1">

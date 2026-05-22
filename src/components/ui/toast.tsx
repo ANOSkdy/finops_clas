@@ -94,7 +94,7 @@ function tone(variant: ToastVariant) {
 function ToastViewport({ items, onDismiss }: { items: ToastItem[]; onDismiss: (id: string) => void }) {
   return (
     <div
-      className="fixed bottom-20 left-0 right-0 z-[95] mx-auto w-full max-w-xl px-4 safe-bottom pointer-events-none"
+      className="pointer-events-none fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-[95] w-[min(calc(100vw-2rem),36rem)] -translate-x-1/2"
       aria-live="polite"
       aria-relevant="additions text"
     >
@@ -103,7 +103,7 @@ function ToastViewport({ items, onDismiss }: { items: ToastItem[]; onDismiss: (i
           <div
             key={t.id}
             role={t.variant === "error" ? "alert" : "status"}
-            className={cn("rounded-xl border px-4 py-3 shadow-sm", tone(t.variant))}
+            className={cn("t-toast-item rounded-xl border px-4 py-3 shadow-sm", tone(t.variant))}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
