@@ -45,8 +45,26 @@ model Company {
   ratings     Rating[]
   emails      Email[]
   sessions    Session[]
+  taxSetting  CompanyTaxSetting?
 
   @@map("companies")
+}
+
+
+
+model CompanyTaxSetting {
+  id                                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId                               String   @unique @map("company_id") @db.Uuid
+  previousCorporateTaxNationalAmountYen   BigInt?  @map("previous_corporate_tax_national_amount_yen")
+  isConsumptionTaxTaxableBusiness         Boolean  @default(false) @map("is_consumption_tax_taxable_business")
+  consumptionTaxReason                    String?  @map("consumption_tax_reason")
+  previousConsumptionTaxNationalAmountYen BigInt?  @map("previous_consumption_tax_national_amount_yen")
+  createdAt                               DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                               DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("company_tax_settings")
 }
 
 model Membership {

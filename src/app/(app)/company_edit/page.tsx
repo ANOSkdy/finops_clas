@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/toast";
 
 type LegalForm = "corporation" | "sole";
 type PaymentSchedule = "monthly" | "special";
+type ConsumptionTaxReason = "sales_over_10m" | "taxable_selection" | "invoice_registered" | "other";
 
 type CompanyResponse = {
   company: {
@@ -28,10 +29,20 @@ type CompanyResponse = {
   userRole?: string | null;
 };
 
+type TaxSettingResponse = {
+  taxSetting: {
+    previousCorporateTaxNationalAmountYen: string | null;
+    isConsumptionTaxTaxableBusiness: boolean;
+    consumptionTaxReason: ConsumptionTaxReason | null;
+    previousConsumptionTaxNationalAmountYen: string | null;
+  };
+};
+
 export default function CompanyEditPage() {
   const { toast } = useToast();
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [taxBusy, setTaxBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [canEdit, setCanEdit] = useState(false);
 
@@ -50,6 +61,10 @@ export default function CompanyEditPage() {
   const [residentTaxPaymentSchedule, setResidentTaxPaymentSchedule] = useState<
     PaymentSchedule | ""
   >("");
+  const [previousCorporateTaxNationalAmountYen, setPreviousCorporateTaxNationalAmountYen] = useState("");
+  const [isConsumptionTaxTaxableBusiness, setIsConsumptionTaxTaxableBusiness] = useState(false);
+  const [consumptionTaxReason, setConsumptionTaxReason] = useState<ConsumptionTaxReason | "">("");
+  const [previousConsumptionTaxNationalAmountYen, setPreviousConsumptionTaxNationalAmountYen] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -87,6 +102,19 @@ export default function CompanyEditPage() {
         if (!isPrivileged) {
           setError("会社情報の修正は管理者またはグローバル管理者のみ実施できます。");
         }
+
+        const taxRes = await fetch("/api/company/tax-settings", { credentials: "include" });
+        if (taxRes.ok) {
+          const taxData = (await taxRes.json()) as TaxSettingResponse;
+          setPreviousCorporateTaxNationalAmountYen(
+            taxData.taxSetting.previousCorporateTaxNationalAmountYen ?? ""
+          );
+          setIsConsumptionTaxTaxableBusiness(taxData.taxSetting.isConsumptionTaxTaxableBusiness);
+          setConsumptionTaxReason(taxData.taxSetting.consumptionTaxReason ?? "");
+          setPreviousConsumptionTaxNationalAmountYen(
+            taxData.taxSetting.previousConsumptionTaxNationalAmountYen ?? ""
+          );
+        }
       } catch {
         setError("会社情報の取得に失敗しました。");
       } finally {
@@ -99,6 +127,40 @@ export default function CompanyEditPage() {
   const monthValue = monthDisabled ? 12 : fiscalClosingMonth;
   const corporateNumberValid =
     !corporateNumber || /^[0-9]{13}$/.test(corporateNumber);
+
+  async function onSubmitTaxSettings() {
+    if (!canEdit) return;
+    try {
+      setTaxBusy(true);
+      const res = await fetch("/api/company/tax-settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          taxSetting: {
+            previousCorporateTaxNationalAmountYen: previousCorporateTaxNationalAmountYen || null,
+            isConsumptionTaxTaxableBusiness,
+            consumptionTaxReason: isConsumptionTaxTaxableBusiness ? consumptionTaxReason || null : null,
+            previousConsumptionTaxNationalAmountYen: previousConsumptionTaxNationalAmountYen || null,
+          },
+        }),
+      });
+      if (!res.ok) {
+        toast({ variant: "error", title: "更新失敗", description: "税務設定の更新に失敗しました" });
+        return;
+      }
+      const data = (await res.json()) as TaxSettingResponse;
+      setPreviousCorporateTaxNationalAmountYen(data.taxSetting.previousCorporateTaxNationalAmountYen ?? "");
+      setIsConsumptionTaxTaxableBusiness(data.taxSetting.isConsumptionTaxTaxableBusiness);
+      setConsumptionTaxReason(data.taxSetting.consumptionTaxReason ?? "");
+      setPreviousConsumptionTaxNationalAmountYen(data.taxSetting.previousConsumptionTaxNationalAmountYen ?? "");
+      toast({ variant: "success", title: "更新完了", description: "税務設定を更新しました" });
+    } catch {
+      toast({ variant: "error", title: "更新失敗", description: "ネットワークを確認してください" });
+    } finally {
+      setTaxBusy(false);
+    }
+  }
 
   async function onSubmit() {
     if (!canEdit) return;
@@ -185,123 +247,48 @@ export default function CompanyEditPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Field
-            label="法人種別"
-            value={legalForm === "corporation" ? "法人" : "個人事業主"}
-            disabled
-          />
-
-          <Field
-            label="会社名"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={busy || !canEdit}
-          />
-
-          <Field
-            label="所在地"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            disabled={busy || !canEdit}
-          />
-
-          <Field
-            label="法人番号"
-            inputMode="numeric"
-            maxLength={13}
-            value={corporateNumber}
-            onChange={(e) => setCorporateNumber(e.target.value)}
-            disabled={busy || !canEdit}
-            error={corporateNumberValid ? null : "13桁の数字で入力してください"}
-          />
-
-          <Field
-            label="設立年月日"
-            type="date"
-            value={establishedOn}
-            onChange={(e) => setEstablishedOn(e.target.value)}
-            disabled={busy || !canEdit}
-          />
-
-          <Field
-            label="決算月"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={12}
-            value={String(monthValue)}
-            onChange={(e) => setFiscalClosingMonth(Number(e.target.value))}
-            disabled={busy || !canEdit || monthDisabled}
-            hint={monthDisabled ? "個人事業主は12月固定です" : "1〜12"}
-          />
-
-          <Field
-            label="代表者名"
-            value={representativeName}
-            onChange={(e) => setRepresentativeName(e.target.value)}
-            disabled={busy || !canEdit}
-          />
-
-          <Field
-            label="連絡先Email"
-            type="email"
-            inputMode="email"
-            autoCapitalize="none"
-            spellCheck={false}
-            value={contactEmail}
-            onChange={(e) => setContactEmail(e.target.value)}
-            disabled={busy || !canEdit}
-          />
-
-          <Field
-            label="連絡先TEL"
-            type="tel"
-            inputMode="tel"
-            value={contactPhone}
-            onChange={(e) => setContactPhone(e.target.value)}
-            disabled={busy || !canEdit}
-          />
-
-          <SelectField
-            label="源泉所得税 納付特例"
-            value={withholdingIncomeTaxPaymentSchedule}
-            onChange={(e) =>
-              setWithholdingIncomeTaxPaymentSchedule(
-                e.target.value as PaymentSchedule | ""
-              )
-            }
-            disabled={busy || !canEdit}
-            placeholder="選択してください"
-          >
+          <Field label="法人種別" value={legalForm === "corporation" ? "法人" : "個人事業主"} disabled />
+          <Field label="会社名" required value={name} onChange={(e) => setName(e.target.value)} disabled={busy || !canEdit} />
+          <Field label="所在地" value={address} onChange={(e) => setAddress(e.target.value)} disabled={busy || !canEdit} />
+          <Field label="法人番号" inputMode="numeric" maxLength={13} value={corporateNumber} onChange={(e) => setCorporateNumber(e.target.value)} disabled={busy || !canEdit} error={corporateNumberValid ? null : "13桁の数字で入力してください"} />
+          <Field label="設立年月日" type="date" value={establishedOn} onChange={(e) => setEstablishedOn(e.target.value)} disabled={busy || !canEdit} />
+          <Field label="決算月" type="number" inputMode="numeric" min={1} max={12} value={String(monthValue)} onChange={(e) => setFiscalClosingMonth(Number(e.target.value))} disabled={busy || !canEdit || monthDisabled} hint={monthDisabled ? "個人事業主は12月固定です" : "1〜12"} />
+          <Field label="代表者名" value={representativeName} onChange={(e) => setRepresentativeName(e.target.value)} disabled={busy || !canEdit} />
+          <Field label="連絡先Email" type="email" inputMode="email" autoCapitalize="none" spellCheck={false} value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} disabled={busy || !canEdit} />
+          <Field label="連絡先TEL" type="tel" inputMode="tel" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} disabled={busy || !canEdit} />
+          <SelectField label="源泉所得税 納付特例" value={withholdingIncomeTaxPaymentSchedule} onChange={(e) => setWithholdingIncomeTaxPaymentSchedule(e.target.value as PaymentSchedule | "")} disabled={busy || !canEdit} placeholder="選択してください">
             <option value="monthly">毎月納付</option>
             <option value="special">納期特例（年2回）</option>
           </SelectField>
-
-          <SelectField
-            label="住民税 納付特例"
-            value={residentTaxPaymentSchedule}
-            onChange={(e) =>
-              setResidentTaxPaymentSchedule(e.target.value as PaymentSchedule | "")
-            }
-            disabled={busy || !canEdit}
-            placeholder="選択してください"
-          >
+          <SelectField label="住民税 納付特例" value={residentTaxPaymentSchedule} onChange={(e) => setResidentTaxPaymentSchedule(e.target.value as PaymentSchedule | "")} disabled={busy || !canEdit} placeholder="選択してください">
             <option value="monthly">毎月納付</option>
             <option value="special">納期特例（年2回）</option>
           </SelectField>
-
           <div className="flex items-center gap-3 pt-1">
-            <Button onClick={onSubmit} disabled={busy || !canEdit}>
-              {busy ? "更新中…" : "更新する"}
-            </Button>
-            <a
-              href="/settings"
-              className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
-            >
-              設定へ戻る
-            </a>
+            <Button onClick={onSubmit} disabled={busy || !canEdit}>{busy ? "更新中…" : "更新する"}</Button>
+            <a href="/settings" className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90">設定へ戻る</a>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="glass">
+        <CardHeader>
+          <div className="text-base font-semibold">税務スケジュール設定</div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Field label="前期法人税（国税）額" inputMode="numeric" value={previousCorporateTaxNationalAmountYen} onChange={(e) => setPreviousCorporateTaxNationalAmountYen(e.target.value)} disabled={taxBusy || !canEdit} />
+          <SelectField label="消費税の課税事業者" value={isConsumptionTaxTaxableBusiness ? "true" : "false"} onChange={(e) => setIsConsumptionTaxTaxableBusiness(e.target.value === "true")} disabled={taxBusy || !canEdit}>
+            <option value="false">いいえ</option>
+            <option value="true">はい</option>
+          </SelectField>
+          <SelectField label="消費税課税事業者の理由" value={consumptionTaxReason} onChange={(e) => setConsumptionTaxReason(e.target.value as ConsumptionTaxReason | "")} disabled={taxBusy || !canEdit || !isConsumptionTaxTaxableBusiness} placeholder="選択してください">
+            <option value="sales_over_10m">2事業年度前の課税売上高が1,000万円超</option>
+            <option value="taxable_selection">消費税課税事業者選択届出書を提出</option>
+            <option value="invoice_registered">インボイス登録</option>
+            <option value="other">その他</option>
+          </SelectField>
+          <Field label="前年度消費税（国税分）" inputMode="numeric" value={previousConsumptionTaxNationalAmountYen} onChange={(e) => setPreviousConsumptionTaxNationalAmountYen(e.target.value)} disabled={taxBusy || !canEdit} />
+          <Button onClick={onSubmitTaxSettings} disabled={taxBusy || !canEdit}>{taxBusy ? "更新中…" : "税務設定を更新する"}</Button>
         </CardContent>
       </Card>
     </div>
