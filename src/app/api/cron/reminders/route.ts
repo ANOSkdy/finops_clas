@@ -17,6 +17,32 @@ const REMIND_LABELS: Record<ReminderEmailKey, string> = {
   overdue: "期限切れ",
 };
 
+
+function normalizeAppUrl(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  const withProtocol = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+
+  try {
+    const parsed = new URL(withProtocol);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
+    const normalized = parsed.toString().replace(/\/$/, "");
+    return normalized || null;
+  } catch {
+    return null;
+  }
+}
+
+function getAppUrl(): string | null {
+  return (
+    normalizeAppUrl(process.env.APP_URL ?? "") ??
+    normalizeAppUrl(process.env.NEXT_PUBLIC_APP_URL ?? "") ??
+    normalizeAppUrl(process.env.VERCEL_URL ?? "")
+  );
+}
 function formatDateUTC(d: Date): string {
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
@@ -64,12 +90,13 @@ async function handleCronRequest(req: NextRequest) {
     take: 200,
   });
 
-  let scanned = tasks.length;
+  const scanned = tasks.length;
   let eligible = 0;
   let queued = 0;
   let sent = 0;
   let skipped = 0;
   let failed = 0;
+  const appUrl = getAppUrl();
 
   for (const task of tasks) {
     const remindKey = getReminderEmailKey({
@@ -124,7 +151,7 @@ async function handleCronRequest(req: NextRequest) {
     const dueDateStr = formatDateUTC(task.dueDate);
     const remindLabel = REMIND_LABELS[remindKey];
     const subject = `【CLAS FinOps】税務期限リマインド：${task.title}`;
-    const body = [
+    const bodyLines = [
       `${task.company.name} の税務スケジュールのリマインドです。`,
       "",
       `内容: ${task.title}`,
@@ -132,7 +159,11 @@ async function handleCronRequest(req: NextRequest) {
       `通知: ${remindLabel}`,
       "",
       "アプリで詳細を確認してください。",
-    ].join("\n");
+    ];
+    if (appUrl) {
+      bodyLines.push(appUrl);
+    }
+    const body = bodyLines.join("\n");
 
     const sendResult = await sendMail({
       to: task.company.contactEmail,
