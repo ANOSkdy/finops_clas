@@ -94,7 +94,7 @@ export default function SchedulePage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">スケジュール</div>
-        <div className="mt-1 text-sm text-inkMuted">カテゴリ別にタスクを一覧表示します。</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">カテゴリ別にタスクを一覧表示します。</div>
         <div className="mt-3 w-full max-w-[360px]">
           <Button className="w-full" onClick={refreshTasks} disabled={updating}>
             タスクの更新
@@ -105,7 +105,7 @@ export default function SchedulePage() {
       {state === "loading" && skeleton}
 
       {state === "needsLogin" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">ログインが必要です</div>
           </CardHeader>
@@ -117,7 +117,7 @@ export default function SchedulePage() {
       )}
 
       {state === "needsCompany" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">会社が選択されていません</div>
           </CardHeader>
@@ -129,7 +129,7 @@ export default function SchedulePage() {
       )}
 
       {state === "error" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">読み込みに失敗しました</div>
           </CardHeader>

@@ -10,7 +10,7 @@ type Task = {
 
 function Badge({ status }: { status: Task["status"] }) {
   const base =
-    "inline-flex h-7 min-w-[52px] items-center justify-center whitespace-nowrap rounded-full border border-line bg-panel px-2 text-[11px] font-medium leading-none text-ink";
+    "inline-flex h-7 min-w-[52px] items-center justify-center whitespace-nowrap rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-2 text-[11px] font-medium leading-none text-[var(--color-text-primary)]";
 
   if (status === "done") return <span className={base}>完了</span>;
   if (status === "overdue") return <span className={base}>期限切れ</span>;
@@ -22,15 +22,15 @@ function Section({ title, items }: { title: string; items: Task[] }) {
 
   return (
     <section className="space-y-2">
-      <div className="text-xs font-semibold tracking-wide text-inkMuted">{title}</div>
+      <div className="text-xs font-semibold tracking-wide text-[var(--color-text-secondary)]">{title}</div>
 
       <ul className="space-y-2">
         {items.map((t) => (
-          <li key={t.taskId} className="glass rounded-2xl px-4 py-3">
+          <li key={t.taskId} className=" rounded-2xl px-4 py-3">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-sm font-semibold text-ink">{t.title}</div>
-                <div className="mt-1 text-xs text-inkMuted">期限: {t.dueDate}</div>
+                <div className="text-sm font-semibold text-[var(--color-text-primary)]">{t.title}</div>
+                <div className="mt-1 text-xs text-[var(--color-text-secondary)]">期限: {t.dueDate}</div>
               </div>
               <Badge status={t.status} />
             </div>
@@ -48,7 +48,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
 
   if (tasks.length === 0) {
     return (
-      <div className="glass rounded-2xl px-4 py-6 text-sm text-ink">
+      <div className=" rounded-2xl px-4 py-6 text-sm text-[var(--color-text-primary)]">
         タスクがまだありません。
       </div>
     );

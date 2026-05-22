@@ -86,9 +86,9 @@ export function useToast() {
 }
 
 function tone(variant: ToastVariant) {
-  if (variant === "success") return "border-secondary/35 bg-secondary/10 text-ink";
-  if (variant === "error") return "border-accent2/35 bg-accent2/10 text-ink";
-  return "border-line bg-panel text-ink";
+  if (variant === "success") return "border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]";
+  if (variant === "error") return "border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]";
+  return "border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]";
 }
 
 function ToastViewport({ items, onDismiss }: { items: ToastItem[]; onDismiss: (id: string) => void }) {
@@ -103,7 +103,7 @@ function ToastViewport({ items, onDismiss }: { items: ToastItem[]; onDismiss: (i
           <div
             key={t.id}
             role={t.variant === "error" ? "alert" : "status"}
-            className={cn("rounded-xl border px-4 py-3 shadow-softSm", tone(t.variant))}
+            className={cn("rounded-xl border px-4 py-3 shadow-sm", tone(t.variant))}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -112,7 +112,7 @@ function ToastViewport({ items, onDismiss }: { items: ToastItem[]; onDismiss: (i
               </div>
 
               <button
-                className="focus-ring tap-44 grid place-items-center rounded-lg text-sm text-inkMuted hover:text-ink"
+                className="focus-ring tap-44 grid place-items-center rounded-lg text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 onClick={() => onDismiss(t.id)}
                 aria-label="閉じる"
                 type="button"

@@ -21,7 +21,7 @@ export default async function ManualDetailPage({ params }: ManualDetailPageProps
     <div className="space-y-4">
       <div className="space-y-2">
         <Link
-          className="focus-ring inline-flex items-center rounded-lg bg-[color:rgb(var(--button))] px-2 py-1 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+          className="focus-ring inline-flex items-center rounded-lg bg-[color:rgb(var(--button))] px-2 py-1 text-sm text-white shadow-sm hover:bg-[color:rgb(var(--button))]/90"
           href="/manual"
         >
           ← 一覧に戻る
@@ -29,15 +29,15 @@ export default async function ManualDetailPage({ params }: ManualDetailPageProps
         <div className="text-xl font-semibold tracking-tight">{doc.title}</div>
       </div>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">本文</div>
         </CardHeader>
         <CardContent>
           {doc.contentMd ? (
-            <pre className="whitespace-pre-wrap text-sm text-ink">{doc.contentMd.trim()}</pre>
+            <pre className="whitespace-pre-wrap text-sm text-[var(--color-text-primary)]">{doc.contentMd.trim()}</pre>
           ) : (
-            <div className="text-sm text-inkMuted">本文がありません。</div>
+            <div className="text-sm text-[var(--color-text-secondary)]">本文がありません。</div>
           )}
         </CardContent>
       </Card>

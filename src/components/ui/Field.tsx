@@ -39,8 +39,8 @@ export function Field({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-11 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
-            "border-line focus:border-primary",
+            "focus-ring peer h-11 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-5 pb-2 text-sm text-[var(--color-text-primary)]",
+            "border-[var(--color-border-default)] focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent",
             inputClassName
@@ -50,8 +50,8 @@ export function Field({
         <label
           htmlFor={id}
           className={cn(
-            "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
-            "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
+            "pointer-events-none absolute left-3 top-2 text-xs text-[var(--color-text-secondary)] transition-all",
+            "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[var(--color-text-secondary)]",
             "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary",
             labelClassName
           )}
@@ -60,7 +60,7 @@ export function Field({
         </label>
       </div>
 
-      {hint && <p id={hintId} className="text-xs text-inkMuted">{hint}</p>}
+      {hint && <p id={hintId} className="text-xs text-[var(--color-text-secondary)]">{hint}</p>}
       {error && <p id={errorId} role="alert" className="text-xs text-accent2">{error}</p>}
     </div>
   );
@@ -99,8 +99,8 @@ export function SelectField({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-11 w-full rounded-lg border bg-panel px-3 pt-5 pb-2 text-sm text-ink",
-            "border-line focus:border-primary",
+            "focus-ring peer h-11 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-5 pb-2 text-sm text-[var(--color-text-primary)]",
+            "border-[var(--color-border-default)] focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
             inputClassName
           )}
@@ -112,8 +112,8 @@ export function SelectField({
         <label
           htmlFor={id}
           className={cn(
-            "pointer-events-none absolute left-3 text-xs text-inkMuted transition-all",
-            isEmpty ? "top-3 text-sm text-inkMuted" : "top-2",
+            "pointer-events-none absolute left-3 text-xs text-[var(--color-text-secondary)] transition-all",
+            isEmpty ? "top-3 text-sm text-[var(--color-text-secondary)]" : "top-2",
             "group-focus-within:top-2 group-focus-within:text-xs group-focus-within:text-primary",
             labelClassName
           )}
@@ -122,7 +122,7 @@ export function SelectField({
         </label>
       </div>
 
-      {hint && <p id={hintId} className="text-xs text-inkMuted">{hint}</p>}
+      {hint && <p id={hintId} className="text-xs text-[var(--color-text-secondary)]">{hint}</p>}
       {error && <p id={errorId} role="alert" className="text-xs text-accent2">{error}</p>}
     </div>
   );
@@ -155,8 +155,8 @@ export function TextareaField({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer min-h-[140px] w-full rounded-lg border bg-panel px-3 pt-6 pb-3 text-sm text-ink",
-            "border-line focus:border-primary resize-y",
+            "focus-ring peer min-h-[140px] w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-6 pb-3 text-sm text-[var(--color-text-primary)]",
+            "border-[var(--color-border-default)] focus:border-primary resize-y",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent",
             inputClassName
@@ -166,8 +166,8 @@ export function TextareaField({
         <label
           htmlFor={id}
           className={cn(
-            "pointer-events-none absolute left-3 top-2 text-xs text-inkMuted transition-all",
-            "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-inkMuted",
+            "pointer-events-none absolute left-3 top-2 text-xs text-[var(--color-text-secondary)] transition-all",
+            "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[var(--color-text-secondary)]",
             "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary",
             labelClassName
           )}
@@ -176,7 +176,7 @@ export function TextareaField({
         </label>
       </div>
 
-      {hint && <p id={hintId} className="text-xs text-inkMuted">{hint}</p>}
+      {hint && <p id={hintId} className="text-xs text-[var(--color-text-secondary)]">{hint}</p>}
       {error && <p id={errorId} role="alert" className="text-xs text-accent2">{error}</p>}
     </div>
   );

@@ -123,7 +123,7 @@ export default function PasswordPage() {
     return (
       <div className="space-y-2">
         <div className="text-xl font-semibold tracking-tight">パスワード変更</div>
-        <div className="text-sm text-inkMuted">権限を確認しています…</div>
+        <div className="text-sm text-[var(--color-text-secondary)]">権限を確認しています…</div>
       </div>
     );
   }
@@ -132,7 +132,7 @@ export default function PasswordPage() {
     return (
       <div className="space-y-2">
         <div className="text-xl font-semibold tracking-tight">パスワード変更</div>
-        <div className="text-sm text-inkMuted">このページを表示するにはログインが必要です。</div>
+        <div className="text-sm text-[var(--color-text-secondary)]">このページを表示するにはログインが必要です。</div>
       </div>
     );
   }
@@ -141,13 +141,13 @@ export default function PasswordPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">パスワード変更</div>
-        <div className="mt-1 text-sm text-inkMuted">現在のパスワードと新しいパスワードを入力してください。</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">現在のパスワードと新しいパスワードを入力してください。</div>
       </div>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">パスワードを更新</div>
-          <div className="mt-1 text-sm text-inkMuted">新しいパスワードは8文字以上で設定してください。</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">新しいパスワードは8文字以上で設定してください。</div>
         </CardHeader>
         <CardContent className="space-y-4">
           <Field

@@ -18,7 +18,7 @@ export function DialogContent({
       <DialogPrimitive.Content
         className={cn(
           "fixed left-1/2 top-1/2 z-[80] w-[min(92vw,520px)] -translate-x-1/2 -translate-y-1/2",
-          "rounded-xl border border-line bg-panel p-4 text-ink shadow-raised focus-ring outline-none",
+          "rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] p-4 text-[var(--color-text-primary)] shadow-raised focus-ring outline-none",
           className
         )}
         {...props}
@@ -38,5 +38,5 @@ export function DialogDescription({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>) {
-  return <DialogPrimitive.Description className={cn("mt-1 text-sm text-inkMuted", className)} {...props} />;
+  return <DialogPrimitive.Description className={cn("mt-1 text-sm text-[var(--color-text-secondary)]", className)} {...props} />;
 }
