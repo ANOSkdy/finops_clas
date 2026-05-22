@@ -114,6 +114,10 @@ async function handleCronRequest(req: NextRequest) {
         continue;
       }
       failed++;
+      console.error("reminder_cron_delivery_create_failed", {
+        taskId: task.id,
+        error: err instanceof Error ? err.message : String(err),
+      });
       continue;
     }
 
@@ -153,10 +157,17 @@ async function handleCronRequest(req: NextRequest) {
         },
       });
       failed++;
+      console.error("reminder_cron_send_failed", {
+        taskId: task.id,
+        remindKey,
+        error: sendResult.error,
+      });
     }
   }
 
-  return jsonOk({ ok: true, scanned, eligible, queued, sent, skipped, failed });
+  const result = { ok: true, scanned, eligible, queued, sent, skipped, failed };
+  console.info("reminder_cron_result", result);
+  return jsonOk(result);
 }
 
 export async function GET(req: NextRequest) {
