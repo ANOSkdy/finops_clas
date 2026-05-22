@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
   if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
   if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
 
+  const taxSetting = await prisma.companyTaxSetting.findUnique({
+    where: { companyId: scoped.companyId },
+  });
+
   const generatedTasks = generateTaxScheduleTasks({
     company: {
       legalForm: scoped.company.legalForm,
@@ -24,6 +28,12 @@ export async function POST(req: NextRequest) {
       withholdingIncomeTaxPaymentSchedule:
         scoped.company.withholdingIncomeTaxPaymentSchedule,
       residentTaxPaymentSchedule: scoped.company.residentTaxPaymentSchedule,
+    },
+    taxSetting: {
+      previousCorporateTaxNationalAmountYen: taxSetting?.previousCorporateTaxNationalAmountYen ?? null,
+      isConsumptionTaxTaxableBusiness: taxSetting?.isConsumptionTaxTaxableBusiness ?? false,
+      consumptionTaxReason: taxSetting?.consumptionTaxReason ?? null,
+      previousConsumptionTaxNationalAmountYen: taxSetting?.previousConsumptionTaxNationalAmountYen ?? null,
     },
   });
 

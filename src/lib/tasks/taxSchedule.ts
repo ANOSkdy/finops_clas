@@ -22,6 +22,13 @@ export type TaxScheduleCompanyInput = {
   residentTaxPaymentSchedule: string | null;
 };
 
+export type TaxScheduleTaxSettingInput = {
+  previousCorporateTaxNationalAmountYen?: bigint | number | string | null;
+  isConsumptionTaxTaxableBusiness?: boolean | null;
+  consumptionTaxReason?: string | null;
+  previousConsumptionTaxNationalAmountYen?: bigint | number | string | null;
+};
+
 const TAX_CATEGORY: GeneratedTask["category"] = "tax";
 
 function monthKey(date: Date): string {
@@ -30,13 +37,36 @@ function monthKey(date: Date): string {
   return `${y}-${m}`;
 }
 
+function addDaysUtc(date: Date, days: number): Date {
+  return toUtcDateOnly(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate() + days);
+}
+
+function toBigIntOrNull(value: bigint | number | string | null | undefined): bigint | null {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number") return Number.isFinite(value) ? BigInt(Math.trunc(value)) : null;
+  try {
+    return BigInt(value);
+  } catch {
+    return null;
+  }
+}
+
+function getConsumptionInterimCount(amount: bigint | null): 0 | 1 | 3 | 11 {
+  if (amount === null || amount <= BigInt(480000)) return 0;
+  if (amount <= BigInt(4000000)) return 1;
+  if (amount <= BigInt(48000000)) return 3;
+  return 11;
+}
+
 export function generateTaxScheduleTasks(input: {
   company: TaxScheduleCompanyInput;
+  taxSetting?: TaxScheduleTaxSettingInput | null;
   fromDate?: Date;
   monthsAhead?: number;
   holidays?: Set<string>;
 }): GeneratedTask[] {
-  const { company, holidays } = input;
+  const { company, holidays, taxSetting } = input;
   const monthsAhead = input.monthsAhead ?? 36;
   const today = startOfUtcDay(input.fromDate ?? new Date());
   const fromMonth = toUtcDateOnly(today.getUTCFullYear(), today.getUTCMonth() + 1, 1);
@@ -44,6 +74,11 @@ export function generateTaxScheduleTasks(input: {
   const tasks: GeneratedTask[] = [];
   const withholdingSpecial = company.withholdingIncomeTaxPaymentSchedule === "special";
   const residentTaxSpecial = company.residentTaxPaymentSchedule === "special";
+  const isCorporation = company.legalForm !== "sole";
+  const isTaxableBusiness = taxSetting?.isConsumptionTaxTaxableBusiness === true;
+  const previousCorporateTax = toBigIntOrNull(taxSetting?.previousCorporateTaxNationalAmountYen);
+  const previousConsumptionTax = toBigIntOrNull(taxSetting?.previousConsumptionTaxNationalAmountYen);
+  const consumptionInterimCount = getConsumptionInterimCount(previousConsumptionTax);
 
   for (let i = 1; i <= monthsAhead; i += 1) {
     const dueMonthStart = addMonthsUtc(fromMonth, i);
@@ -119,18 +154,100 @@ export function generateTaxScheduleTasks(input: {
       dueDate: adjustToNextBusinessDay(toUtcDateOnly(year, 1, 31), holidays),
     });
 
-    const isCorporation = company.legalForm !== "sole";
     if (isCorporation) {
       const fiscalClosingMonth = company.fiscalClosingMonth ?? 12;
       const fiscalYearEnd = endOfMonthUtc(year, fiscalClosingMonth);
+      const fiscalYearLabel = `${year}-${String(fiscalClosingMonth).padStart(2, "0")}`;
+      const fiscalYearStart = toUtcDateOnly(year - 1, fiscalClosingMonth + 1, 1);
       const corporateDueDate = adjustToNextBusinessDay(addMonthsUtc(fiscalYearEnd, 2), holidays);
 
       tasks.push({
-        taskKey: `tax:corporate-final:${year}-${String(fiscalClosingMonth).padStart(2, "0")}`,
+        taskKey: `tax:corporate-final:${fiscalYearLabel}`,
         category: TAX_CATEGORY,
         title: "法人税・地方税（確定申告・納付）",
         dueDate: corporateDueDate,
       });
+
+      if (previousCorporateTax !== null && previousCorporateTax > BigInt(200000)) {
+        const interimAnchor = addMonthsUtc(fiscalYearStart, 6);
+        const interimPeriodEnd = endOfMonthUtc(interimAnchor.getUTCFullYear(), interimAnchor.getUTCMonth() + 1);
+        tasks.push({
+          taskKey: `tax:corporate-interim:${fiscalYearLabel}`,
+          category: TAX_CATEGORY,
+          title: "法人税・地方税（予定納税・中間申告）",
+          dueDate: adjustToNextBusinessDay(addMonthsUtc(interimPeriodEnd, 2), holidays),
+          periodStart: fiscalYearStart,
+          periodEnd: interimPeriodEnd,
+        });
+      }
+
+      if (isTaxableBusiness) {
+        tasks.push({
+          taskKey: `tax:consumption-final:${fiscalYearLabel}`,
+          category: TAX_CATEGORY,
+          title: "消費税（確定申告・納付）",
+          dueDate: adjustToNextBusinessDay(addMonthsUtc(fiscalYearEnd, 2), holidays),
+          periodStart: fiscalYearStart,
+          periodEnd: fiscalYearEnd,
+        });
+
+        const periods =
+          consumptionInterimCount === 1 ? [6] : consumptionInterimCount === 3 ? [3, 6, 9] : Array.from({ length: 11 }, (_, i) => i + 1);
+        periods.slice(0, consumptionInterimCount).forEach((months, idx) => {
+          const periodAnchor = addMonthsUtc(fiscalYearStart, months);
+          const periodEndDate = endOfMonthUtc(periodAnchor.getUTCFullYear(), periodAnchor.getUTCMonth() + 1);
+          tasks.push({
+            taskKey: `tax:consumption-interim:${consumptionInterimCount}x:${fiscalYearLabel}:${idx + 1}`,
+            category: TAX_CATEGORY,
+            title:
+              consumptionInterimCount === 1
+                ? "消費税（中間申告・予定納付：年1回）"
+                : `消費税（中間申告・予定納付：年${consumptionInterimCount}回 第${idx + 1}回）`,
+            dueDate: adjustToNextBusinessDay(addMonthsUtc(periodEndDate, 2), holidays),
+            periodStart: fiscalYearStart,
+            periodEnd: periodEndDate,
+          });
+        });
+      }
+    } else {
+      const yearStart = toUtcDateOnly(year, 1, 1);
+      const yearEnd = toUtcDateOnly(year, 12, 31);
+      tasks.push({
+        taskKey: `tax:sole-income-final:${year}`,
+        category: TAX_CATEGORY,
+        title: "所得税（確定申告・納付）",
+        dueDate: adjustToNextBusinessDay(toUtcDateOnly(year, 3, 15), holidays),
+        periodStart: yearStart,
+        periodEnd: yearEnd,
+      });
+
+      if (isTaxableBusiness) {
+        tasks.push({
+          taskKey: `tax:sole-consumption-final:${year}`,
+          category: TAX_CATEGORY,
+          title: "消費税（確定申告・納付）",
+          dueDate: adjustToNextBusinessDay(toUtcDateOnly(year, 3, 31), holidays),
+          periodStart: yearStart,
+          periodEnd: yearEnd,
+        });
+
+        const periods =
+          consumptionInterimCount === 1 ? [6] : consumptionInterimCount === 3 ? [3, 6, 9] : Array.from({ length: 11 }, (_, i) => i + 1);
+        periods.slice(0, consumptionInterimCount).forEach((months, idx) => {
+          const periodEndDate = addDaysUtc(addMonthsUtc(yearStart, months), -1);
+          tasks.push({
+            taskKey: `tax:sole-consumption-interim:${consumptionInterimCount}x:${year}:${idx + 1}`,
+            category: TAX_CATEGORY,
+            title:
+              consumptionInterimCount === 1
+                ? "消費税（中間申告・予定納付：年1回）"
+                : `消費税（中間申告・予定納付：年${consumptionInterimCount}回 第${idx + 1}回）`,
+            dueDate: adjustToNextBusinessDay(addMonthsUtc(periodEndDate, 2), holidays),
+            periodStart: yearStart,
+            periodEnd: periodEndDate,
+          });
+        });
+      }
     }
   }
 
