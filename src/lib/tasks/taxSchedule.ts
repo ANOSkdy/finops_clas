@@ -59,6 +59,49 @@ function getConsumptionInterimCount(amount: bigint | null): 0 | 1 | 3 | 11 {
   return 11;
 }
 
+
+
+export type RecurringTaxDueDateInput = {
+  id: string;
+  taxType: string;
+  title: string;
+  installmentLabel: string | null;
+  month: number;
+  day: number;
+  enabled: boolean;
+};
+
+export function generateRecurringTaxDueDateTasks(input: {
+  dueDates: RecurringTaxDueDateInput[];
+  fromDate?: Date;
+  monthsAhead?: number;
+  holidays?: Set<string>;
+}): GeneratedTask[] {
+  const today = startOfUtcDay(input.fromDate ?? new Date());
+  const monthsAhead = input.monthsAhead ?? 36;
+  const endDate = addMonthsUtc(today, monthsAhead);
+  const startYear = today.getUTCFullYear();
+  const endYear = endDate.getUTCFullYear();
+  const tasks: GeneratedTask[] = [];
+
+  for (const dueDateSetting of input.dueDates) {
+    if (!dueDateSetting.enabled) continue;
+    for (let year = startYear; year <= endYear; year += 1) {
+      const adjustedDueDate = adjustToNextBusinessDay(toUtcDateOnly(year, dueDateSetting.month, dueDateSetting.day), input.holidays);
+      if (adjustedDueDate < today) continue;
+      tasks.push({
+        taskKey: `tax:recurring:${dueDateSetting.taxType}:${dueDateSetting.id}:${year}`,
+        category: TAX_CATEGORY,
+        title: dueDateSetting.installmentLabel ? `${dueDateSetting.title}（${dueDateSetting.installmentLabel}）` : dueDateSetting.title,
+        dueDate: adjustedDueDate,
+        periodStart: null,
+        periodEnd: null,
+      });
+    }
+  }
+
+  return tasks;
+}
 export function generateTaxScheduleTasks(input: {
   company: TaxScheduleCompanyInput;
   taxSetting?: TaxScheduleTaxSettingInput | null;

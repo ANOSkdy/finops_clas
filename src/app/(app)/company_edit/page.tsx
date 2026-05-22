@@ -29,6 +29,19 @@ type CompanyResponse = {
   userRole?: string | null;
 };
 
+type RecurringTaxType = "fixed_asset_tax" | "ordinary_resident_tax" | "custom";
+
+type RecurringTaxDueDate = {
+  id: string;
+  taxType: RecurringTaxType;
+  title: string;
+  installmentLabel: string | null;
+  month: number;
+  day: number;
+  enabled: boolean;
+  sortOrder: number;
+};
+
 type TaxSettingResponse = {
   taxSetting: {
     previousCorporateTaxNationalAmountYen: string | null;
@@ -65,6 +78,13 @@ export default function CompanyEditPage() {
   const [isConsumptionTaxTaxableBusiness, setIsConsumptionTaxTaxableBusiness] = useState(false);
   const [consumptionTaxReason, setConsumptionTaxReason] = useState<ConsumptionTaxReason | "">("");
   const [previousConsumptionTaxNationalAmountYen, setPreviousConsumptionTaxNationalAmountYen] = useState("");
+  const [dueDates, setDueDates] = useState<RecurringTaxDueDate[]>([]);
+  const [dueDateBusy, setDueDateBusy] = useState(false);
+  const [newTaxType, setNewTaxType] = useState<RecurringTaxType>("fixed_asset_tax");
+  const [newTitle, setNewTitle] = useState("");
+  const [newInstallmentLabel, setNewInstallmentLabel] = useState("");
+  const [newMonth, setNewMonth] = useState(1);
+  const [newDay, setNewDay] = useState(1);
 
   useEffect(() => {
     (async () => {
@@ -114,6 +134,12 @@ export default function CompanyEditPage() {
           setPreviousConsumptionTaxNationalAmountYen(
             taxData.taxSetting.previousConsumptionTaxNationalAmountYen ?? ""
           );
+        }
+
+        const dueDateRes = await fetch("/api/company/recurring-tax-due-dates", { credentials: "include" });
+        if (dueDateRes.ok) {
+          const dueDateData = (await dueDateRes.json()) as { dueDates: RecurringTaxDueDate[] };
+          setDueDates(dueDateData.dueDates);
         }
       } catch {
         setError("会社情報の取得に失敗しました。");
@@ -220,6 +246,42 @@ export default function CompanyEditPage() {
     }
   }
 
+
+  async function addDueDate() {
+    if (!canEdit) return;
+    setDueDateBusy(true);
+    try {
+      const res = await fetch("/api/company/recurring-tax-due-dates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ dueDate: { taxType: newTaxType, title: newTitle, installmentLabel: newInstallmentLabel || null, month: newMonth, day: newDay, enabled: true, sortOrder: 0 } }),
+      });
+      if (!res.ok) throw new Error();
+      const data = (await res.json()) as { dueDate: RecurringTaxDueDate };
+      setDueDates((prev) => [...prev, data.dueDate]);
+      setNewTitle("");
+      setNewInstallmentLabel("");
+      toast({ variant: "success", title: "追加完了", description: "納期限を追加しました" });
+    } catch {
+      toast({ variant: "error", title: "追加失敗", description: "入力値を確認してください" });
+    } finally { setDueDateBusy(false); }
+  }
+
+  async function toggleDueDate(id: string, enabled: boolean) {
+    if (!canEdit) return;
+    const res = await fetch(`/api/company/recurring-tax-due-dates/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ dueDate: { enabled } }) });
+    if (!res.ok) return;
+    setDueDates((prev) => prev.map((row) => (row.id === id ? { ...row, enabled } : row)));
+  }
+
+  async function deleteDueDate(id: string) {
+    if (!canEdit) return;
+    const res = await fetch(`/api/company/recurring-tax-due-dates/${id}`, { method: "DELETE", credentials: "include" });
+    if (!res.ok) return;
+    setDueDates((prev) => prev.filter((row) => row.id !== id));
+  }
+
   return (
     <div className="space-y-4">
       <div>
@@ -291,6 +353,36 @@ export default function CompanyEditPage() {
           <Button onClick={onSubmitTaxSettings} disabled={taxBusy || !canEdit}>{taxBusy ? "更新中…" : "税務設定を更新する"}</Button>
         </CardContent>
       </Card>
+
+      <Card className="glass">
+        <CardHeader><div className="text-base font-semibold">自治体別・任意納期限設定</div></CardHeader>
+        <CardContent className="space-y-3">
+          <SelectField label="税目" value={newTaxType} onChange={(e) => setNewTaxType(e.target.value as RecurringTaxType)} disabled={dueDateBusy || !canEdit}>
+            <option value="fixed_asset_tax">固定資産税</option>
+            <option value="ordinary_resident_tax">個人住民税（普通徴収）</option>
+            <option value="custom">その他</option>
+          </SelectField>
+          <Field label="表示名" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} disabled={dueDateBusy || !canEdit} />
+          <Field label="期別" value={newInstallmentLabel} onChange={(e) => setNewInstallmentLabel(e.target.value)} disabled={dueDateBusy || !canEdit} />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="月" type="number" min={1} max={12} value={String(newMonth)} onChange={(e) => setNewMonth(Number(e.target.value))} disabled={dueDateBusy || !canEdit} />
+            <Field label="日" type="number" min={1} max={31} value={String(newDay)} onChange={(e) => setNewDay(Number(e.target.value))} disabled={dueDateBusy || !canEdit} />
+          </div>
+          <Button onClick={addDueDate} disabled={dueDateBusy || !canEdit || !newTitle.trim()}>追加する</Button>
+          <div className="space-y-2">
+            {dueDates.map((row) => (
+              <div key={row.id} className="rounded-xl border border-line p-3 text-sm">
+                <div>{row.title}{row.installmentLabel ? `（${row.installmentLabel}）` : ""} / {row.month}/{row.day}</div>
+                <div className="mt-2 flex gap-2">
+                  <Button variant="secondary" onClick={() => toggleDueDate(row.id, !row.enabled)} disabled={!canEdit}>{row.enabled ? "無効化" : "有効化"}</Button>
+                  <Button variant="ghost" onClick={() => deleteDueDate(row.id)} disabled={!canEdit}>削除</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
     </div>
   );
 }
