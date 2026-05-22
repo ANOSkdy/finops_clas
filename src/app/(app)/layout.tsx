@@ -15,7 +15,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       <div className="min-h-screen bg-[var(--color-bg-primary)]">
         <AppHeader />
-        <main id="main" className="pt-6 pb-safe-nav">
+        <main id="main" className="pt-6">
           <MainContainer>{children}</MainContainer>
         </main>
         <BottomNav />

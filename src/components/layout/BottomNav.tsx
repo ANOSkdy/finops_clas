@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/ui/cn";
-import { MainContainer } from "@/components/ui/MainContainer";
 
 type Item = { href: string; label: string };
 
@@ -16,23 +16,32 @@ const items: Item[] = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
   const isSelectCompany = pathname === "/selectcompany" || pathname.startsWith("/selectcompany/");
 
   if (isSelectCompany) return null;
 
-  const itemClass = (active: boolean) =>
-    cn(
-      "focus-ring tap-44 col-span-1 flex items-center justify-center rounded-lg px-1 py-2 text-[11px] whitespace-nowrap",
-      active
-        ? "font-semibold text-[var(--color-text-primary)]"
-        : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-    );
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur safe-bottom">
-      <MainContainer className="safe-x">
-        <div className="grid h-16 grid-cols-5 items-center px-2">
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="focus-ring fixed left-3 top-[4.25rem] z-50 rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-primary)] shadow-[var(--shadow-elevation-1)]"
+        aria-expanded={open}
+        aria-controls="app-side-nav"
+      >
+        {open ? "ナビを閉じる" : "ナビを開く"}
+      </button>
+
+      <nav
+        id="app-side-nav"
+        className={cn(
+          "fixed left-0 top-0 z-40 h-screen safe-top safe-bottom border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)]/95 px-2 pt-20 backdrop-blur transition-transform duration-200",
+          open ? "translate-x-0" : "-translate-x-[88%]"
+        )}
+      >
+        <div className="w-44 space-y-1">
           {items.map((it) => {
             const active = isActive(it.href);
             return (
@@ -40,22 +49,20 @@ export function BottomNav() {
                 key={it.href}
                 href={it.href}
                 aria-current={active ? "page" : undefined}
-                className={itemClass(active)}
+                className={cn(
+                  "focus-ring flex min-h-11 items-center rounded-lg px-3 text-sm transition-colors",
+                  active
+                    ? "bg-[var(--color-bg-secondary)] font-semibold text-[var(--color-text-primary)]"
+                    : "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]"
+                )}
               >
-                <div>{it.label}</div>
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "nav-indicator mt-1 ml-1 h-1 w-6 rounded-full transition-opacity",
-                    active ? "opacity-100" : "opacity-0"
-                  )}
-                />
+                <span className="truncate">{it.label}</span>
               </a>
             );
           })}
         </div>
-      </MainContainer>
-    </nav>
+      </nav>
+    </>
   );
 }
 
