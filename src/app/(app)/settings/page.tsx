@@ -47,10 +47,10 @@ export default function SettingsPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">設定</div>
-        <div className="mt-1 text-sm text-inkMuted">アカウントとセキュリティ</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">アカウントとセキュリティ</div>
       </div>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">アカウント</div>
         </CardHeader>
@@ -66,10 +66,10 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">会社情報</div>
-          <div className="mt-1 text-sm text-inkMuted">登録済みの会社情報を修正します</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">登録済みの会社情報を修正します</div>
         </CardHeader>
         <CardContent className="flex justify-center">
           <a href="/company_edit">
@@ -79,10 +79,10 @@ export default function SettingsPage() {
       </Card>
 
       {role === "global" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">システム管理</div>
-            <div className="mt-1 text-sm text-inkMuted">グローバル権限者向けの設定を表示します</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">グローバル権限者向けの設定を表示します</div>
           </CardHeader>
           <CardContent className="flex justify-center">
             <a href="/system_manager">
@@ -100,7 +100,7 @@ export default function SettingsPage() {
               <DialogDescription>ログイン画面へ戻ります。</DialogDescription>
             </div>
             <DialogClose asChild>
-              <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+              <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-[var(--color-text-secondary)]" type="button" aria-label="閉じる">✕</button>
             </DialogClose>
           </div>
           <div className="mt-4 flex justify-end gap-2">

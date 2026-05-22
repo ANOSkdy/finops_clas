@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/toast";
-import { MemoGrid } from "@/components/ui/MemoCard";
 
 type Summary = {
   alerts: Array<{ type: "warning"; message: string }>;
@@ -19,7 +18,7 @@ type Summary = {
 
 function AlertItem({ message }: { message: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-accent1/20 shadow-softSm px-4 py-3 text-sm text-ink">
+    <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] shadow-sm px-4 py-3 text-sm text-[var(--color-text-primary)]">
       {message}
     </div>
   );
@@ -36,17 +35,17 @@ function TaskItem({
 }) {
   const tone =
     status === "overdue"
-      ? "border-accent2/40 bg-accent2/10"
+      ? "border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]"
       : status === "done"
-      ? "border-secondary/30 bg-secondary/10"
-      : "border-line bg-panel";
+      ? "border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]"
+      : "border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]";
 
   return (
-    <div className={`rounded-2xl border shadow-softSm px-4 py-3 ${tone}`}>
+    <div className={`rounded-2xl border shadow-sm px-4 py-3 ${tone}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-sm font-medium text-ink">{title}</div>
-          <div className="mt-1 text-xs text-inkMuted">期限: {dueDate}</div>
+          <div className="text-sm font-medium text-[var(--color-text-primary)]">{title}</div>
+          <div className="mt-1 text-xs text-[var(--color-text-secondary)]">期限: {dueDate}</div>
         </div>
       </div>
     </div>
@@ -101,16 +100,16 @@ export default function HomePage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">ホーム</div>
-        <div className="mt-1 text-sm text-inkMuted">アラートと期限の近いタスクを確認します。</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">アラートと期限の近いタスクを確認します。</div>
       </div>
 
       {state === "loading" && skeleton}
 
       {state === "needsLogin" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">ログインが必要です</div>
-            <div className="mt-1 text-sm text-inkMuted">セッションが無効です。</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">セッションが無効です。</div>
           </CardHeader>
           <CardContent className="flex items-center gap-3">
             <a href="/login">
@@ -130,10 +129,10 @@ export default function HomePage() {
       )}
 
       {state === "needsCompany" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">会社が選択されていません</div>
-            <div className="mt-1 text-sm text-inkMuted">会社を選択するとホーム/スケジュールが利用できます。</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">会社を選択するとホーム/スケジュールが利用できます。</div>
           </CardHeader>
           <CardContent className="flex items-center gap-3">
             <a href="/selectcompany">
@@ -147,16 +146,16 @@ export default function HomePage() {
       )}
 
       {state === "error" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">読み込みに失敗しました</div>
-            <div className="mt-1 text-sm text-inkMuted">ネットワークやログイン状態を確認してください。</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">ネットワークやログイン状態を確認してください。</div>
           </CardHeader>
           <CardContent className="flex items-center gap-3">
             <Button onClick={load}>再試行</Button>
             <a
               href="/manual"
-              className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-button shadow-sm hover:bg-[color:rgb(var(--button))]/90"
+              className="focus-ring tap-44 inline-flex items-center justify-center rounded-xl bg-[color:rgb(var(--button))] px-3 text-sm text-white shadow-sm hover:bg-[color:rgb(var(--button))]/90"
             >
               マニュアル
             </a>
@@ -166,34 +165,34 @@ export default function HomePage() {
 
       {state === "ok" && data && (
         <>
-          <Card className="glass">
+          <Card className="">
             <CardHeader>
               <div className="text-base font-semibold">リマインダー</div>
-              <div className="mt-1 text-sm text-inkMuted">期限前/期限切れの通知</div>
+              <div className="mt-1 text-sm text-[var(--color-text-secondary)]">期限前/期限切れの通知</div>
             </CardHeader>
             <CardContent className="py-1">
-              <MemoGrid>
+              <div className="grid gap-3 md:grid-cols-2">
                 {data.alerts.map((a, i) => (
                   <AlertItem key={i} message={a.message} />
                 ))}
-              </MemoGrid>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="glass">
+          <Card className="">
             <CardHeader>
               <div className="text-base font-semibold">期限が近いタスク</div>
-              <div className="mt-1 text-sm text-inkMuted">直近14日</div>
+              <div className="mt-1 text-sm text-[var(--color-text-secondary)]">直近14日</div>
             </CardHeader>
             <CardContent className="py-1">
               {data.upcomingTasks.length === 0 ? (
-                <div className="text-sm text-inkMuted">該当タスクはありません。</div>
+                <div className="text-sm text-[var(--color-text-secondary)]">該当タスクはありません。</div>
               ) : (
-                <MemoGrid>
+                <div className="grid gap-3 md:grid-cols-2">
                   {data.upcomingTasks.map((t) => (
                     <TaskItem key={t.taskId} title={t.title} dueDate={t.dueDate} status={t.status} />
                   ))}
-                </MemoGrid>
+                </div>
               )}
             </CardContent>
           </Card>

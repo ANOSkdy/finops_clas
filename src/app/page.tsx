@@ -2,31 +2,31 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-base font-sans text-ink">
+    <div className="min-h-screen bg-[var(--color-bg-primary)] font-sans text-[var(--color-text-primary)]">
       <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-16">
-        <div className="w-full rounded-3xl border border-line bg-panel/90 p-10 text-center shadow-soft sm:p-14">
+        <div className="w-full rounded-3xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]/90 p-10 text-center shadow-soft sm:p-14">
           <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-6">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-base shadow-softSm">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-base shadow-sm">
               C
             </div>
             <div className="space-y-3">
               <h1 className="text-3xl font-semibold leading-10 tracking-tight">
                 CLAS FinOps
               </h1>
-              <p className="text-base leading-7 text-inkMuted">
+              <p className="text-base leading-7 text-[var(--color-text-secondary)]">
                 会社選択とアップロードを最短で進められる、モダンで軽やかな画面に刷新しました。
               </p>
             </div>
 
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
               <a
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-button shadow-softSm hover:bg-[color:rgb(var(--button))]/90"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-white shadow-sm hover:bg-[color:rgb(var(--button))]/90"
                 href="/login"
               >
                 ログインへ進む
               </a>
               <a
-                className="inline-flex h-12 items-center justify-center rounded-full border border-[color:rgb(var(--button))]/30 bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-button shadow-softSm hover:bg-[color:rgb(var(--button))]/90"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-[color:rgb(var(--button))]/30 bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-white shadow-sm hover:bg-[color:rgb(var(--button))]/90"
                 href="/manual"
               >
                 マニュアルを見る
@@ -35,7 +35,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-8 flex items-center gap-3 text-xs text-inkMuted">
+        <div className="mt-8 flex items-center gap-3 text-xs text-[var(--color-text-secondary)]">
           <Image src="/next.svg" alt="Next.js ロゴ" width={64} height={16} priority />
           <span>Next.js で構築</span>
         </div>

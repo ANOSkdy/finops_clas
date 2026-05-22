@@ -18,10 +18,10 @@ export default async function ManualPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">マニュアル</div>
-        <div className="mt-1 text-sm text-inkMuted">一覧から詳細ページへ移動します。</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">一覧から詳細ページへ移動します。</div>
       </div>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">一覧</div>
         </CardHeader>
@@ -29,9 +29,9 @@ export default async function ManualPage() {
           {docs.length > 0 ? (
             <ul className="space-y-2">
               {docs.map((doc) => (
-                <li key={doc.slug} className="glass rounded-2xl px-4 py-3">
+                <li key={doc.slug} className=" rounded-2xl px-4 py-3">
                   <Link
-                    className="focus-ring flex w-full items-center text-sm font-semibold text-ink"
+                    className="focus-ring flex w-full items-center text-sm font-semibold text-[var(--color-text-primary)]"
                     href={`/manual/${doc.slug}`}
                   >
                     {doc.title}
@@ -40,7 +40,7 @@ export default async function ManualPage() {
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-inkMuted">マニュアルが未登録です。管理画面から追加してください。</div>
+            <div className="text-sm text-[var(--color-text-secondary)]">マニュアルが未登録です。管理画面から追加してください。</div>
           )}
         </CardContent>
       </Card>

@@ -25,13 +25,13 @@ export function ErrorDetailsDialog({
             <DialogDescription>{description}</DialogDescription>
           </div>
           <DialogClose asChild>
-            <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">
+            <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-[var(--color-text-secondary)]" type="button" aria-label="閉じる">
               ✕
             </button>
           </DialogClose>
         </div>
 
-        <pre className="mt-4 max-h-[50vh] overflow-auto rounded-2xl border border-line bg-panel p-3 text-xs text-ink whitespace-pre-wrap">
+        <pre className="mt-4 max-h-[50vh] overflow-auto rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] p-3 text-xs text-[var(--color-text-primary)] whitespace-pre-wrap">
 {details}
         </pre>
 

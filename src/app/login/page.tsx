@@ -48,21 +48,21 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
+    <main className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-3xl">
-        <Card className="min-h-[360px] surface-card text-ink">
+        <Card className="min-h-[360px]  text-[var(--color-text-primary)]">
           <CardHeader className="px-8 pt-5">
             <div className="text-xl font-semibold tracking-tight">ログイン</div>
           </CardHeader>
           <CardContent className="space-y-6 px-8 pb-8 pt-6">
             {error && (
-              <div role="alert" className="rounded-2xl border border-accent2/30 bg-panel px-4 py-3 text-sm text-ink">
+              <div role="alert" className="rounded-2xl border border-accent2/30 bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
                 {error}
               </div>
             )}
 
             <div className="space-y-2">
-              <div className="text-sm font-semibold text-ink">ログインID</div>
+              <div className="text-sm font-semibold text-[var(--color-text-primary)]">ログインID</div>
               <Field
                 label=""
                 aria-label="ログインID"
@@ -73,13 +73,13 @@ function LoginForm() {
                 spellCheck={false}
                 inputMode="text"
                 disabled={busy}
-                inputClassName="bg-panel text-black h-12"
-                labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
+                inputClassName="bg-[var(--color-bg-secondary)] text-black h-12"
+                labelClassName="text-[var(--color-text-secondary)] peer-placeholder-shown:text-[var(--color-text-secondary)] peer-focus:text-[var(--color-text-primary)]"
               />
             </div>
 
             <div className="space-y-2">
-              <div className="text-sm font-semibold text-ink">パスワード</div>
+              <div className="text-sm font-semibold text-[var(--color-text-primary)]">パスワード</div>
               <Field
                 label=""
                 aria-label="パスワード"
@@ -91,8 +91,8 @@ function LoginForm() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") onSubmit();
                 }}
-                inputClassName="bg-panel text-black h-12"
-                labelClassName="text-inkMuted peer-placeholder-shown:text-inkMuted peer-focus:text-ink"
+                inputClassName="bg-[var(--color-bg-secondary)] text-black h-12"
+                labelClassName="text-[var(--color-text-secondary)] peer-placeholder-shown:text-[var(--color-text-secondary)] peer-focus:text-[var(--color-text-primary)]"
               />
             </div>
 
@@ -110,17 +110,17 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-base text-ink flex items-center justify-center px-4 py-10">
+        <main className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] flex items-center justify-center px-4 py-10">
           <div className="w-full max-w-3xl">
-            <Card className="min-h-[360px] surface-card text-ink">
+            <Card className="min-h-[360px]  text-[var(--color-text-primary)]">
               <CardHeader className="px-8 pt-5">
                 <div className="text-xl font-semibold tracking-tight">ログイン</div>
-                <div className="mt-1 text-sm text-inkMuted">読み込み中…</div>
+                <div className="mt-1 text-sm text-[var(--color-text-secondary)]">読み込み中…</div>
               </CardHeader>
               <CardContent className="space-y-6 px-8 pb-8 pt-6">
-                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
-                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
-                <div className="h-12 rounded-2xl border border-line/60 bg-panel/80" />
+                <div className="h-12 rounded-2xl border border-[var(--color-border-default)]/60 bg-[var(--color-bg-secondary)]/80" />
+                <div className="h-12 rounded-2xl border border-[var(--color-border-default)]/60 bg-[var(--color-bg-secondary)]/80" />
+                <div className="h-12 rounded-2xl border border-[var(--color-border-default)]/60 bg-[var(--color-bg-secondary)]/80" />
               </CardContent>
             </Card>
           </div>

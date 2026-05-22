@@ -247,7 +247,7 @@ export default function AccountPage() {
     return (
       <div className="space-y-4">
         <div className="text-xl font-semibold tracking-tight">アカウント管理</div>
-        <div className="text-sm text-inkMuted">権限を確認しています…</div>
+        <div className="text-sm text-[var(--color-text-secondary)]">権限を確認しています…</div>
       </div>
     );
   }
@@ -256,7 +256,7 @@ export default function AccountPage() {
     return (
       <div className="space-y-2">
         <div className="text-xl font-semibold tracking-tight">アカウント管理</div>
-        <div className="text-sm text-inkMuted">権限がありません。</div>
+        <div className="text-sm text-[var(--color-text-secondary)]">権限がありません。</div>
       </div>
     );
   }
@@ -265,13 +265,13 @@ export default function AccountPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">アカウント管理</div>
-        <div className="mt-1 text-sm text-inkMuted">新規ユーザーの作成と削除を行います（管理者のみ）。</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">新規ユーザーの作成と削除を行います（管理者のみ）。</div>
       </div>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">新規ユーザー作成</div>
-          <div className="mt-1 text-sm text-inkMuted">パスワードはサーバー側でハッシュ化されます。</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">パスワードはサーバー側でハッシュ化されます。</div>
         </CardHeader>
         <CardContent className="space-y-4">
           <Field
@@ -337,10 +337,10 @@ export default function AccountPage() {
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">ユーザー一覧</div>
-          <div className="mt-1 text-sm text-inkMuted">削除前に関連データが無いかご確認ください。</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">削除前に関連データが無いかご確認ください。</div>
         </CardHeader>
         <CardContent className="space-y-3">
           {loading && (
@@ -352,20 +352,20 @@ export default function AccountPage() {
           )}
 
           {!loading && users?.length === 0 && (
-            <div className="text-sm text-inkMuted">ユーザーが見つかりません。</div>
+            <div className="text-sm text-[var(--color-text-secondary)]">ユーザーが見つかりません。</div>
           )}
 
           {!loading && users && users.length > 0 && (
-            <div className="divide-y divide-line rounded-2xl border border-line bg-panel">
+            <div className="divide-y divide-line rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]">
               {users.map((u) => (
                 <div key={u.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <div className="text-sm font-semibold text-ink">{u.name}</div>
-                    <div className="text-xs text-inkMuted">ID: {u.loginId}</div>
-                    <div className="text-xs text-inkMuted">ロール: {u.role}</div>
+                    <div className="text-sm font-semibold text-[var(--color-text-primary)]">{u.name}</div>
+                    <div className="text-xs text-[var(--color-text-secondary)]">ID: {u.loginId}</div>
+                    <div className="text-xs text-[var(--color-text-secondary)]">ロール: {u.role}</div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="text-[10px] text-inkMuted">更新: {new Date(u.updatedAt).toLocaleString()}</div>
+                    <div className="text-[10px] text-[var(--color-text-secondary)]">更新: {new Date(u.updatedAt).toLocaleString()}</div>
                     <Button
                       variant="secondary"
                       onClick={() => deleteUser(u.id)}

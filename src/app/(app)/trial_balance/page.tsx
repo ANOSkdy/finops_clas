@@ -216,16 +216,16 @@ CLAS`
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">試算表</div>
-        <div className="mt-1 text-sm text-inkMuted">
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">
           試算表アップロード → メール作成 → 送信（監査ログ保存）
         </div>
       </div>
 
       {needsCompany && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">会社が選択されていません</div>
-            <div className="mt-1 text-sm text-inkMuted">先に会社を選択してください。</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">先に会社を選択してください。</div>
           </CardHeader>
           <CardContent>
             <a href="/selectcompany"><Button>会社を選択</Button></a>
@@ -234,37 +234,37 @@ CLAS`
       )}
 
       {inlineError && (
-        <div role="alert" className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink">
+        <div role="alert" className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
           {inlineError}
         </div>
       )}
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">アップロード</div>
-          <div className="mt-1 text-sm text-inkMuted">選択中: {companyName ?? "未選択"}</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">選択中: {companyName ?? "未選択"}</div>
         </CardHeader>
         <CardContent className="space-y-3">
           <input
             ref={inputRef}
             type="file"
-            className="focus-ring tap-44 w-full rounded-xl border border-line bg-panel/90 px-3 py-2 text-sm text-ink"
+            className="focus-ring tap-44 w-full rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]/90 px-3 py-2 text-sm text-[var(--color-text-primary)]"
             accept={accept}
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             disabled={busy}
           />
-          <div className="text-xs text-inkMuted">
+          <div className="text-xs text-[var(--color-text-secondary)]">
             {file ? `${file.name} (${formatBytes(file.size)})` : "未選択"}
           </div>
 
           {fileId && (
-            <div className="rounded-2xl border border-secondary/40 bg-panel px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-secondary/40 bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
               ファイルID: {fileId}
             </div>
           )}
 
           {progress && (
-            <div className="rounded-2xl border border-line bg-panel px-4 py-3 text-sm text-ink">
+            <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
               {progress}
             </div>
           )}
@@ -284,11 +284,11 @@ CLAS`
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader className="flex items-center justify-between">
           <div>
             <div className="text-base font-semibold">メール</div>
-            <div className="mt-1 text-sm text-inkMuted">送信前に確認モーダルを表示します</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">送信前に確認モーダルを表示します</div>
           </div>
           <Button variant="secondary" onClick={() => setShowMail((v) => !v)}>
             {showMail ? "閉じる" : "開く"}
@@ -325,7 +325,7 @@ CLAS`
               disabled={busy}
             />
 
-            <div className="text-xs text-inkMuted">
+            <div className="text-xs text-[var(--color-text-secondary)]">
               添付：{fileId ? fileId : "（未アップロード）"}
             </div>
 
@@ -333,7 +333,7 @@ CLAS`
               {busy ? "送信中…" : "送信する（確認）"}
             </Button>
 
-            <div className="text-xs text-inkMuted">
+            <div className="text-xs text-[var(--color-text-secondary)]">
               ※ MAIL_PROVIDER=disabled の場合は送信失敗しますが、監査ログ（emails）は保存されます。
             </div>
           </CardContent>
@@ -350,21 +350,21 @@ CLAS`
               </DialogDescription>
           </div>
           <DialogClose asChild>
-            <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-inkMuted" type="button" aria-label="閉じる">✕</button>
+            <button className="focus-ring tap-44 rounded-xl px-2 text-sm text-[var(--color-text-secondary)]" type="button" aria-label="閉じる">✕</button>
           </DialogClose>
         </div>
 
         <div className="mt-4 space-y-3 text-sm">
-          <div className="rounded-2xl border border-line bg-panel p-3">
-            <div className="text-xs text-inkMuted">宛先</div>
+          <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] p-3">
+            <div className="text-xs text-[var(--color-text-secondary)]">宛先</div>
             <div className="mt-1 break-all">{to}</div>
           </div>
-          <div className="rounded-2xl border border-line bg-panel p-3">
-            <div className="text-xs text-inkMuted">件名</div>
+          <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] p-3">
+            <div className="text-xs text-[var(--color-text-secondary)]">件名</div>
             <div className="mt-1">{subject}</div>
           </div>
-          <div className="rounded-2xl border border-line bg-panel p-3">
-            <div className="text-xs text-inkMuted">添付</div>
+          <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] p-3">
+            <div className="text-xs text-[var(--color-text-secondary)]">添付</div>
             <div className="mt-1 break-all">{fileId}</div>
           </div>
 

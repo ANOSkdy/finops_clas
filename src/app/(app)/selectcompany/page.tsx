@@ -89,7 +89,7 @@ export default function SelectCompanyPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">会社を選択</div>
-        <div className="mt-1 text-sm text-inkMuted">所属会社を選択してアクティブに設定します。</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">所属会社を選択してアクティブに設定します。</div>
       </div>
 
       <div className="flex gap-3">
@@ -99,7 +99,7 @@ export default function SelectCompanyPage() {
       {state === "loading" && skeleton}
 
       {state === "needsLogin" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">ログインが必要です</div>
           </CardHeader>
@@ -111,10 +111,10 @@ export default function SelectCompanyPage() {
       )}
 
       {state === "error" && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">読み込みに失敗しました</div>
-            <div className="mt-1 text-sm text-inkMuted">ネットワークを確認してください。</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">ネットワークを確認してください。</div>
           </CardHeader>
           <CardContent className="flex items-center gap-3">
             <Button onClick={load}>再試行</Button>
@@ -123,10 +123,10 @@ export default function SelectCompanyPage() {
       )}
 
       {state === "ok" && items && items.length === 0 && (
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">会社がありません</div>
-            <div className="mt-1 text-sm text-inkMuted">「新しい会社を登録」から作成してください。</div>
+            <div className="mt-1 text-sm text-[var(--color-text-secondary)]">「新しい会社を登録」から作成してください。</div>
           </CardHeader>
         </Card>
       )}
@@ -134,15 +134,15 @@ export default function SelectCompanyPage() {
       {state === "ok" && items && items.length > 0 && (
         <div className="space-y-3">
           {items.map((c) => (
-            <Card key={c.companyId} className="glass">
+            <Card key={c.companyId} className="">
               <CardHeader className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-base font-semibold">{c.name}</div>
-                  <div className="mt-1 text-xs text-inkMuted">
+                  <div className="mt-1 text-xs text-[var(--color-text-secondary)]">
                     {c.legalForm === "sole" ? "個人事業主" : "法人"}
                     {c.representativeName ? ` / 代表: ${c.representativeName}` : ""}
                   </div>
-                  <div className="mt-2 text-xs text-inkMuted">
+                  <div className="mt-2 text-xs text-[var(--color-text-secondary)]">
                     {c.contactEmail ?? ""}
                     {c.contactEmail && c.contactPhone ? " / " : ""}
                     {c.contactPhone ?? ""}

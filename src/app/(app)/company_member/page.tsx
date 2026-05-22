@@ -228,13 +228,13 @@ export default function CompanyMemberPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">会社メンバー紐付け</div>
-        <div className="mt-1 text-sm text-inkMuted">
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">
           登録済みの法人・個人事業主にユーザーを紐付けてメンバーとして登録します。
         </div>
       </div>
 
       {error && (
-        <div role="alert" className="rounded-2xl border border-accent2/35 bg-panel px-4 py-3 text-sm text-ink">
+        <div role="alert" className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
           {error}
         </div>
       )}
@@ -245,10 +245,10 @@ export default function CompanyMemberPage() {
         </Button>
       </div>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">メンバーを追加</div>
-          <div className="mt-1 text-sm text-inkMuted">
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">
             会社とユーザーを選び、会社内ロールを設定して紐付けます。
           </div>
         </CardHeader>
@@ -317,10 +317,10 @@ export default function CompanyMemberPage() {
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">紐付け一覧</div>
-          <div className="mt-1 text-sm text-inkMuted">登録済みのメンバーを確認できます。</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">登録済みのメンバーを確認できます。</div>
         </CardHeader>
         <CardContent className="space-y-3">
           {loading && (
@@ -331,24 +331,24 @@ export default function CompanyMemberPage() {
           )}
 
           {!loading && memberships?.length === 0 && (
-            <div className="text-sm text-inkMuted">紐付けがまだ登録されていません。</div>
+            <div className="text-sm text-[var(--color-text-secondary)]">紐付けがまだ登録されていません。</div>
           )}
 
           {!loading && memberships && memberships.length > 0 && (
-            <div className="divide-y divide-line rounded-2xl border border-line bg-panel">
+            <div className="divide-y divide-line rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]">
               {memberships.map((m) => {
                 const key = `${m.companyId}-${m.userId}`;
                 return (
                   <div key={key} className="grid gap-2 px-4 py-3 sm:grid-cols-4 sm:items-center">
                     <div className="sm:col-span-2">
-                      <div className="text-sm font-semibold text-ink">{m.companyName}</div>
-                      <div className="text-xs text-inkMuted">{legalFormLabel(m.legalForm)}</div>
+                      <div className="text-sm font-semibold text-[var(--color-text-primary)]">{m.companyName}</div>
+                      <div className="text-xs text-[var(--color-text-secondary)]">{legalFormLabel(m.legalForm)}</div>
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-ink">{m.userName}</div>
-                      <div className="text-xs text-inkMuted">ID: {m.loginId} / ユーザーロール: {m.userRole}</div>
-                      <div className="text-xs text-inkMuted">会社内ロール: {m.roleInCompany}</div>
-                      <div className="text-[11px] text-inkMuted">登録日: {new Date(m.createdAt).toLocaleString()}</div>
+                      <div className="text-sm font-semibold text-[var(--color-text-primary)]">{m.userName}</div>
+                      <div className="text-xs text-[var(--color-text-secondary)]">ID: {m.loginId} / ユーザーロール: {m.userRole}</div>
+                      <div className="text-xs text-[var(--color-text-secondary)]">会社内ロール: {m.roleInCompany}</div>
+                      <div className="text-[11px] text-[var(--color-text-secondary)]">登録日: {new Date(m.createdAt).toLocaleString()}</div>
                     </div>
                     <div className="flex justify-end sm:items-center">
                       <Button

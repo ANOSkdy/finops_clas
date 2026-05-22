@@ -54,9 +54,9 @@ export default function SystemManagerPage() {
       <div className="space-y-4">
         <div>
           <div className="text-xl font-semibold tracking-tight">システム管理</div>
-          <div className="mt-1 text-sm text-inkMuted">グローバル権限で利用できる管理メニュー</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">グローバル権限で利用できる管理メニュー</div>
         </div>
-        <Card className="glass">
+        <Card className="">
           <CardHeader>
             <div className="text-base font-semibold">読み込み中</div>
           </CardHeader>
@@ -75,13 +75,13 @@ export default function SystemManagerPage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">システム管理</div>
-        <div className="mt-1 text-sm text-inkMuted">グローバル権限で利用できる管理メニュー</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">グローバル権限で利用できる管理メニュー</div>
       </div>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">アカウント管理</div>
-          <div className="mt-1 text-sm text-inkMuted">ユーザー作成・削除や権限の管理を行います</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">ユーザー作成・削除や権限の管理を行います</div>
         </CardHeader>
         <CardContent className="flex justify-center">
           <a href="/account">
@@ -90,10 +90,10 @@ export default function SystemManagerPage() {
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">新しい会社</div>
-          <div className="mt-1 text-sm text-inkMuted">会社レコードを追加します</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">会社レコードを追加します</div>
         </CardHeader>
         <CardContent className="flex justify-center">
           <a href="/newcompany">
@@ -102,10 +102,10 @@ export default function SystemManagerPage() {
         </CardContent>
       </Card>
 
-      <Card className="glass">
+      <Card className="">
         <CardHeader>
           <div className="text-base font-semibold">会社メンバー紐付け</div>
-          <div className="mt-1 text-sm text-inkMuted">既存の法人・個人事業主にユーザーを追加します</div>
+          <div className="mt-1 text-sm text-[var(--color-text-secondary)]">既存の法人・個人事業主にユーザーを追加します</div>
         </CardHeader>
         <CardContent className="flex justify-center">
           <a href="/company_member">

@@ -10,7 +10,7 @@ export const viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <body className="min-h-screen bg-base text-ink force-ink">
+      <body className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] force-ink">
         <Providers>{children}</Providers>
       </body>
     </html>
