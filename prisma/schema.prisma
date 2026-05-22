@@ -12,7 +12,8 @@ model User {
   loginId      String   @unique @map("login_id")
   passwordHash String   @map("password_hash")
   name         String
-  role         String   @default("user") // 'admin'|'user'繝ｻ繝ｻB陋幢ｽｴCHECK邵ｺ・ｯmigration邵ｺ・ｧ髴托ｽｽ陷会｣ｰ繝ｻ繝ｻ  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  role         String   @default("user") // admin|user|global
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   memberships Membership[]
@@ -24,34 +25,32 @@ model User {
 }
 
 model Company {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name               String
-  legalForm          String   @map("legal_form") // 'corporation'|'sole'
-  address            String?
-  fiscalClosingMonth Int      @map("fiscal_closing_month")
-  representativeName String?  @map("representative_name")
-  contactEmail       String?  @map("contact_email")
-  contactPhone       String?  @map("contact_phone")
-  corporateNumber    String?  @map("corporate_number") @db.VarChar(13)
-  establishedOn      DateTime? @map("established_on") @db.Date
-  withholdingIncomeTaxPaymentSchedule String? @map("withholding_income_tax_payment_schedule")
-  residentTaxPaymentSchedule  String? @map("resident_tax_payment_schedule")
-  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id                                   String                         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                                 String
+  legalForm                            String                         @map("legal_form") // corporation|sole
+  address                              String?
+  fiscalClosingMonth                   Int                            @map("fiscal_closing_month")
+  representativeName                   String?                        @map("representative_name")
+  contactEmail                         String?                        @map("contact_email")
+  contactPhone                         String?                        @map("contact_phone")
+  corporateNumber                      String?                        @map("corporate_number") @db.VarChar(13)
+  establishedOn                        DateTime?                      @map("established_on") @db.Date
+  withholdingIncomeTaxPaymentSchedule  String?                        @map("withholding_income_tax_payment_schedule")
+  residentTaxPaymentSchedule           String?                        @map("resident_tax_payment_schedule")
+  createdAt                            DateTime                       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                            DateTime                       @default(now()) @map("updated_at") @db.Timestamptz(6)
 
-  memberships Membership[]
-  tasks       Task[]
-  uploads     Upload[]
-  ratings     Rating[]
-  emails      Email[]
-  sessions    Session[]
-  taxSetting  CompanyTaxSetting?
+  memberships          Membership[]
+  tasks                Task[]
+  uploads              Upload[]
+  ratings              Rating[]
+  emails               Email[]
+  sessions             Session[]
+  taxSetting           CompanyTaxSetting?
   recurringTaxDueDates CompanyRecurringTaxDueDate[]
 
   @@map("companies")
 }
-
-
 
 model CompanyTaxSetting {
   id                                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -67,8 +66,6 @@ model CompanyTaxSetting {
 
   @@map("company_tax_settings")
 }
-
-
 
 model CompanyRecurringTaxDueDate {
   id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -89,6 +86,7 @@ model CompanyRecurringTaxDueDate {
   @@index([companyId, taxType])
   @@map("company_recurring_tax_due_dates")
 }
+
 model Membership {
   userId        String   @map("user_id") @db.Uuid
   companyId     String   @map("company_id") @db.Uuid
@@ -119,17 +117,17 @@ model Session {
 }
 
 model Task {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId String   @map("company_id") @db.Uuid
-  category  String // tax|social|other
-  title     String
-  dueDate   DateTime  @map("due_date") @db.Date
-  taskKey   String?   @map("task_key")
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId   String    @map("company_id") @db.Uuid
+  category    String    // tax|social|other
+  title       String
+  dueDate     DateTime  @map("due_date") @db.Date
+  taskKey     String?   @map("task_key")
   periodStart DateTime? @map("period_start") @db.Date
-  periodEnd DateTime? @map("period_end") @db.Date
-  status    String    @default("pending") // pending|done|overdue
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  periodEnd   DateTime? @map("period_end") @db.Date
+  status      String    @default("pending") // pending|done|overdue
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
@@ -143,7 +141,7 @@ model Upload {
   id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   companyId        String   @map("company_id") @db.Uuid
   userId           String   @map("user_id") @db.Uuid
-  purpose          String // rating|trial_balance
+  purpose          String   // rating|trial_balance
   storageProvider  String   @map("storage_provider") // vercel_blob|s3
   storageKey       String   @map("storage_key")
   originalFilename String   @map("original_filename")
