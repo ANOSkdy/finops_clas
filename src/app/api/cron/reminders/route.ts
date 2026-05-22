@@ -24,7 +24,7 @@ function formatDateUTC(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-export async function POST(req: NextRequest) {
+async function handleCronRequest(req: NextRequest) {
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret) {
     return new Response(JSON.stringify({ error: "CRON_SECRET not configured" }), {
@@ -157,4 +157,12 @@ export async function POST(req: NextRequest) {
   }
 
   return jsonOk({ ok: true, scanned, eligible, queued, sent, skipped, failed });
+}
+
+export async function GET(req: NextRequest) {
+  return handleCronRequest(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleCronRequest(req);
 }
