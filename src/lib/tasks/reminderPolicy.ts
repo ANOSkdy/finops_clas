@@ -1,3 +1,12 @@
+export type ReminderEmailKey =
+  | "30d_before"
+  | "14d_before"
+  | "7d_before"
+  | "3d_before"
+  | "1d_before"
+  | "today"
+  | "overdue";
+
 export type ReminderGroupKey =
   | "overdue"
   | "today"
@@ -43,4 +52,48 @@ export function createEmptyReminderGroups<T>() {
     within14Days: [] as T[],
     within30Days: [] as T[],
   };
+}
+
+export function getReminderEmailKey({
+  dueDate,
+  today,
+  taskKey,
+}: {
+  dueDate: Date;
+  today: Date;
+  taskKey?: string | null;
+}): ReminderEmailKey | null {
+  const due = Date.UTC(dueDate.getUTCFullYear(), dueDate.getUTCMonth(), dueDate.getUTCDate());
+  const base = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  const daysDiff = Math.floor((due - base) / (24 * 60 * 60 * 1000));
+
+  if (daysDiff < 0) return "overdue";
+  if (daysDiff === 0) return "today";
+
+  const policy = classifyReminderPolicy(taskKey);
+
+  switch (policy) {
+    case "major":
+      if (daysDiff === 30) return "30d_before";
+      if (daysDiff === 14) return "14d_before";
+      if (daysDiff === 7) return "7d_before";
+      if (daysDiff === 3) return "3d_before";
+      break;
+    case "monthly":
+      if (daysDiff === 7) return "7d_before";
+      if (daysDiff === 3) return "3d_before";
+      if (daysDiff === 1) return "1d_before";
+      break;
+    case "municipal":
+      if (daysDiff === 14) return "14d_before";
+      if (daysDiff === 7) return "7d_before";
+      if (daysDiff === 1) return "1d_before";
+      break;
+    case "default":
+      if (daysDiff === 7) return "7d_before";
+      if (daysDiff === 1) return "1d_before";
+      break;
+  }
+
+  return null;
 }

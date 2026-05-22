@@ -129,12 +129,31 @@ model Task {
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company            Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reminderDeliveries TaskReminderDelivery[]
 
   @@index([companyId, dueDate])
   @@index([companyId, status])
   @@index([companyId, taskKey])
   @@map("tasks")
+}
+
+model TaskReminderDelivery {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  taskId    String    @map("task_id") @db.Uuid
+  channel   String
+  remindKey String    @map("remind_key")
+  status    String    @default("queued")
+  sentAt    DateTime? @map("sent_at") @db.Timestamptz(6)
+  error     String?
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, channel, remindKey])
+  @@index([status, createdAt])
+  @@map("task_reminder_deliveries")
 }
 
 model Upload {
