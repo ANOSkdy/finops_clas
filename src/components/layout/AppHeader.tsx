@@ -52,7 +52,7 @@ export function AppHeader() {
   return (
     <header
       data-scrolled={scrolled}
-      className="sticky top-0 z-40 border-b border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur transition-all"
+      className="sticky top-0 z-40 border-b border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur transition-[background-color,box-shadow]"
     >
       <MainContainer className="safe-x">
         <div

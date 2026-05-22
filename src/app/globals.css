@@ -42,6 +42,11 @@
   --font-serif: "Hiragino Mincho ProN", "Hiragino Mincho Pro", HGSMinchoE,
     "Yu Mincho", YuMincho, "MS PMincho", serif;
   --font-mono: SFMono-Regular, Consolas, Menlo, Courier, monospace;
+  --app-header-height: 3.5rem;
+  --t-duration-fast: 160ms;
+  --t-duration-base: 240ms;
+  --t-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --t-ease-emphasized: cubic-bezier(0.2, 0, 0, 1.2);
 
   /* Compatibility variables used by existing screens before PR2 migration */
   --memo-red: 242 139 130;
@@ -89,3 +94,66 @@ body {
   background: var(--color-surface-primary);
 }
 
+.t-page-shell {
+  animation: t-page-enter var(--t-duration-base) var(--t-ease-standard);
+}
+
+.t-toast-item {
+  transition:
+    transform var(--t-duration-fast) var(--t-ease-standard),
+    opacity var(--t-duration-fast) var(--t-ease-standard);
+}
+
+.t-panel {
+  transition:
+    transform var(--t-duration-base) var(--t-ease-standard),
+    opacity var(--t-duration-fast) var(--t-ease-standard);
+  will-change: transform, opacity;
+}
+
+.t-panel-open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.t-panel-closed {
+  transform: translateX(-88%);
+  opacity: 0.96;
+}
+
+.t-error-pop {
+  animation: t-error-pop var(--t-duration-fast) var(--t-ease-emphasized);
+}
+
+@keyframes t-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes t-error-pop {
+  from {
+    opacity: 0.92;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-page-shell,
+  .t-error-pop {
+    animation: none;
+  }
+  .t-toast-item,
+  .t-panel {
+    transition: none;
+  }
+}

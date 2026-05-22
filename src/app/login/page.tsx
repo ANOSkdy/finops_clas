@@ -33,7 +33,6 @@ function LoginForm() {
 
       if (res.status !== 204) {
         setError("IDまたはパスワードが違います。");
-        toast({ variant: "error", description: "ログインに失敗しました" });
         return;
       }
 
@@ -56,7 +55,7 @@ function LoginForm() {
           </CardHeader>
           <CardContent className="space-y-6 px-8 pb-8 pt-6">
             {error && (
-              <div role="alert" className="rounded-2xl border border-accent2/30 bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
+              <div role="alert" className="t-error-pop rounded-2xl border border-accent2/30 bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
                 {error}
               </div>
             )}
