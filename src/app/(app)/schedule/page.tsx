@@ -20,6 +20,7 @@ export default function SchedulePage() {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [state, setState] = useState<"loading"|"ok"|"needsCompany"|"needsLogin"|"error">("loading");
   const [updating, setUpdating] = useState(false);
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
 
   const load = useCallback(async () => {
@@ -61,6 +62,34 @@ export default function SchedulePage() {
       setUpdating(false);
     }
   }, [load, toast]);
+
+
+
+  const updateTaskStatus = useCallback(async (taskId: string, status: "pending" | "done") => {
+    setUpdating(true);
+    setUpdatingTaskId(taskId);
+    try {
+      const res = await fetch(`/api/tasks/${taskId}/status`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) {
+        toast({ variant: "error", description: "タスク状態の更新に失敗しました" });
+        return;
+      }
+
+      setTasks((prev) => (prev ? prev.map((t) => (t.taskId === taskId ? { ...t, status } : t)) : prev));
+      toast({ variant: "success", description: status === "done" ? "タスクを完了にしました" : "未完了に戻しました" });
+    } catch {
+      toast({ variant: "error", description: "タスク状態更新中にエラーが発生しました" });
+    } finally {
+      setUpdating(false);
+      setUpdatingTaskId(null);
+    }
+  }, [toast]);
 
   const skeleton = (
     <div aria-busy="true" className="space-y-3">
@@ -141,7 +170,7 @@ export default function SchedulePage() {
 
       {state === "ok" && tasks && (
         <div className="space-y-3">
-          <TaskList tasks={visibleTasks ?? []} />
+          <TaskList tasks={visibleTasks ?? []} onStatusChange={updateTaskStatus} updatingTaskId={updatingTaskId} />
           {tasks.length > 0 && (showAll || hasTasksBeyondThreeMonths) && (
             <div className="flex justify-center">
               <Button variant="secondary" onClick={() => setShowAll((v) => !v)}>

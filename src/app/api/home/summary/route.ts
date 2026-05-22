@@ -3,8 +3,20 @@ import { prisma } from "@/lib/db";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { requireActiveCompany } from "@/lib/auth/tenant";
 import { computeTaskStatus, startOfTodayUtc, toYmd } from "@/lib/tasks/format";
+import { createEmptyReminderGroups, getReminderGroupKey } from "@/lib/tasks/reminderPolicy";
 
 export const runtime = "nodejs";
+
+const GROUP_LIMIT = 8;
+
+type ReminderTask = {
+  taskId: string;
+  title: string;
+  dueDate: string;
+  status: "pending" | "done" | "overdue";
+  taskKey?: string | null;
+  category?: "tax" | "social" | "other";
+};
 
 export async function GET(req: NextRequest) {
   const scoped = await requireActiveCompany(req);
@@ -16,47 +28,57 @@ export async function GET(req: NextRequest) {
 
   const now = new Date();
   const today = startOfTodayUtc(now);
-  const soon = new Date(today);
-  soon.setUTCDate(soon.getUTCDate() + 14);
+  const within30 = new Date(today);
+  within30.setUTCDate(within30.getUTCDate() + 30);
 
-  const overdueCount = await prisma.task.count({
+  const candidateTasks = await prisma.task.findMany({
     where: {
       companyId: scoped.companyId,
       status: { not: "done" },
-      dueDate: { lt: today },
-    },
-  });
-
-  const upcomingRaw = await prisma.task.findMany({
-    where: {
-      companyId: scoped.companyId,
-      status: { not: "done" },
-      dueDate: { gte: today, lte: soon },
+      dueDate: { lte: within30 },
     },
     orderBy: [{ dueDate: "asc" }],
-    take: 5,
-    select: { id: true, title: true, dueDate: true, status: true },
+    select: { id: true, title: true, dueDate: true, status: true, taskKey: true, category: true },
   });
 
-  const upcomingTasks = upcomingRaw.map((t) => ({
-    taskId: t.id,
-    title: t.title,
-    dueDate: toYmd(t.dueDate),
-    status: computeTaskStatus(t.status, t.dueDate, now),
-  }));
+  const reminderGroups = createEmptyReminderGroups<ReminderTask>();
+  let overdueCount = 0;
+  let dueTodayCount = 0;
+  let within30Count = 0;
 
-  const upcomingCount = await prisma.task.count({
-    where: {
-      companyId: scoped.companyId,
-      status: { not: "done" },
-      dueDate: { gte: today, lte: soon },
-    },
-  });
+  for (const t of candidateTasks) {
+    const displayStatus = computeTaskStatus(t.status, t.dueDate, now);
+    const groupKey = getReminderGroupKey(t.dueDate, today);
+    if (!groupKey) continue;
+
+    within30Count += 1;
+    if (groupKey === "overdue") overdueCount += 1;
+    if (groupKey === "today") dueTodayCount += 1;
+
+    if (reminderGroups[groupKey].length >= GROUP_LIMIT) continue;
+
+    reminderGroups[groupKey].push({
+      taskId: t.id,
+      title: t.title,
+      dueDate: toYmd(t.dueDate),
+      status: displayStatus,
+      taskKey: t.taskKey,
+      category: t.category as "tax" | "social" | "other",
+    });
+  }
+
+  const upcomingTasks = [
+    ...reminderGroups.today,
+    ...reminderGroups.within3Days,
+    ...reminderGroups.within7Days,
+    ...reminderGroups.within14Days,
+  ].slice(0, 5);
 
   const alerts: Array<{ type: "warning"; message: string }> = [];
   if (overdueCount > 0) alerts.push({ type: "warning", message: `期限切れのタスクが ${overdueCount} 件あります` });
-  if (upcomingCount > 0) alerts.push({ type: "warning", message: `期限が近いタスクが ${upcomingCount} 件あります` });
+  if (dueTodayCount > 0) alerts.push({ type: "warning", message: `本日期限のタスクが ${dueTodayCount} 件あります` });
+  if (within30Count > 0) alerts.push({ type: "warning", message: `30日以内のタスクが ${within30Count} 件あります` });
   if (alerts.length === 0) alerts.push({ type: "warning", message: "期限が近いタスクはありません" });
 
-  return jsonOk({ alerts, upcomingTasks });
+  return jsonOk({ alerts, upcomingTasks, reminderGroups });
 }
