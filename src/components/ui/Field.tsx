@@ -39,7 +39,7 @@ export function Field({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-11 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-5 pb-2 text-sm text-[var(--color-text-primary)]",
+            "focus-ring peer h-14 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-7 pb-2 text-sm leading-5 text-[var(--color-text-primary)]",
             "border-[var(--color-border-default)] focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent",
@@ -50,9 +50,9 @@ export function Field({
         <label
           htmlFor={id}
           className={cn(
-            "pointer-events-none absolute left-3 top-2 text-xs text-[var(--color-text-secondary)] transition-all",
-            "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[var(--color-text-secondary)]",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary",
+            "pointer-events-none absolute left-3 top-2 text-xs leading-4 text-[var(--color-text-secondary)] transition-all",
+            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-5 peer-placeholder-shown:text-[var(--color-text-secondary)]",
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:leading-4 peer-focus:text-primary",
             labelClassName
           )}
         >
@@ -88,7 +88,6 @@ export function SelectField({
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
-  const isEmpty = value === undefined || value === null || value === "";
 
   return (
     <div className={cn("space-y-1", className)}>
@@ -99,7 +98,7 @@ export function SelectField({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer h-11 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-5 pb-2 text-sm text-[var(--color-text-primary)]",
+            "focus-ring peer h-14 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-7 pb-2 pr-10 text-sm leading-5 text-[var(--color-text-primary)]",
             "border-[var(--color-border-default)] focus:border-primary",
             error ? "border-accent2 focus:border-accent2" : "",
             inputClassName
@@ -112,9 +111,8 @@ export function SelectField({
         <label
           htmlFor={id}
           className={cn(
-            "pointer-events-none absolute left-3 text-xs text-[var(--color-text-secondary)] transition-all",
-            isEmpty ? "top-3 text-sm text-[var(--color-text-secondary)]" : "top-2",
-            "group-focus-within:top-2 group-focus-within:text-xs group-focus-within:text-primary",
+            "pointer-events-none absolute left-3 top-2 text-xs leading-4 text-[var(--color-text-secondary)] transition-all",
+            "group-focus-within:text-primary",
             labelClassName
           )}
         >
@@ -155,7 +153,7 @@ export function TextareaField({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            "focus-ring peer min-h-[140px] w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-6 pb-3 text-sm text-[var(--color-text-primary)]",
+            "focus-ring peer min-h-[140px] w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-7 pb-3 text-sm leading-5 text-[var(--color-text-primary)]",
             "border-[var(--color-border-default)] focus:border-primary resize-y",
             error ? "border-accent2 focus:border-accent2" : "",
             "placeholder:text-transparent",
@@ -166,9 +164,9 @@ export function TextareaField({
         <label
           htmlFor={id}
           className={cn(
-            "pointer-events-none absolute left-3 top-2 text-xs text-[var(--color-text-secondary)] transition-all",
-            "peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[var(--color-text-secondary)]",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary",
+            "pointer-events-none absolute left-3 top-2 text-xs leading-4 text-[var(--color-text-secondary)] transition-all",
+            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-5 peer-placeholder-shown:text-[var(--color-text-secondary)]",
+            "peer-focus:top-2 peer-focus:text-xs peer-focus:leading-4 peer-focus:text-primary",
             labelClassName
           )}
         >
