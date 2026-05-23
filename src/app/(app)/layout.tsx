@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { AppHeader } from "@/components/layout/AppHeader";
-import { BottomNav } from "@/components/layout/BottomNav";
 import { MainContainer } from "@/components/ui/MainContainer";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -15,10 +14,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
       <div className="min-h-screen bg-[var(--color-bg-primary)]">
         <AppHeader />
-        <main id="main" className="t-page-shell pt-6">
+        <main id="main" className="t-page-shell min-w-0 max-w-full overflow-x-hidden pt-6">
           <MainContainer>{children}</MainContainer>
         </main>
-        <BottomNav />
       </div>
     </>
   );
