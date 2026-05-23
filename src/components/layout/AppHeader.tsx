@@ -114,26 +114,26 @@ export function AppHeader() {
     <>
       <header
         data-scrolled={scrolled}
-        className="sticky top-0 z-40 border-b border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur transition-[background-color,box-shadow]"
+        className="sticky top-0 z-40 w-full max-w-full overflow-hidden border-b border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur transition-[background-color,box-shadow]"
       >
-        <MainContainer className="safe-x">
+        <MainContainer className="safe-x px-3 sm:px-6">
           <div
             data-scrolled={scrolled}
-            className="flex h-14 min-w-0 items-center justify-between gap-2 transition-[height] data-[scrolled=true]:h-12"
+            className="flex h-14 w-full min-w-0 max-w-full items-center justify-between gap-1.5 overflow-hidden transition-[height] data-[scrolled=true]:h-12 sm:gap-2"
           >
-            <div className="leading-tight min-w-0">
+            <div className="min-w-0 flex-1 overflow-hidden leading-tight">
               <div className="truncate text-base font-semibold text-[var(--color-text-primary)]">CLAS FinOps</div>
               <div className="truncate text-xs text-[var(--color-text-secondary)]">
                 {loaded ? companyName : "読み込み中…"}
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
               {!isSelectCompany && (
                 <button
                   type="button"
                   onClick={() => setDrawerOpen(true)}
-                  className="focus-ring tap-44 inline-flex items-center justify-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 text-sm font-medium text-[var(--color-text-primary)]"
+                  className="focus-ring tap-44 inline-flex shrink-0 items-center justify-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-2.5 text-sm font-medium text-[var(--color-text-primary)]"
                   aria-label="ナビゲーションを開く"
                   aria-expanded={drawerOpen}
                   aria-controls="app-drawer-nav"
@@ -141,8 +141,12 @@ export function AppHeader() {
                   ☰
                 </button>
               )}
-              <a href="/selectcompany" className="shrink-0">
-                <Button variant="outline" size="md">
+              <a href="/selectcompany" className="shrink-0 whitespace-nowrap">
+                <Button
+                  variant="outline"
+                  size="md"
+                  className="px-2 text-xs whitespace-nowrap sm:px-5 sm:text-sm"
+                >
                   会社切替
                 </Button>
               </a>
@@ -162,7 +166,7 @@ export function AppHeader() {
 
           <aside
             id="app-drawer-nav"
-            className="t-panel-open relative z-10 h-full w-[min(18rem,86vw)] max-w-full border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 pb-4 pt-4 shadow-[var(--shadow-elevation-4)]"
+            className="t-panel-open relative z-10 h-full w-[min(84vw,360px)] max-w-full border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 pb-4 pt-4 shadow-[var(--shadow-elevation-4)]"
           >
             <div className="mb-3 flex items-center justify-between">
               <p className="text-sm font-semibold text-[var(--color-text-primary)]">メニュー</p>

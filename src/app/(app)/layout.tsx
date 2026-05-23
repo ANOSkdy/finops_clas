@@ -12,7 +12,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         本文へスキップ
       </a>
 
-      <div className="min-h-screen bg-[var(--color-bg-primary)]">
+      <div className="min-h-dvh w-full max-w-full overflow-x-hidden bg-[var(--color-bg-primary)]">
         <AppHeader />
         <main id="main" className="t-page-shell min-w-0 max-w-full overflow-x-hidden pt-6">
           <MainContainer>{children}</MainContainer>
