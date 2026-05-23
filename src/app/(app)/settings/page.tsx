@@ -50,43 +50,43 @@ export default function SettingsPage() {
         <div className="mt-1 text-sm text-[var(--color-text-secondary)]">アカウントとセキュリティ</div>
       </div>
 
-      <Card className="">
-        <CardHeader>
+      <Card className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader className="px-0 pt-0">
           <div className="text-base font-semibold">アカウント</div>
         </CardHeader>
-        <CardContent className="flex justify-center">
-          <div className="flex flex-col gap-2 sm:flex-row">
+        <CardContent className="px-0 pb-0 sm:shrink-0">
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             <a href="/password">
-              <Button className="w-48">パスワード</Button>
+              <Button className="w-full sm:w-48">パスワード</Button>
             </a>
-            <Button className="w-48" onClick={() => setOpen(true)} disabled={busy}>
+            <Button className="w-full sm:w-48" onClick={() => setOpen(true)} disabled={busy}>
               ログアウト
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="">
-        <CardHeader>
+      <Card className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader className="px-0 pt-0">
           <div className="text-base font-semibold">会社情報</div>
           <div className="mt-1 text-sm text-[var(--color-text-secondary)]">登録済みの会社情報を修正します</div>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="px-0 pb-0 sm:shrink-0">
           <a href="/company_edit">
-            <Button className="w-48">会社情報を修正</Button>
+            <Button className="w-full sm:w-48">会社情報を修正</Button>
           </a>
         </CardContent>
       </Card>
 
       {role === "global" && (
-        <Card className="">
-          <CardHeader>
+        <Card className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <CardHeader className="px-0 pt-0">
             <div className="text-base font-semibold">システム管理</div>
             <div className="mt-1 text-sm text-[var(--color-text-secondary)]">グローバル権限者向けの設定を表示します</div>
           </CardHeader>
-          <CardContent className="flex justify-center">
+          <CardContent className="px-0 pb-0 sm:shrink-0">
             <a href="/system_manager">
-              <Button className="w-48">システム管理</Button>
+              <Button className="w-full sm:w-48">システム管理</Button>
             </a>
           </CardContent>
         </Card>
