@@ -78,38 +78,38 @@ export default function SystemManagerPage() {
         <div className="mt-1 text-sm text-[var(--color-text-secondary)]">グローバル権限で利用できる管理メニュー</div>
       </div>
 
-      <Card className="">
-        <CardHeader>
+      <Card className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader className="px-0 pt-0">
           <div className="text-base font-semibold">アカウント管理</div>
           <div className="mt-1 text-sm text-[var(--color-text-secondary)]">ユーザー作成・削除や権限の管理を行います</div>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="px-0 pb-0 sm:shrink-0">
           <a href="/account">
-            <Button className="w-48">アカウント管理を開く</Button>
+            <Button className="w-full sm:w-56">アカウント管理を開く</Button>
           </a>
         </CardContent>
       </Card>
 
-      <Card className="">
-        <CardHeader>
+      <Card className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader className="px-0 pt-0">
           <div className="text-base font-semibold">新しい会社</div>
           <div className="mt-1 text-sm text-[var(--color-text-secondary)]">会社レコードを追加します</div>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="px-0 pb-0 sm:shrink-0">
           <a href="/newcompany">
-            <Button className="w-48">新しい会社を登録</Button>
+            <Button className="w-full sm:w-56">新しい会社を登録</Button>
           </a>
         </CardContent>
       </Card>
 
-      <Card className="">
-        <CardHeader>
+      <Card className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <CardHeader className="px-0 pt-0">
           <div className="text-base font-semibold">会社メンバー紐付け</div>
           <div className="mt-1 text-sm text-[var(--color-text-secondary)]">既存の法人・個人事業主にユーザーを追加します</div>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="px-0 pb-0 sm:shrink-0">
           <a href="/company_member">
-            <Button className="w-48">紐付けページを開く</Button>
+            <Button className="w-full sm:w-56">紐付けページを開く</Button>
           </a>
         </CardContent>
       </Card>
