@@ -116,19 +116,21 @@ export function AppHeader() {
         data-scrolled={scrolled}
         className="sticky top-0 z-40 w-full max-w-full overflow-hidden border-b border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur transition-[background-color,box-shadow]"
       >
-        <MainContainer className="safe-x px-3 sm:px-6">
+        <MainContainer className="safe-x !px-3 sm:!px-4">
           <div
             data-scrolled={scrolled}
-            className="flex h-14 w-full min-w-0 max-w-full items-center justify-between gap-1.5 overflow-hidden transition-[height] data-[scrolled=true]:h-12 sm:gap-2"
+            className="flex h-16 w-full min-w-0 max-w-full items-center gap-2 overflow-hidden transition-[height] data-[scrolled=true]:h-14"
           >
             <div className="min-w-0 flex-1 overflow-hidden leading-tight">
-              <div className="truncate text-base font-semibold text-[var(--color-text-primary)]">CLAS FinOps</div>
-              <div className="truncate text-xs text-[var(--color-text-secondary)]">
+              <div className="truncate text-lg font-semibold leading-tight text-[var(--color-text-primary)]">
+                CLAS FinOps
+              </div>
+              <div className="truncate text-sm text-[var(--color-text-secondary)]">
                 {loaded ? companyName : "読み込み中…"}
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <div className="ml-2 flex shrink-0 items-center gap-1.5 sm:gap-2">
               {!isSelectCompany && (
                 <button
                   type="button"
