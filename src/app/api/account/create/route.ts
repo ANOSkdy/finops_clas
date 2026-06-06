@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
   const passwordHash = await hashPassword(password);
 
-  const user = await prisma.$transaction(async (tx: typeof prisma) => {
+  const user = await prisma.$transaction(async (tx) => {
     const created = await tx.user.create({
       data: {
         loginId,
