@@ -9,9 +9,13 @@ import { useToast } from "@/components/ui/toast";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/Dialog";
 import { buildBlobPath } from "@/lib/uploads/path";
 
-type ActiveCompanyResponse =
-  | { company: { companyId: string; name: string } }
-  | { error?: unknown };
+type ActiveCompanyResponse = { company?: { companyId: string; name: string }; error?: unknown };
+
+type UploadedBlobInfo = {
+  url: string;
+  pathname?: string;
+  contentType?: string;
+};
 
 function formatBytes(n: number) {
   if (n < 1024) return `${n} B`;
@@ -72,7 +76,6 @@ CLAS`
         if (res.status === 404) { setNeedsCompany(true); return; }
         if (!res.ok) return;
         const json = (await res.json()) as ActiveCompanyResponse;
-        // @ts-expect-error
         const c = json.company;
         if (c?.companyId) {
           setCompanyId(c.companyId);
@@ -109,11 +112,11 @@ CLAS`
         originalFilename: file.name,
       });
 
-      const blob = await upload(pathname, file, {
+      const blob = (await upload(pathname, file, {
         access: "public",
         handleUploadUrl: "/api/uploads/token",
         clientPayload: JSON.stringify({ purpose: "trial_balance", originalFilename: file.name }),
-      });
+      })) as UploadedBlobInfo;
 
       setProgress("完了処理中…（DB記録）");
       const completeRes = await fetch("/api/uploads/complete", {
@@ -126,8 +129,8 @@ CLAS`
           sha256: hash,
           blob: {
             url: blob.url,
-            pathname: (blob as any).pathname,
-            contentType: (blob as any).contentType,
+            pathname: blob.pathname,
+            contentType: blob.contentType,
             size: file.size,
           },
         }),

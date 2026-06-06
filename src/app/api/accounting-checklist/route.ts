@@ -15,10 +15,18 @@ function currentFiscalYear() {
 }
 
 async function ensureDefaultItems(companyId: string) {
-  await prisma.accountingChecklistItem.createMany({
-    data: DEFAULT_ITEMS.map((name, index) => ({ companyId, name, isDefault: true, sortOrder: index })),
-    skipDuplicates: true,
+  const existingItems = await prisma.accountingChecklistItem.findMany({
+    where: { companyId, name: { in: [...DEFAULT_ITEMS] } },
+    select: { name: true },
   });
+  const existingNames = new Set(existingItems.map((item: { name: string }) => item.name));
+  const missingItems = DEFAULT_ITEMS.flatMap((name, index) =>
+    existingNames.has(name) ? [] : [{ companyId, name, isDefault: true, sortOrder: index }]
+  );
+
+  if (missingItems.length > 0) {
+    await prisma.accountingChecklistItem.createMany({ data: missingItems });
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -38,11 +46,11 @@ export async function GET(req: NextRequest) {
   const [items, checks] = await Promise.all([
     prisma.accountingChecklistItem.findMany({
       where: { companyId: scoped.companyId },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }, { name: "asc" }],
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
       select: { id: true, name: true, isDefault: true, sortOrder: true },
     }),
     prisma.accountingChecklistCheck.findMany({
-      where: { companyId: scoped.companyId, fiscalYear: fiscalYearResult.data, checked: true },
+      where: { companyId: scoped.companyId, fiscalYear: fiscalYearResult.data },
       select: { itemId: true, month: true, checked: true },
     }),
   ]);

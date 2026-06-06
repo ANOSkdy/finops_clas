@@ -18,9 +18,13 @@ type FinalizeRes = {
   highlights: Array<{ title: string; detail: string }>;
 };
 
-type ActiveCompanyResponse =
-  | { company: { companyId: string; name: string } }
-  | { error?: unknown };
+type ActiveCompanyResponse = { company?: { companyId: string; name: string }; error?: unknown };
+
+type UploadedBlobInfo = {
+  url: string;
+  pathname?: string;
+  contentType?: string;
+};
 
 async function sha256Hex(file: File): Promise<string | null> {
   const LIMIT = 20 * 1024 * 1024;
@@ -61,7 +65,6 @@ export default function RatingPage() {
         if (res.status === 404) { setNeedsCompany(true); return; }
         if (!res.ok) return;
         const json = (await res.json()) as ActiveCompanyResponse;
-        // @ts-expect-error
         const c = json.company;
         if (c?.companyId) {
           setCompanyId(c.companyId);
@@ -116,11 +119,11 @@ export default function RatingPage() {
       setMsg("アップロード中…");
       const pathname = buildBlobPath({ companyId, purpose: "rating", originalFilename: file.name });
 
-      const blob = await upload(pathname, file, {
+      const blob = (await upload(pathname, file, {
         access: "public",
         handleUploadUrl: "/api/uploads/token",
         clientPayload: JSON.stringify({ purpose: "rating", originalFilename: file.name }),
-      });
+      })) as UploadedBlobInfo;
 
       setMsg("完了処理中…（DB記録）");
       const complete = await postJson<{ fileId: string }>("/api/uploads/complete", {
@@ -129,8 +132,8 @@ export default function RatingPage() {
         sha256: hash,
         blob: {
           url: blob.url,
-          pathname: (blob as any).pathname,
-          contentType: (blob as any).contentType,
+          pathname: blob.pathname,
+          contentType: blob.contentType,
           size: file.size,
         },
       });
@@ -213,7 +216,7 @@ export default function RatingPage() {
 
           {msg && (
             <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
-              {msg}
+              <span className="font-medium">{stage}</span>：{msg}
             </div>
           )}
 

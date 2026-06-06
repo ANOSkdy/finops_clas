@@ -10,13 +10,28 @@ function sanitize(msg: string) {
   return msg.replace(/https?:\/\/[^\s]+/g, "https://***");
 }
 
+type ResendPayload = {
+  from: string;
+  to: string[];
+  subject: string;
+  text: string;
+  replyTo?: string;
+  attachments?: Array<{ path: string; filename: string }>;
+};
+
+type ResendResponse = {
+  id?: unknown;
+  message?: unknown;
+  error?: { message?: unknown };
+};
+
 export async function sendResend(input: MailSendInput): Promise<MailSendResult> {
   try {
     const apiKey = requireEnv("MAIL_API_KEY");
     const from = requireEnv("MAIL_FROM");
     const replyTo = process.env.MAIL_REPLY_TO || undefined;
 
-    const payload: any = {
+    const payload: ResendPayload = {
       from,
       to: [input.to],
       subject: input.subject,
@@ -41,7 +56,7 @@ export async function sendResend(input: MailSendInput): Promise<MailSendResult> 
       body: JSON.stringify(payload),
     });
 
-    const json: any = await res.json().catch(() => null);
+    const json = (await res.json().catch(() => null)) as ResendResponse | null;
 
     if (!res.ok) {
       const msg =
@@ -54,7 +69,8 @@ export async function sendResend(input: MailSendInput): Promise<MailSendResult> 
     const id = json?.id;
     if (!id) return { status: "failed", error: "resend_missing_id" };
     return { status: "sent", providerMessageId: String(id) };
-  } catch (e: any) {
-    return { status: "failed", error: sanitize(String(e?.message || e)) };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { status: "failed", error: sanitize(msg) };
   }
 }

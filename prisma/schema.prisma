@@ -47,7 +47,7 @@ model Company {
   emails               Email[]
   sessions             Session[]
   taxSetting           CompanyTaxSetting?
-  recurringTaxDueDates     CompanyRecurringTaxDueDate[]
+  recurringTaxDueDates CompanyRecurringTaxDueDate[]
   accountingChecklistItems  AccountingChecklistItem[]
   accountingChecklistChecks AccountingChecklistCheck[]
 
@@ -93,15 +93,14 @@ model AccountingChecklistItem {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   companyId String   @map("company_id") @db.Uuid
   name      String
-  isDefault Boolean  @default(false) @map("is_default")
   sortOrder Int      @default(0) @map("sort_order")
+  isDefault Boolean  @default(false) @map("is_default")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   company Company                     @relation(fields: [companyId], references: [id], onDelete: Cascade)
   checks  AccountingChecklistCheck[]
 
-  @@unique([companyId, name])
   @@index([companyId, sortOrder])
   @@map("accounting_checklist_items")
 }

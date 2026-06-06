@@ -11,7 +11,22 @@ function formatDate(date: Date | null) {
   return date ? date.toISOString().slice(0, 10) : null;
 }
 
-function shapeCompany(c: any) {
+type CompanyShapeSource = {
+  id: string;
+  name: string;
+  legalForm: string;
+  address: string | null;
+  fiscalClosingMonth: number;
+  representativeName: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  corporateNumber: string | null;
+  establishedOn: Date | null;
+  withholdingIncomeTaxPaymentSchedule: string | null;
+  residentTaxPaymentSchedule: string | null;
+};
+
+function shapeCompany(c: CompanyShapeSource) {
   return {
     companyId: c.id,
     name: c.name,

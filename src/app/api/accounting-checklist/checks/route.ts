@@ -12,7 +12,14 @@ export async function PATCH(req: NextRequest) {
   if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
   if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
 
-  const parsed = upsertAccountingChecklistCheckSchema.safeParse(await req.json());
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return jsonError(400, "VALIDATION_ERROR", "入力値が不正です");
+  }
+
+  const parsed = upsertAccountingChecklistCheckSchema.safeParse(body);
   if (!parsed.success) return jsonError(400, "VALIDATION_ERROR", "入力値が不正です");
 
   const { itemId, fiscalYear, month, checked } = parsed.data;

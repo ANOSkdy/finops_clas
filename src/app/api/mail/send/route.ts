@@ -52,12 +52,12 @@ export async function POST(req: NextRequest) {
     return jsonError(403, "FORBIDDEN", "添付ファイルにアクセスできません");
   }
 
-  const wrongPurpose = uploads.find((u) => u.purpose !== "trial_balance");
+  const wrongPurpose = uploads.find((u: { purpose: string }) => u.purpose !== "trial_balance");
   if (wrongPurpose) {
     return jsonError(409, "CONFLICT", "添付は trial_balance のアップロードのみ対応です");
   }
 
-  const attachments: MailAttachment[] = uploads.map((u) => ({
+  const attachments: MailAttachment[] = uploads.map((u: { originalFilename: string; storageKey: string }) => ({
     filename: safeFilename(u.originalFilename),
     url: u.storageKey,
   }));

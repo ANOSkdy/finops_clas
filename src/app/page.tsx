@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -25,12 +26,12 @@ export default function Home() {
               >
                 ログインへ進む
               </a>
-              <a
+              <Link
                 className="inline-flex h-12 items-center justify-center rounded-full border border-[color:rgb(var(--button))]/30 bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-white shadow-sm hover:bg-[color:rgb(var(--button))]/90"
                 href="/manual"
               >
                 マニュアルを見る
-              </a>
+              </Link>
             </div>
           </div>
         </div>

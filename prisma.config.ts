@@ -1,6 +1,6 @@
 ﻿import "dotenv/config";
 import path from "node:path";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 export default defineConfig({
   // Prisma CLI uses this config for migrate/introspect/etc.
@@ -10,7 +10,7 @@ export default defineConfig({
   },
   datasource: {
     // For Prisma Migrate / CLI
-    url: env("DATABASE_URL"),
+    url: process.env.DATABASE_URL ?? "postgresql://user:password@localhost:5432/finops_clas",
     // Optional (only if you explicitly use a separate shadow DB):
     // shadowDatabaseUrl: env("SHADOW_DATABASE_URL"),
   },

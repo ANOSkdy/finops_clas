@@ -23,6 +23,26 @@ const ALLOWED_CONTENT_TYPES = [
 
 const MAX_BYTES = 250 * 1024 * 1024; // 250MB
 
+type UploadTokenPayload = {
+  companyId?: unknown;
+  userId?: unknown;
+  purpose?: unknown;
+  originalFilename?: unknown;
+};
+
+type BlobWithMetadata = {
+  url: string;
+  pathname: string;
+  contentType?: string;
+  size?: number;
+};
+
+function parseUploadTokenPayload(tokenPayload: string | null | undefined): UploadTokenPayload | null {
+  if (!tokenPayload) return null;
+  const parsed = JSON.parse(tokenPayload) as unknown;
+  return typeof parsed === "object" && parsed !== null ? parsed : null;
+}
+
 export async function POST(request: NextRequest) {
   let body: HandleUploadBody;
   try {
@@ -34,7 +54,7 @@ export async function POST(request: NextRequest) {
   }
 
   // callback (blob.upload-completed) では cookie が無いので、認証必須にしない
-  const isGenerateToken = (body as any)?.type === "blob.generate-client-token";
+  const isGenerateToken = (body as { type?: unknown }).type === "blob.generate-client-token";
 
   let authContext: Awaited<ReturnType<typeof requireActiveCompany>> | null = null;
   if (isGenerateToken) {
@@ -83,20 +103,25 @@ export async function POST(request: NextRequest) {
       onUploadCompleted: async ({ blob, tokenPayload }) => {
         // 本番ではここが呼ばれてDB更新できる（ローカルでは呼ばれない）
         try {
-          const tp = tokenPayload ? JSON.parse(tokenPayload) : null;
-          if (!tp?.companyId || !tp?.userId || !tp?.purpose) return;
+          const tp = parseUploadTokenPayload(tokenPayload);
+          if (
+            typeof tp?.companyId !== "string" ||
+            typeof tp.userId !== "string" ||
+            (tp.purpose !== "rating" && tp.purpose !== "trial_balance")
+          ) return;
+          const blobWithMetadata = blob as BlobWithMetadata;
 
           await upsertUploadFromBlob({
             companyId: tp.companyId,
             userId: tp.userId,
             purpose: tp.purpose,
-            originalFilename: tp.originalFilename ?? null,
+            originalFilename: typeof tp.originalFilename === "string" ? tp.originalFilename : null,
             sha256: null,
             blob: {
-              url: blob.url,
-              pathname: blob.pathname,
-              contentType: (blob as any).contentType,
-              size: (blob as any).size,
+              url: blobWithMetadata.url,
+              pathname: blobWithMetadata.pathname,
+              contentType: blobWithMetadata.contentType,
+              size: blobWithMetadata.size,
             },
           });
         } catch {
@@ -106,8 +131,8 @@ export async function POST(request: NextRequest) {
     });
 
     return jsonOk(jsonResponse);
-  } catch (e: any) {
-    const msg = String(e?.message || e || "");
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e || "");
     if (msg.includes("BLOB_READ_WRITE_TOKEN")) {
       return jsonError(500, "STORAGE_ERROR", "Blob token が設定されていません");
     }
