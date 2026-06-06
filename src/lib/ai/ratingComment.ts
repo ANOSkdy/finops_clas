@@ -39,6 +39,16 @@ function getModel() {
   return process.env.GEMINI_MODEL || "gemini-2.5-flash";
 }
 
+type GenerateContentResponseLike = {
+  text?: string;
+  candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+};
+
+type RatingCommentJson = {
+  aiComment?: unknown;
+  highlights?: unknown;
+};
+
 export async function generateRatingComment(params: {
   companyName?: string | null;
   originalFilename: string;
@@ -89,7 +99,7 @@ export async function generateRatingComment(params: {
   );
 
   try {
-    const resp: any = await Promise.race([
+    const resp = await Promise.race([
       ai.models.generateContent({
         model: getModel(),
         contents: prompt,
@@ -101,20 +111,24 @@ export async function generateRatingComment(params: {
       timeout,
     ]);
 
+    const response = resp as GenerateContentResponseLike;
     const text: string =
-      resp?.text ??
-      resp?.candidates?.[0]?.content?.parts?.[0]?.text ??
+      response.text ??
+      response.candidates?.[0]?.content?.parts?.[0]?.text ??
       "";
 
-    const json = JSON.parse(text);
+    const json = JSON.parse(text) as RatingCommentJson;
     const aiComment = typeof json.aiComment === "string" ? json.aiComment : fallback().aiComment;
     const highlightsRaw = Array.isArray(json.highlights) ? json.highlights : fallback().highlights;
 
     const highlights: RatingHighlight[] = highlightsRaw
-      .map((h: any) => ({
-        title: String(h?.title ?? "").slice(0, 80) || "ポイント",
-        detail: String(h?.detail ?? "").slice(0, 400) || "",
-      }))
+      .map((h: unknown) => {
+        const highlight = typeof h === "object" && h !== null ? h as { title?: unknown; detail?: unknown } : {};
+        return {
+          title: String(highlight.title ?? "").slice(0, 80) || "ポイント",
+          detail: String(highlight.detail ?? "").slice(0, 400) || "",
+        };
+      })
       .filter((h: RatingHighlight) => h.detail.length > 0)
       .slice(0, 5);
 

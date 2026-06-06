@@ -7,7 +7,7 @@ export async function readErrorText(res: Response) {
   }
 }
 
-export async function postJson<T>(url: string, body: any): Promise<{ ok: true; data: T } | { ok: false; status: number; text: string }> {
+export async function postJson<T>(url: string, body: unknown): Promise<{ ok: true; data: T } | { ok: false; status: number; text: string }> {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

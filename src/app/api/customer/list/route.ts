@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: "desc" },
   });
 
-  const res = memberships.map((m) => ({
+  const res = memberships.map((m: { company: { id: string; name: string; representativeName: string | null; contactEmail: string | null; contactPhone: string | null; legalForm: string } }) => ({
     companyId: m.company.id,
     name: m.company.name,
     representativeName: m.company.representativeName ?? null,

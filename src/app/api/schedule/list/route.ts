@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     select: { id: true, category: true, title: true, dueDate: true, status: true },
   });
 
-  const res = tasks.map((t) => ({
+  const res = tasks.map((t: { id: string; category: string; title: string; dueDate: Date; status: string }) => ({
     taskId: t.id,
     category: t.category,
     title: t.title,

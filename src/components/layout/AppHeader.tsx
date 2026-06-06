@@ -16,6 +16,7 @@ const navItems: NavItem[] = [
   { href: "/home", label: "ホーム" },
   { href: "/schedule", label: "スケジュール" },
   { href: "/upload", label: "アップロード" },
+  { href: "/accounting_checklist", label: "会計チェック" },
   { href: "/manual", label: "マニュアル" },
   { href: "/settings", label: "設定" },
 ];
@@ -107,7 +108,8 @@ export function AppHeader() {
   }, [drawerOpen]);
 
   useEffect(() => {
-    setDrawerOpen(false);
+    const id = window.setTimeout(() => setDrawerOpen(false), 0);
+    return () => window.clearTimeout(id);
   }, [pathname]);
 
   return (

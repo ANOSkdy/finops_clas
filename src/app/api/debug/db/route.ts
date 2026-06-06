@@ -8,12 +8,11 @@ function sanitize(msg: string) {
 
 export async function GET() {
   try {
-    const mod = await import("@/lib/db");
-    const prisma = (mod as any).prisma;
+    const { prisma } = await import("@/lib/db");
     const n = await prisma.user.count();
     return NextResponse.json({ ok: true, userCount: n });
-  } catch (e: any) {
-    const message = sanitize(String(e?.stack || e?.message || e));
+  } catch (e: unknown) {
+    const message = sanitize(e instanceof Error ? (e.stack || e.message) : String(e));
     return NextResponse.json({ ok: false, message }, { status: 500 });
   }
 }

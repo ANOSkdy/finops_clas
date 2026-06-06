@@ -48,6 +48,8 @@ model Company {
   sessions             Session[]
   taxSetting           CompanyTaxSetting?
   recurringTaxDueDates CompanyRecurringTaxDueDate[]
+  accountingChecklistItems  AccountingChecklistItem[]
+  accountingChecklistChecks AccountingChecklistCheck[]
 
   @@map("companies")
 }
@@ -85,6 +87,40 @@ model CompanyRecurringTaxDueDate {
   @@index([companyId, enabled])
   @@index([companyId, taxType])
   @@map("company_recurring_tax_due_dates")
+}
+
+model AccountingChecklistItem {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId String   @map("company_id") @db.Uuid
+  name      String
+  sortOrder Int      @default(0) @map("sort_order")
+  isDefault Boolean  @default(false) @map("is_default")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  company Company                     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  checks  AccountingChecklistCheck[]
+
+  @@index([companyId, sortOrder])
+  @@map("accounting_checklist_items")
+}
+
+model AccountingChecklistCheck {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId  String   @map("company_id") @db.Uuid
+  itemId     String   @map("item_id") @db.Uuid
+  fiscalYear Int      @map("fiscal_year")
+  month      Int
+  checked    Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  company Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  item    AccountingChecklistItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, itemId, fiscalYear, month])
+  @@index([companyId, fiscalYear])
+  @@map("accounting_checklist_checks")
 }
 
 model Membership {
