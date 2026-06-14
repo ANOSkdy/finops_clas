@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "dev3010": "next dev --webpack -p 3010",
-    "typecheck": "prisma generate && tsc --noEmit"
+    "typecheck": "prisma generate && tsc --noEmit",
+    "test:tax-schedule": "tsx scripts/test-tax-schedule.ts"
   },
   "dependencies": {
     "@google/genai": "^1.34.0",
