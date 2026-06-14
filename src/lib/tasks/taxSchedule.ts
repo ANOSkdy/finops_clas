@@ -1,4 +1,5 @@
 import {
+  addMonthsClampedUtc,
   addMonthsUtc,
   adjustToNextBusinessDay,
   endOfMonthUtc,
@@ -202,7 +203,7 @@ export function generateTaxScheduleTasks(input: {
       const fiscalYearEnd = endOfMonthUtc(year, fiscalClosingMonth);
       const fiscalYearLabel = `${year}-${String(fiscalClosingMonth).padStart(2, "0")}`;
       const fiscalYearStart = toUtcDateOnly(year - 1, fiscalClosingMonth + 1, 1);
-      const corporateDueDate = adjustToNextBusinessDay(addMonthsUtc(fiscalYearEnd, 2), holidays);
+      const corporateDueDate = adjustToNextBusinessDay(addMonthsClampedUtc(fiscalYearEnd, 2), holidays);
 
       tasks.push({
         taskKey: `tax:corporate-final:${fiscalYearLabel}`,
@@ -218,7 +219,7 @@ export function generateTaxScheduleTasks(input: {
           taskKey: `tax:corporate-interim:${fiscalYearLabel}`,
           category: TAX_CATEGORY,
           title: "法人税・地方税（予定納税・中間申告）",
-          dueDate: adjustToNextBusinessDay(addMonthsUtc(interimPeriodEnd, 2), holidays),
+          dueDate: adjustToNextBusinessDay(addMonthsClampedUtc(interimPeriodEnd, 2), holidays),
           periodStart: fiscalYearStart,
           periodEnd: interimPeriodEnd,
         });
@@ -229,7 +230,7 @@ export function generateTaxScheduleTasks(input: {
           taskKey: `tax:consumption-final:${fiscalYearLabel}`,
           category: TAX_CATEGORY,
           title: "消費税（確定申告・納付）",
-          dueDate: adjustToNextBusinessDay(addMonthsUtc(fiscalYearEnd, 2), holidays),
+          dueDate: adjustToNextBusinessDay(addMonthsClampedUtc(fiscalYearEnd, 2), holidays),
           periodStart: fiscalYearStart,
           periodEnd: fiscalYearEnd,
         });
@@ -246,7 +247,7 @@ export function generateTaxScheduleTasks(input: {
               consumptionInterimCount === 1
                 ? "消費税（中間申告・予定納付：年1回）"
                 : `消費税（中間申告・予定納付：年${consumptionInterimCount}回 第${idx + 1}回）`,
-            dueDate: adjustToNextBusinessDay(addMonthsUtc(periodEndDate, 2), holidays),
+            dueDate: adjustToNextBusinessDay(addMonthsClampedUtc(periodEndDate, 2), holidays),
             periodStart: fiscalYearStart,
             periodEnd: periodEndDate,
           });
@@ -285,7 +286,7 @@ export function generateTaxScheduleTasks(input: {
               consumptionInterimCount === 1
                 ? "消費税（中間申告・予定納付：年1回）"
                 : `消費税（中間申告・予定納付：年${consumptionInterimCount}回 第${idx + 1}回）`,
-            dueDate: adjustToNextBusinessDay(addMonthsUtc(periodEndDate, 2), holidays),
+            dueDate: adjustToNextBusinessDay(addMonthsClampedUtc(periodEndDate, 2), holidays),
             periodStart: yearStart,
             periodEnd: periodEndDate,
           });

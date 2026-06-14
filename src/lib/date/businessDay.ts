@@ -24,6 +24,16 @@ export function addMonthsUtc(date: Date, months: number): Date {
   );
 }
 
+export function addMonthsClampedUtc(date: Date, months: number): Date {
+  const targetMonthStart = Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + months, 1);
+  const targetMonth = new Date(targetMonthStart);
+  const targetYear = targetMonth.getUTCFullYear();
+  const targetMonthNumber = targetMonth.getUTCMonth() + 1;
+  const lastDay = endOfMonthUtc(targetYear, targetMonthNumber).getUTCDate();
+
+  return toUtcDateOnly(targetYear, targetMonthNumber, Math.min(date.getUTCDate(), lastDay));
+}
+
 export function isWeekend(date: Date): boolean {
   const day = date.getUTCDay();
   return day === 0 || day === 6;
