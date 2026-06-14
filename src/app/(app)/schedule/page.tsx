@@ -123,7 +123,7 @@ export default function SchedulePage() {
     <div className="space-y-4">
       <div>
         <div className="text-xl font-semibold tracking-tight">スケジュール</div>
-        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">カテゴリ別にタスクを一覧表示します。</div>
+        <div className="mt-1 text-sm text-[var(--color-text-secondary)]">月ごとに税務・労務のタスクを一覧表示します。</div>
         <div className="mt-3 w-full max-w-[360px]">
           <Button className="w-full" onClick={refreshTasks} disabled={updating}>
             タスクの更新

@@ -134,8 +134,10 @@ export async function syncGeneratedTaxTasks(input: {
   prisma: PrismaClient;
   companyId: string;
   tasks: GeneratedTask[];
+  taskKeyPrefixes?: string[];
 }) {
   const taskKeys = input.tasks.map((task) => task.taskKey);
+  const taskKeyPrefixes = input.taskKeyPrefixes ?? ["tax:"];
   const currentVisibleKeys = new Set(input.tasks.map(visibleTaskKey));
 
   await input.prisma.$transaction(async (tx) => {
@@ -179,9 +181,9 @@ export async function syncGeneratedTaxTasks(input: {
         companyId: input.companyId,
         status: { in: ACTIVE_GENERATED_STATUSES },
         taskKey: {
-          startsWith: "tax:",
           notIn: taskKeys.length > 0 ? taskKeys : ["__never_generated__"],
         },
+        OR: taskKeyPrefixes.map((prefix) => ({ taskKey: { startsWith: prefix } })),
       },
     });
 
