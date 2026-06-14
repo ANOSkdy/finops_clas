@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { requireActiveCompany } from "@/lib/auth/tenant";
 import { dedupeGeneratedTasks, syncGeneratedTaxTasks } from "@/lib/tasks/syncGeneratedTasks";
+import { generateLaborScheduleTasks } from "@/lib/tasks/laborSchedule";
 import { generateRecurringTaxDueDateTasks, generateTaxScheduleTasks } from "@/lib/tasks/taxSchedule";
 
 export const runtime = "nodejs";
@@ -40,6 +41,8 @@ export async function POST(req: NextRequest) {
 
 
 
+  const generatedLaborTasks = generateLaborScheduleTasks();
+
   const recurringDueDates = await prisma.companyRecurringTaxDueDate.findMany({
     where: { companyId: scoped.companyId, enabled: true },
     select: { id: true, taxType: true, title: true, installmentLabel: true, month: true, day: true, enabled: true },
@@ -50,7 +53,7 @@ export async function POST(req: NextRequest) {
   });
 
   const generatedTasks = dedupeGeneratedTasks({
-    standardTasks: generatedTaxTasks,
+    standardTasks: [...generatedTaxTasks, ...generatedLaborTasks],
     recurringTasks: generatedRecurringTasks,
   });
 
@@ -58,6 +61,7 @@ export async function POST(req: NextRequest) {
     prisma,
     companyId: scoped.companyId,
     tasks: generatedTasks,
+    taskKeyPrefixes: ["tax:", "social:"],
   });
 
   return jsonOk({ ok: true });
