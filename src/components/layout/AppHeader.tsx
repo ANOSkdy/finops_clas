@@ -110,6 +110,20 @@ export function AppHeader() {
             data-scrolled={scrolled}
             className="flex h-16 w-full min-w-0 max-w-full items-center gap-2 overflow-hidden transition-[height] data-[scrolled=true]:h-14"
           >
+            {!isSelectCompany && (
+              <DialogPrimitive.Trigger asChild>
+                <button
+                  type="button"
+                  className="focus-ring tap-44 inline-flex shrink-0 items-center justify-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-2.5 text-sm font-medium text-[var(--color-text-primary)]"
+                  aria-label="ナビゲーションを開く"
+                  aria-expanded={drawerOpen}
+                  aria-controls="app-drawer-nav"
+                >
+                  ☰
+                </button>
+              </DialogPrimitive.Trigger>
+            )}
+
             <div className="min-w-0 flex-1 overflow-hidden leading-tight">
               <div className="truncate text-lg font-semibold leading-tight text-[var(--color-text-primary)]">
                 CLAS FinOps
@@ -120,19 +134,6 @@ export function AppHeader() {
             </div>
 
             <div className="ml-2 flex shrink-0 items-center gap-1.5 sm:gap-2">
-              {!isSelectCompany && (
-                <DialogPrimitive.Trigger asChild>
-                  <button
-                    type="button"
-                    className="focus-ring tap-44 inline-flex shrink-0 items-center justify-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-2.5 text-sm font-medium text-[var(--color-text-primary)]"
-                    aria-label="ナビゲーションを開く"
-                    aria-expanded={drawerOpen}
-                    aria-controls="app-drawer-nav"
-                  >
-                    ☰
-                  </button>
-                </DialogPrimitive.Trigger>
-              )}
               <a href="/selectcompany" className="shrink-0 whitespace-nowrap">
                 <Button
                   variant="outline"
@@ -153,7 +154,7 @@ export function AppHeader() {
           <DialogPrimitive.Content
             id="app-drawer-nav"
             aria-label="アプリナビゲーション"
-            className="t-drawer-content fixed right-0 top-0 z-50 h-dvh w-[min(84vw,360px)] max-w-full border-l border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 pb-4 pt-4 shadow-[var(--shadow-elevation-4)] focus-ring outline-none"
+            className="t-drawer-content fixed left-0 top-0 z-50 h-dvh w-[min(84vw,360px)] max-w-full border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 pb-4 pt-4 shadow-[var(--shadow-elevation-4)] focus-ring outline-none"
           >
             <div className="mb-3 flex items-center justify-start gap-2">
               <DialogPrimitive.Close asChild>

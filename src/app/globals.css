@@ -159,7 +159,7 @@ body {
 @keyframes t-drawer-in {
   from {
     opacity: 0.96;
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
   to {
     opacity: 1;
@@ -174,7 +174,7 @@ body {
   }
   to {
     opacity: 0.96;
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
 }
 
