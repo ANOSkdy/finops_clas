@@ -261,7 +261,7 @@ CLAS`
           </div>
 
           {fileId && (
-            <div className="rounded-2xl border border-secondary/40 bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
+            <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
               ファイルID: {fileId}
             </div>
           )}

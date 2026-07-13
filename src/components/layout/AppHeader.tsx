@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { MainContainer } from "@/components/ui/MainContainer";
@@ -94,35 +95,35 @@ export function AppHeader() {
   }, []);
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setDrawerOpen(false);
-    };
-    if (drawerOpen) {
-      document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", onKeyDown);
-    }
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [drawerOpen]);
-
-  useEffect(() => {
     const id = window.setTimeout(() => setDrawerOpen(false), 0);
     return () => window.clearTimeout(id);
   }, [pathname]);
 
   return (
-    <>
+    <DialogPrimitive.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
       <header
         data-scrolled={scrolled}
         className="sticky top-0 z-40 w-full max-w-full overflow-hidden border-b border-[var(--color-border-default)] bg-[color-mix(in_srgb,var(--color-surface-normal)_95%,transparent)] backdrop-blur transition-[background-color,box-shadow]"
       >
-        <MainContainer className="safe-x !px-3 sm:!px-4">
+        <MainContainer>
           <div
             data-scrolled={scrolled}
             className="flex h-16 w-full min-w-0 max-w-full items-center gap-2 overflow-hidden transition-[height] data-[scrolled=true]:h-14"
           >
+            {!isSelectCompany && (
+              <DialogPrimitive.Trigger asChild>
+                <button
+                  type="button"
+                  className="focus-ring tap-44 inline-flex shrink-0 items-center justify-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-2.5 text-sm font-medium text-[var(--color-text-primary)]"
+                  aria-label="ナビゲーションを開く"
+                  aria-expanded={drawerOpen}
+                  aria-controls="app-drawer-nav"
+                >
+                  ☰
+                </button>
+              </DialogPrimitive.Trigger>
+            )}
+
             <div className="min-w-0 flex-1 overflow-hidden leading-tight">
               <div className="truncate text-lg font-semibold leading-tight text-[var(--color-text-primary)]">
                 CLAS FinOps
@@ -133,18 +134,6 @@ export function AppHeader() {
             </div>
 
             <div className="ml-2 flex shrink-0 items-center gap-1.5 sm:gap-2">
-              {!isSelectCompany && (
-                <button
-                  type="button"
-                  onClick={() => setDrawerOpen(true)}
-                  className="focus-ring tap-44 inline-flex shrink-0 items-center justify-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-2.5 text-sm font-medium text-[var(--color-text-primary)]"
-                  aria-label="ナビゲーションを開く"
-                  aria-expanded={drawerOpen}
-                  aria-controls="app-drawer-nav"
-                >
-                  ☰
-                </button>
-              )}
               <a href="/selectcompany" className="shrink-0 whitespace-nowrap">
                 <Button
                   variant="outline"
@@ -159,34 +148,32 @@ export function AppHeader() {
         </MainContainer>
       </header>
 
-      {!isSelectCompany && drawerOpen && (
-        <div className="fixed inset-0 z-50 overflow-x-hidden" role="dialog" aria-modal="true">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setDrawerOpen(false)}
-            aria-label="ナビゲーションを閉じる"
-          />
-
-          <aside
+      {!isSelectCompany && (
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Overlay className="t-drawer-overlay fixed inset-0 z-50 bg-black/40" />
+          <DialogPrimitive.Content
             id="app-drawer-nav"
-            className="t-panel-open relative z-10 h-full w-[min(84vw,360px)] max-w-full border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 pb-4 pt-4 shadow-[var(--shadow-elevation-4)]"
+            aria-label="アプリナビゲーション"
+            className="t-drawer-content fixed left-0 top-0 z-50 h-dvh w-[min(84vw,360px)] max-w-full border-r border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 pb-4 pt-4 shadow-[var(--shadow-elevation-4)] focus-ring outline-none"
           >
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold text-[var(--color-text-primary)]">メニュー</p>
-              <button
-                type="button"
-                className="focus-ring tap-44 rounded-md px-2 text-sm text-[var(--color-text-primary)]"
-                onClick={() => setDrawerOpen(false)}
-                aria-label="ナビゲーションを閉じる"
-              >
-                ✕
-              </button>
+            <div className="mb-3 flex items-center justify-start gap-2">
+              <DialogPrimitive.Close asChild>
+                <button
+                  type="button"
+                  className="focus-ring tap-44 rounded-md px-2 text-sm text-[var(--color-text-primary)]"
+                  aria-label="ナビゲーションを閉じる"
+                >
+                  ✕
+                </button>
+              </DialogPrimitive.Close>
+              <DialogPrimitive.Title className="text-sm font-semibold text-[var(--color-text-primary)]">
+                メニュー
+              </DialogPrimitive.Title>
             </div>
             <NavigationList pathname={pathname} onNavigate={() => setDrawerOpen(false)} />
-          </aside>
-        </div>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
       )}
-    </>
+    </DialogPrimitive.Root>
   );
 }

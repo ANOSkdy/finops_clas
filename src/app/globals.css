@@ -121,8 +121,61 @@ body {
   opacity: 0.96;
 }
 
+.t-drawer-overlay[data-state="open"] {
+  animation: t-drawer-overlay-in var(--t-duration-base) var(--t-ease-standard);
+}
+
+.t-drawer-overlay[data-state="closed"] {
+  animation: t-drawer-overlay-out var(--t-duration-base) var(--t-ease-standard);
+}
+
+.t-drawer-content {
+  will-change: transform, opacity;
+}
+
+.t-drawer-content[data-state="open"] {
+  animation: t-drawer-in var(--t-duration-base) var(--t-ease-standard);
+}
+
+.t-drawer-content[data-state="closed"] {
+  animation: t-drawer-out var(--t-duration-base) var(--t-ease-standard);
+}
+
 .t-error-pop {
   animation: t-error-pop var(--t-duration-fast) var(--t-ease-emphasized);
+}
+
+
+@keyframes t-drawer-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes t-drawer-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes t-drawer-in {
+  from {
+    opacity: 0.96;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes t-drawer-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0.96;
+    transform: translateX(-100%);
+  }
 }
 
 @keyframes t-page-enter {
@@ -149,7 +202,9 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .t-page-shell,
-  .t-error-pop {
+  .t-error-pop,
+  .t-drawer-overlay,
+  .t-drawer-content {
     animation: none;
   }
   .t-toast-item,
