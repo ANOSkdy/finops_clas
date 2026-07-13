@@ -155,10 +155,7 @@ export function AppHeader() {
             aria-label="アプリナビゲーション"
             className="t-drawer-content fixed right-0 top-0 z-50 h-dvh w-[min(84vw,360px)] max-w-full border-l border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 pb-4 pt-4 shadow-[var(--shadow-elevation-4)] focus-ring outline-none"
           >
-            <div className="mb-3 flex items-center justify-between">
-              <DialogPrimitive.Title className="text-sm font-semibold text-[var(--color-text-primary)]">
-                メニュー
-              </DialogPrimitive.Title>
+            <div className="mb-3 flex items-center justify-start gap-2">
               <DialogPrimitive.Close asChild>
                 <button
                   type="button"
@@ -168,6 +165,9 @@ export function AppHeader() {
                   ✕
                 </button>
               </DialogPrimitive.Close>
+              <DialogPrimitive.Title className="text-sm font-semibold text-[var(--color-text-primary)]">
+                メニュー
+              </DialogPrimitive.Title>
             </div>
             <NavigationList pathname={pathname} onNavigate={() => setDrawerOpen(false)} />
           </DialogPrimitive.Content>
