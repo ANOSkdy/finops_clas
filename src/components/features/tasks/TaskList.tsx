@@ -1,5 +1,7 @@
 "use client";
 
+import { Card } from "@/components/ui/Card";
+
 type Task = {
   taskId: string;
   category: "tax" | "social" | "other";
@@ -143,7 +145,7 @@ export function TaskList({
   return (
     <div className="space-y-6">
       {monthlyGroups.map((group) => (
-        <section key={group.monthKey} className="space-y-4 rounded-3xl border border-[var(--color-border-default)] p-4">
+        <Card key={group.monthKey} className="space-y-4 p-4">
           <h2 className="text-base font-semibold text-[var(--color-text-primary)]">{group.monthLabel}</h2>
           <div className="space-y-4">
             {CATEGORY_SECTIONS.map((section) => {
@@ -160,7 +162,7 @@ export function TaskList({
               );
             })}
           </div>
-        </section>
+        </Card>
       ))}
     </div>
   );

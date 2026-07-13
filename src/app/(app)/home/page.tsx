@@ -27,12 +27,12 @@ type Summary = {
 };
 
 function AlertItem({ message }: { message: string }) {
-  return <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] shadow-sm px-4 py-3 text-sm text-[var(--color-text-primary)]">{message}</div>;
+  return <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-4 py-3 text-sm text-[var(--color-text-primary)]">{message}</div>;
 }
 
 function TaskItem({ title, dueDate }: { title: string; dueDate: string }) {
   return (
-    <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] shadow-sm px-4 py-3">
+    <div className="rounded-2xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] px-4 py-3">
       <div className="text-sm font-medium text-[var(--color-text-primary)]">{title}</div>
       <div className="mt-1 text-xs text-[var(--color-text-secondary)]">期限: {dueDate}</div>
     </div>

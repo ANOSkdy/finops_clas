@@ -32,7 +32,7 @@ export default function UploadPage() {
           </CardHeader>
           <CardContent>
             <Link href="/trial_balance">
-              <Button className="w-full" variant="secondary">試算表ページへ進む</Button>
+              <Button className="w-full">試算表ページへ進む</Button>
             </Link>
           </CardContent>
         </Card>
