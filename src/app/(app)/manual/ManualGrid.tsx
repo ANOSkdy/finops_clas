@@ -123,6 +123,7 @@ export function ManualGrid({ initialProcedures }: { initialProcedures: ManualPro
       </SelectField>
       <span className="manual-result-count">{filtered.length}件</span>
     </div>
+    <p className="manual-grid-scroll-hint">表は横にスクロールすると全項目を確認できます。</p>
 
     <div className="manual-grid-wrap" role="region" aria-label="各種届出・手続き一覧" tabIndex={0}>
       <table className="manual-grid">
@@ -164,8 +165,41 @@ export function ManualGrid({ initialProcedures }: { initialProcedures: ManualPro
           <td title={procedure.notes || undefined}>{procedure.notes || "—"}</td>
         </tr>)}</tbody>
       </table>
-      {filtered.length === 0 ? <p className="manual-grid-empty">条件に一致するレコードはありません。</p> : null}
     </div>
+
+    <ul className="manual-card-list">{filtered.map((procedure) => <li className="manual-card" key={procedure.id}>
+      <div className="manual-card-meta">
+        <span className="manual-category" data-category={procedure.category}>{categoryLabel[procedure.category]}</span>
+        {procedure.custom ? <span className="manual-detail-custom">会社追加</span> : null}
+      </div>
+      <button
+        type="button"
+        className="manual-card-title"
+        aria-haspopup="dialog"
+        aria-label={`${procedure.title}の詳細を開く`}
+        onClick={() => setSelectedProcedure(procedure)}
+      >{procedure.title}</button>
+      <dl className="manual-card-fields">
+        <div><dt>提出・申請期限</dt><dd>{procedure.deadline}</dd></div>
+      </dl>
+      <div className="manual-card-actions">
+        <label className="manual-card-status">
+          <span className="visually-hidden">{`${procedure.title}のステータス`}</span>
+          <select
+            className="manual-status-select"
+            data-status={procedure.status}
+            value={procedure.status}
+            disabled={savingStatus === procedure.id}
+            onChange={(event) => void updateStatus(procedure.id, event.target.value as ManualStatus)}
+          >
+            {(Object.keys(statusLabel) as ManualStatus[]).map((value) => <option value={value} key={value}>{statusLabel[value]}</option>)}
+          </select>
+        </label>
+        <Button type="button" variant="secondary" onClick={() => setSelectedProcedure(procedure)}>詳細</Button>
+      </div>
+    </li>)}</ul>
+
+    {filtered.length === 0 ? <p className="manual-grid-empty">条件に一致するレコードはありません。</p> : null}
 
     <Dialog.Root open={selectedProcedure !== null} onOpenChange={(open) => { if (!open) setSelectedProcedure(null); }}><Dialog.Portal>
       <Dialog.Overlay className="dialog-overlay" />

@@ -96,12 +96,12 @@ export function ScheduleView({ initialData, initialNeedsCompany = false }: { ini
       </div>
       {filtered.length === 0 ? <EmptyState title="タスクはありません" message="現在の条件に一致するタスクはありません。再計算または条件変更をお試しください。" /> : [...grouped.entries()].map(([month, tasks]) => <section key={month}>
         <h2 className="month-heading">{Number(month.slice(0, 4))}年{Number(month.slice(5, 7))}月</h2>
-        <div className="data-list">{tasks.map((task) => <div className="data-row" key={task.id}>
-          <div className="row-title">{task.title}{task.periodStart ? <div className="row-meta">対象期間 {task.periodStart}〜{task.periodEnd}</div> : null}</div>
-          <span>{categoryLabel[task.category]}</span>
-          <time className="tabular" dateTime={task.dueDate}>{task.dueDate}</time>
+        <div className="data-list">{tasks.map((task) => <div className="data-row schedule-row" key={task.id}>
+          <div className="row-title">{task.title}{task.periodStart ? <div className="row-meta row-period">対象期間 {task.periodStart}〜{task.periodEnd}</div> : null}</div>
+          <span className="row-category">{categoryLabel[task.category]}</span>
+          <time className="tabular row-due" dateTime={task.dueDate}>{task.dueDate}</time>
           <StatusBadge status={task.status} />
-          <Button variant="ghost" busy={updating === task.id} onClick={() => toggle(task)}>{task.status === "done" ? "未完了へ戻す" : "完了にする"}</Button>
+          <Button className="row-action" variant="ghost" busy={updating === task.id} onClick={() => toggle(task)}>{task.status === "done" ? "未完了へ戻す" : "完了にする"}</Button>
         </div>)}</div>
       </section>)}
     </>}
