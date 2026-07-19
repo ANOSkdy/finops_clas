@@ -1,42 +1,27 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
-import { requireActiveCompany } from "@/lib/auth/tenant";
-import { jsonError, jsonOk } from "@/lib/api/response";
-import { upsertAccountingChecklistCheckSchema } from "@/lib/validators/accountingChecklist";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { requireActiveCompany } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { AppError } from "@/lib/api/errors";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+const schema = z.object({ itemId: z.uuid(), fiscalYear: z.number().int().min(2000).max(2100), month: z.number().int().min(1).max(12), checked: z.boolean() });
 
-export async function PATCH(req: NextRequest) {
-  const scoped = await requireActiveCompany(req);
-  if (!scoped) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
-  if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力値が不正です");
-  }
-
-  const parsed = upsertAccountingChecklistCheckSchema.safeParse(body);
-  if (!parsed.success) return jsonError(400, "VALIDATION_ERROR", "入力値が不正です");
-
-  const { itemId, fiscalYear, month, checked } = parsed.data;
-  const item = await prisma.accountingChecklistItem.findFirst({
-    where: { id: itemId, companyId: scoped.companyId },
-    select: { id: true },
+export async function PATCH(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const context = await requireActiveCompany();
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    const item = await db.accountingChecklistItem.findFirst({ where: { id: parsed.data.itemId, companyId: context.companyId } });
+    if (!item) throw new AppError("NOT_FOUND", "チェック項目が見つかりません", 404);
+    const check = await db.accountingChecklistCheck.upsert({
+      where: { companyId_itemId_fiscalYear_month: { companyId: context.companyId, itemId: item.id, fiscalYear: parsed.data.fiscalYear, month: parsed.data.month } },
+      create: { companyId: context.companyId, itemId: item.id, fiscalYear: parsed.data.fiscalYear, month: parsed.data.month, checked: parsed.data.checked },
+      update: { checked: parsed.data.checked }
+    });
+    return NextResponse.json({ check });
   });
-  if (!item) return jsonError(404, "NOT_FOUND", "チェック項目が見つかりません");
-
-  const check = await prisma.accountingChecklistCheck.upsert({
-    where: { companyId_itemId_fiscalYear_month: { companyId: scoped.companyId, itemId, fiscalYear, month } },
-    create: { companyId: scoped.companyId, itemId, fiscalYear, month, checked },
-    update: { checked, updatedAt: new Date() },
-    select: { itemId: true, fiscalYear: true, month: true, checked: true },
-  });
-
-  return jsonOk({ check });
 }
-
-export const POST = PATCH;

@@ -1,34 +1,30 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError, jsonOk } from "@/lib/api/response";
-import { requireActiveCompany } from "@/lib/auth/tenant";
-import { computeTaskStatus, toYmd } from "@/lib/tasks/format";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { requireActiveCompany } from "@/lib/auth/session";
+import { validationError, withApiError } from "@/lib/api/response";
+import { asDateOnly, type DateOnly } from "@/lib/date/business-date";
+import { getScheduleData } from "@/lib/tasks/list";
 
 export const runtime = "nodejs";
+const dateOnlySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => { try { asDateOnly(value); return true; } catch { return false; } });
+const querySchema = z.object({
+  category: z.enum(["tax", "labor", "other"]).optional(),
+  status: z.enum(["pending", "overdue", "done"]).optional(),
+  from: dateOnlySchema.optional(),
+  to: dateOnlySchema.optional()
+}).refine((value) => !value.from || !value.to || value.from <= value.to, { path: ["to"], message: "終了日は開始日以降にしてください" });
 
-export async function GET(req: NextRequest) {
-  const scoped = await requireActiveCompany(req);
-
-  if (!scoped) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
-  if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
-  if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
-
-  const now = new Date();
-
-  const tasks = await prisma.task.findMany({
-    where: { companyId: scoped.companyId },
-    orderBy: [{ dueDate: "asc" }, { createdAt: "asc" }],
-    select: { id: true, category: true, title: true, dueDate: true, status: true },
+export async function GET(request: Request) {
+  return withApiError(async () => {
+    const context = await requireActiveCompany();
+    const url = new URL(request.url);
+    const parsed = querySchema.safeParse(Object.fromEntries(url.searchParams));
+    if (!parsed.success) return validationError(parsed.error);
+    const query = parsed.data;
+    return NextResponse.json(await getScheduleData(context.companyId, {
+      ...query,
+      from: query.from as DateOnly | undefined,
+      to: query.to as DateOnly | undefined
+    }));
   });
-
-  const res = tasks.map((t: { id: string; category: string; title: string; dueDate: Date; status: string }) => ({
-    taskId: t.id,
-    category: t.category,
-    title: t.title,
-    dueDate: toYmd(t.dueDate),
-    status: computeTaskStatus(t.status, t.dueDate, now),
-  }));
-
-  return jsonOk(res);
 }

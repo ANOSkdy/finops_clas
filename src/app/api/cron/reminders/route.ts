@@ -1,210 +1,80 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonOk } from "@/lib/api/response";
-import { sendMail } from "@/lib/mail";
-import { getReminderEmailKey } from "@/lib/tasks/reminderPolicy";
-import type { ReminderEmailKey } from "@/lib/tasks/reminderPolicy";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { AppError } from "@/lib/api/errors";
+import { jsonError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
+import { addDays, fromDateUtc, todayInTokyo } from "@/lib/date/business-date";
+import { reminderKey } from "@/lib/tasks/reminder-policy";
+import { sendMail } from "@/lib/mail/provider";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
+const querySchema = z.object({ dryRun: z.enum(["true", "false"]).optional(), cursor: z.uuid().optional() });
 
-const REMIND_LABELS: Record<ReminderEmailKey, string> = {
-  "30d_before": "30日前",
-  "14d_before": "14日前",
-  "7d_before": "7日前",
-  "3d_before": "3日前",
-  "1d_before": "前日",
-  today: "本日期限",
-  overdue: "期限切れ",
-};
-
-
-function normalizeAppUrl(raw: string): string | null {
-  const trimmed = raw.trim();
-  if (!trimmed) return null;
-
-  const withProtocol = /^https?:\/\//i.test(trimmed)
-    ? trimmed
-    : `https://${trimmed}`;
-
-  try {
-    const parsed = new URL(withProtocol);
-    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
-    const normalized = parsed.toString().replace(/\/$/, "");
-    return normalized || null;
-  } catch {
-    return null;
-  }
+function authorize(request: Request) {
+  const secret = process.env.CRON_SECRET;
+  const header = request.headers.get("authorization");
+  if (!secret || header !== `Bearer ${secret}`) throw new AppError("UNAUTHORIZED", "認証に失敗しました", 401);
 }
 
-function getAppUrl(): string | null {
-  return (
-    normalizeAppUrl(process.env.APP_URL ?? "") ??
-    normalizeAppUrl(process.env.NEXT_PUBLIC_APP_URL ?? "") ??
-    normalizeAppUrl(process.env.VERCEL_URL ?? "")
-  );
-}
-function formatDateUTC(d: Date): string {
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+export async function GET(request: Request) {
+  return run(request);
 }
 
-async function handleCronRequest(req: NextRequest) {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    return new Response(JSON.stringify({ error: "CRON_SECRET not configured" }), {
-      status: 503,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+export async function POST(request: Request) {
+  return run(request);
+}
 
-  const authHeader = req.headers.get("authorization");
-  const querySecret = req.nextUrl.searchParams.get("secret");
-  const authorized =
-    authHeader === `Bearer ${cronSecret}` || querySecret === cronSecret;
-
-  if (!authorized) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const today = new Date();
-  const windowEnd = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + 30)
-  );
-
-  const tasks = await prisma.task.findMany({
-    where: {
-      status: { not: "done" },
-      dueDate: { lte: windowEnd },
-    },
-    include: {
-      company: {
-        select: { id: true, name: true, contactEmail: true },
-      },
-    },
-    orderBy: { dueDate: "asc" },
-    take: 200,
-  });
-
-  const scanned = tasks.length;
-  let eligible = 0;
-  let queued = 0;
-  let sent = 0;
-  let skipped = 0;
-  let failed = 0;
-  const appUrl = getAppUrl();
-
-  for (const task of tasks) {
-    const remindKey = getReminderEmailKey({
-      dueDate: task.dueDate,
-      today,
-      taskKey: task.taskKey,
-    });
-
-    if (!remindKey) {
-      skipped++;
-      continue;
-    }
-
-    if (!task.company.contactEmail) {
-      skipped++;
-      continue;
-    }
-
-    eligible++;
-
-    let deliveryId: string;
-    try {
-      const delivery = await prisma.taskReminderDelivery.create({
-        data: {
-          taskId: task.id,
-          channel: "email",
-          remindKey,
-          status: "queued",
-        },
-        select: { id: true },
+function run(request: Request) {
+  return withApiError(async () => {
+    authorize(request);
+    const query = querySchema.safeParse(Object.fromEntries(new URL(request.url).searchParams));
+    if (!query.success) return jsonError(new AppError("VALIDATION_ERROR", "実行パラメータが正しくありません", 400));
+    const today = todayInTokyo();
+    const maxDue = addDays(today, 30);
+    const startedAt = Date.now();
+    const summary = { scanned: 0, eligible: 0, queued: 0, sent: 0, skipped: 0, failed: 0, resumeCursor: null as string | null };
+    let cursor = query.data.cursor;
+    do {
+      const tasks = await db.task.findMany({
+        where: { status: { not: "done" }, dueDate: { lte: new Date(`${maxDue}T00:00:00Z`) } },
+        include: { company: true },
+        orderBy: { id: "asc" },
+        take: 100,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {})
       });
-      deliveryId = delivery.id;
-      queued++;
-    } catch (err: unknown) {
-      if (
-        err !== null &&
-        typeof err === "object" &&
-        "code" in err &&
-        (err as { code: string }).code === "P2002"
-      ) {
-        skipped++;
-        continue;
+      if (tasks.length === 0) break;
+      for (const task of tasks) {
+        summary.scanned += 1;
+        const key = reminderKey(task.taskKey, fromDateUtc(task.dueDate), today);
+        if (!key || !task.company.email) { summary.skipped += 1; continue; }
+        summary.eligible += 1;
+        if (query.data.dryRun === "true") { summary.queued += 1; continue; }
+        const existing = await db.taskReminderDelivery.findUnique({ where: { taskId_channel_remindKey: { taskId: task.id, channel: "email", remindKey: key } } });
+        const staleBefore = new Date(Date.now() - 15 * 60_000);
+        const retryable = existing?.status === "failed" || (existing?.status === "queued" && existing.updatedAt < staleBefore);
+        const claimed = retryable && existing
+          ? await db.taskReminderDelivery.updateMany({ where: { id: existing.id, status: existing.status, ...(existing.status === "queued" ? { updatedAt: { lt: staleBefore } } : {}) }, data: { status: "queued", errorCode: null } })
+          : existing
+            ? { count: 0 }
+            : await db.taskReminderDelivery.createMany({ data: [{ taskId: task.id, channel: "email", remindKey: key, status: "queued" }], skipDuplicates: true });
+        if (claimed.count === 0) { summary.skipped += 1; continue; }
+        summary.queued += 1;
+        try {
+          await sendMail({ to: task.company.email, subject: `【CLAS FinOps】${task.title}の期限のお知らせ`, body: `${task.title}\n期限: ${fromDateUtc(task.dueDate)}\n\nCLAS FinOpsで状況をご確認ください。`, attachments: [] });
+          await db.taskReminderDelivery.update({ where: { taskId_channel_remindKey: { taskId: task.id, channel: "email", remindKey: key } }, data: { status: "sent", sentAt: new Date() } });
+          summary.sent += 1;
+        } catch (error) {
+          const code = error instanceof AppError ? error.code : "MAIL_ERROR";
+          await db.taskReminderDelivery.update({ where: { taskId_channel_remindKey: { taskId: task.id, channel: "email", remindKey: key } }, data: { status: "failed", errorCode: code } });
+          summary.failed += 1;
+        }
       }
-      failed++;
-      console.error("reminder_cron_delivery_create_failed", {
-        taskId: task.id,
-        error: err instanceof Error ? err.message : String(err),
-      });
-      continue;
-    }
-
-    const dueDateStr = formatDateUTC(task.dueDate);
-    const remindLabel = REMIND_LABELS[remindKey];
-    const subject = `【CLAS FinOps】税務期限リマインド：${task.title}`;
-    const bodyLines = [
-      `${task.company.name} の税務スケジュールのリマインドです。`,
-      "",
-      `内容: ${task.title}`,
-      `期限: ${dueDateStr}`,
-      `通知: ${remindLabel}`,
-      "",
-      "アプリで詳細を確認してください。",
-    ];
-    if (appUrl) {
-      bodyLines.push(appUrl);
-    }
-    const body = bodyLines.join("\n");
-
-    const sendResult = await sendMail({
-      to: task.company.contactEmail,
-      subject,
-      body,
-      attachments: [],
-    });
-
-    if (sendResult.status === "sent") {
-      await prisma.taskReminderDelivery.update({
-        where: { id: deliveryId },
-        data: { status: "sent", sentAt: new Date(), error: null },
-      });
-      sent++;
-    } else {
-      await prisma.taskReminderDelivery.update({
-        where: { id: deliveryId },
-        data: {
-          status: "failed",
-          error: sendResult.error.slice(0, 500),
-          updatedAt: new Date(),
-        },
-      });
-      failed++;
-      console.error("reminder_cron_send_failed", {
-        taskId: task.id,
-        remindKey,
-        error: sendResult.error,
-      });
-    }
-  }
-
-  const result = { ok: true, scanned, eligible, queued, sent, skipped, failed };
-  console.info("reminder_cron_result", result);
-  return jsonOk(result);
-}
-
-export async function GET(req: NextRequest) {
-  return handleCronRequest(req);
-}
-
-export async function POST(req: NextRequest) {
-  return handleCronRequest(req);
+      cursor = tasks.at(-1)?.id;
+      if (Date.now() - startedAt > 45_000) { summary.resumeCursor = cursor ?? null; break; }
+      if (tasks.length < 100) break;
+    } while (cursor);
+    console.info(JSON.stringify({ operation: "reminder_batch", result: "completed", ...summary }));
+    return NextResponse.json(summary);
+  });
 }

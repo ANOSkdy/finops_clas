@@ -1,111 +1,66 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError, jsonOk } from "@/lib/api/response";
-import { requireActiveCompany } from "@/lib/auth/tenant";
-import { mailSendSchema } from "@/lib/validators/mail";
-import { sendMail, getMailProviderName } from "@/lib/mail";
-import type { MailAttachment } from "@/lib/mail/types";
+import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
+import { requireActiveCompany } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { AppError } from "@/lib/api/errors";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
+import { readPrivateObject } from "@/lib/uploads/storage";
+import { sendMail } from "@/lib/mail/provider";
+import { enforceRateLimit } from "@/lib/auth/rate-limit";
 
 export const runtime = "nodejs";
+const schema = z.object({
+  recipient: z.email().max(254),
+  subject: z.string().trim().min(1).max(200),
+  body: z.string().min(1).max(20_000),
+  attachmentIds: z.array(z.uuid()).min(1).max(10),
+  idempotencyKey: z.string().min(8).max(100)
+});
+const MAX_MAIL_ATTACHMENTS = 25 * 1024 * 1024;
 
-function safeFilename(name: string) {
-  const cleaned = (name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
-  return cleaned.slice(0, 120) || "file";
-}
-
-export async function POST(req: NextRequest) {
-  const scoped = await requireActiveCompany(req);
-  if (!scoped) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
-  if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
-  if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
-    ]);
-  }
-
-  const parsed = mailSendSchema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({
-      field: i.path.join(".") || "body",
-      reason: i.code,
-    }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const v = parsed.data;
-
-  const ids = v.attachmentFileIds ?? [];
-  const uploads = ids.length
-    ? await prisma.upload.findMany({
-        where: { id: { in: ids }, companyId: scoped.companyId },
-        select: { id: true, storageKey: true, originalFilename: true, purpose: true },
-      })
-    : [];
-
-  if (uploads.length !== ids.length) {
-    return jsonError(403, "FORBIDDEN", "添付ファイルにアクセスできません");
-  }
-
-  const wrongPurpose = uploads.find((u: { purpose: string }) => u.purpose !== "trial_balance");
-  if (wrongPurpose) {
-    return jsonError(409, "CONFLICT", "添付は trial_balance のアップロードのみ対応です");
-  }
-
-  const attachments: MailAttachment[] = uploads.map((u: { originalFilename: string; storageKey: string }) => ({
-    filename: safeFilename(u.originalFilename),
-    url: u.storageKey,
-  }));
-
-  const emailRow = await prisma.email.create({
-    data: {
-      companyId: scoped.companyId,
-      userId: scoped.auth.user.id,
-      mailTo: v.to,
-      subject: v.subject,
-      body: v.body,
-      attachmentUploadIds: ids,
-      status: "queued",
-    },
-    select: { id: true },
-  });
-
-  const provider = getMailProviderName();
-  const sendRes = await sendMail({
-    to: v.to,
-    subject: v.subject,
-    body: v.body,
-    attachments,
-  });
-
-  if (sendRes.status === "sent") {
-    await prisma.email.update({
-      where: { id: emailRow.id },
-      data: { status: "sent", providerMessageId: sendRes.providerMessageId, error: null },
+export async function POST(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const context = await requireActiveCompany();
+    enforceRateLimit(`mail:${context.session.userId}`, 10, 60_000);
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    const existing = await db.email.findUnique({ where: { companyId_idempotencyKey: { companyId: context.companyId, idempotencyKey: parsed.data.idempotencyKey } } });
+    if (existing) return NextResponse.json({ email: { id: existing.id, status: existing.status }, auditSaved: true, reused: true });
+    const uploads = await db.upload.findMany({ where: { id: { in: parsed.data.attachmentIds }, companyId: context.companyId } });
+    if (uploads.length !== new Set(parsed.data.attachmentIds).size) throw new AppError("NOT_FOUND", "添付書類が見つかりません", 404);
+    if (uploads.some((upload) => upload.purpose !== "trial_balance")) throw new AppError("FORBIDDEN", "試算表送付に使用できない添付書類が含まれています", 403);
+    if (uploads.reduce((sum, upload) => sum + upload.size, 0) > MAX_MAIL_ATTACHMENTS) throw new AppError("VALIDATION_ERROR", "添付ファイルの合計サイズが上限を超えています", 400);
+    let email: Prisma.EmailGetPayload<object>;
+    try {
+      email = await db.email.create({ data: { companyId: context.companyId, userId: context.session.userId, recipient: parsed.data.recipient, subject: parsed.data.subject, body: parsed.data.body, attachmentUploadIds: parsed.data.attachmentIds, idempotencyKey: parsed.data.idempotencyKey, status: "queued" } });
+    } catch (error) {
+      if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") throw error;
+      const concurrent = await db.email.findUniqueOrThrow({ where: { companyId_idempotencyKey: { companyId: context.companyId, idempotencyKey: parsed.data.idempotencyKey } } });
+      return NextResponse.json({ email: { id: concurrent.id, status: concurrent.status }, auditSaved: true, reused: true });
+    }
+    let providerMessageId: string;
+    try {
+      const attachments = await Promise.all(uploads.map(async (upload) => {
+        const object = await readPrivateObject(upload.storageKey);
+        return { filename: upload.originalName, content: object.toString("base64") };
+      }));
+      providerMessageId = await sendMail({ to: parsed.data.recipient, subject: parsed.data.subject, body: parsed.data.body, attachments });
+    } catch (error) {
+      const code = error instanceof AppError ? error.code : "MAIL_ERROR";
+      await db.$transaction(async (tx) => {
+        await tx.email.update({ where: { id: email.id }, data: { status: "failed", errorCode: code } });
+        await tx.auditLog.create({ data: { companyId: context.companyId, actorUserId: context.session.userId, action: "email.send", entityType: "Email", entityId: email.id, result: "failed", metadata: { errorCode: code, attachmentCount: uploads.length } } });
+      });
+      return NextResponse.json({ error: { code: "MAIL_ERROR", message: "メールを送信できませんでした" }, auditSaved: true, email: { id: email.id, status: "failed" } }, { status: 503 });
+    }
+    const sent = await db.$transaction(async (tx) => {
+      const updated = await tx.email.update({ where: { id: email.id }, data: { status: "sent", providerMessageId, sentAt: new Date() } });
+      await tx.auditLog.create({ data: { companyId: context.companyId, actorUserId: context.session.userId, action: "email.send", entityType: "Email", entityId: email.id, result: "success", metadata: { attachmentCount: uploads.length } } });
+      return updated;
     });
-    return jsonOk({ status: "sent", providerMessageId: sendRes.providerMessageId });
-  }
-
-  await prisma.email.update({
-    where: { id: emailRow.id },
-    data: {
-      status: "failed",
-      providerMessageId: null,
-      error: `provider=${provider}; ${sendRes.error}`.slice(0, 500),
-    },
+    return NextResponse.json({ email: { id: sent.id, status: sent.status }, auditSaved: true });
   });
-
-  const isDisabled = sendRes.error === "MAIL_PROVIDER_DISABLED";
-  return jsonError(
-    isDisabled ? 503 : 500,
-    "MAIL_ERROR",
-    isDisabled
-      ? "メール送信が無効化されています（MAIL_PROVIDER=disabled）"
-      : "メール送信に失敗しました"
-  );
 }

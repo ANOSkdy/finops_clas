@@ -1,47 +1,34 @@
-import { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
-import { jsonError, jsonOk } from "@/lib/api/response";
-import { requireActiveCompany } from "@/lib/auth/tenant";
+import { requireActiveCompany } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { AppError } from "@/lib/api/errors";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
+import { fromDateUtc, todayInTokyo } from "@/lib/date/business-date";
+import { visibleTaskStatus } from "@/lib/tasks/status";
 
 export const runtime = "nodejs";
+const schema = z.object({ status: z.enum(["pending", "done"]) });
 
-const schema = z.object({
-  status: z.enum(["pending", "done"]),
-});
-
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ taskId: string }> }) {
-  const scoped = await requireActiveCompany(req);
-  if (!scoped) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
-  if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [{ field: "body", reason: "invalid_json" }]);
-  }
-
-  const parsed = schema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({ field: i.path.join(".") || "body", reason: i.code }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const { taskId } = await params;
-  const existing = await prisma.task.findFirst({
-    where: { id: taskId, companyId: scoped.companyId },
-    select: { id: true },
+export async function PATCH(request: Request, { params }: { params: Promise<{ taskId: string }> }) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const context = await requireActiveCompany();
+    const { taskId } = await params;
+    if (!z.uuid().safeParse(taskId).success) throw new AppError("NOT_FOUND", "タスクが見つかりません", 404);
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    const task = await db.$transaction(async (tx) => {
+      const updated = await tx.task.updateMany({
+        where: { id: taskId, companyId: context.companyId },
+        data: { status: parsed.data.status, completedAt: parsed.data.status === "done" ? new Date() : null }
+      });
+      if (updated.count !== 1) throw new AppError("NOT_FOUND", "タスクが見つかりません", 404);
+      const saved = await tx.task.findFirstOrThrow({ where: { id: taskId, companyId: context.companyId } });
+      await tx.auditLog.create({ data: { companyId: context.companyId, actorUserId: context.session.userId, action: "task.status", entityType: "Task", entityId: taskId, result: "success", metadata: { status: parsed.data.status } } });
+      return saved;
+    });
+    return NextResponse.json({ task: { ...task, dueDate: fromDateUtc(task.dueDate), status: visibleTaskStatus(task.status, task.dueDate, todayInTokyo()) } });
   });
-
-  if (!existing) return jsonError(404, "NOT_FOUND", "タスクが見つかりません");
-
-  const updated = await prisma.task.update({
-    where: { id: existing.id },
-    data: { status: parsed.data.status, updatedAt: new Date() },
-    select: { id: true, status: true },
-  });
-
-  return jsonOk({ task: { taskId: updated.id, status: updated.status } });
 }

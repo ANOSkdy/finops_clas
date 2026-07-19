@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["queryCompiler", "driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,262 +7,330 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  loginId      String   @unique @map("login_id")
-  passwordHash String   @map("password_hash")
-  name         String
-  role         String   @default("user") // admin|user|global
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  memberships Membership[]
-  sessions    Session[]
-  uploads     Upload[]
-  emails      Email[]
+  id           String       @id @default(uuid()) @db.Uuid
+  loginId      String       @unique @db.VarChar(100)
+  name         String       @db.VarChar(100)
+  passwordHash String       @map("password_hash") @db.VarChar(100)
+  role         String       @default("user") @db.VarChar(20)
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  memberships  Membership[]
+  sessions     Session[]
+  uploads      Upload[]
+  emails       Email[]
+  uploadGrants UploadGrant[]
+  createdManualProcedures ManualProcedure[]
+  manualProcedureStatusUpdates CompanyManualProcedureStatus[]
 
   @@map("users")
 }
 
 model Company {
-  id                                  String                        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                                String
-  legalForm                           String                        @map("legal_form") // corporation|sole
-  address                             String?
-  fiscalClosingMonth                  Int                           @map("fiscal_closing_month")
-  representativeName                  String?                       @map("representative_name")
-  contactEmail                        String?                       @map("contact_email")
-  contactPhone                        String?                       @map("contact_phone")
-  corporateNumber                     String?                       @map("corporate_number") @db.VarChar(13)
-  establishedOn                       DateTime?                     @map("established_on") @db.Date
-  withholdingIncomeTaxPaymentSchedule String?                       @map("withholding_income_tax_payment_schedule")
-  residentTaxPaymentSchedule          String?                       @map("resident_tax_payment_schedule")
-  createdAt                           DateTime                      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                           DateTime                      @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  memberships          Membership[]
-  tasks                Task[]
-  uploads              Upload[]
-  ratings              Rating[]
-  emails               Email[]
-  sessions             Session[]
-  taxSetting           CompanyTaxSetting?
-  recurringTaxDueDates CompanyRecurringTaxDueDate[]
-  accountingChecklistItems  AccountingChecklistItem[]
-  accountingChecklistChecks AccountingChecklistCheck[]
+  id                    String                         @id @default(uuid()) @db.Uuid
+  name                  String                         @db.VarChar(200)
+  legalForm             String                         @map("legal_form") @db.VarChar(20)
+  representativeName    String?                        @map("representative_name") @db.VarChar(100)
+  email                 String?                        @db.VarChar(254)
+  phone                 String?                        @db.VarChar(30)
+  postalCode            String?                        @map("postal_code") @db.VarChar(12)
+  address               String?                        @db.VarChar(500)
+  corporateNumber       String?                        @map("corporate_number") @db.VarChar(13)
+  closingMonth          Int                            @map("closing_month")
+  scheduleDirtyAt       DateTime?                      @map("schedule_dirty_at") @db.Timestamptz(3)
+  createdAt             DateTime                       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime                       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  memberships           Membership[]
+  activeSessions        Session[]
+  tasks                 Task[]
+  uploads               Upload[]
+  ratings               Rating[]
+  emails                Email[]
+  taxSetting            CompanyTaxSetting?
+  recurringTaxDueDates  CompanyRecurringTaxDueDate[]
+  checklistItems        AccountingChecklistItem[]
+  checklistChecks       AccountingChecklistCheck[]
+  uploadGrants          UploadGrant[]
+  manualProcedures      ManualProcedure[]
+  manualProcedureStatuses CompanyManualProcedureStatus[]
 
   @@map("companies")
 }
 
-model CompanyTaxSetting {
-  id                                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId                               String   @unique @map("company_id") @db.Uuid
-  previousCorporateTaxNationalAmountYen   BigInt?  @map("previous_corporate_tax_national_amount_yen")
-  isConsumptionTaxTaxableBusiness         Boolean  @default(false) @map("is_consumption_tax_taxable_business")
-  consumptionTaxReason                    String?  @map("consumption_tax_reason")
-  previousConsumptionTaxNationalAmountYen BigInt?  @map("previous_consumption_tax_national_amount_yen")
-  createdAt                               DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                               DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+model Membership {
+  userId        String   @map("user_id") @db.Uuid
+  companyId     String   @map("company_id") @db.Uuid
+  roleInCompany String   @default("member") @map("role_in_company") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  @@id([userId, companyId])
+  @@index([companyId])
+  @@map("memberships")
+}
+
+model Session {
+  id              String   @id @default(uuid()) @db.Uuid
+  tokenHash       String   @unique @map("token_hash") @db.VarChar(64)
+  userId          String   @map("user_id") @db.Uuid
+  activeCompanyId String?  @map("active_company_id") @db.Uuid
+  expiresAt       DateTime @map("expires_at") @db.Timestamptz(3)
+  lastAccessedAt  DateTime @default(now()) @map("last_accessed_at") @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeCompany   Company? @relation(fields: [activeCompanyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model CompanyTaxSetting {
+  companyId                 String   @id @map("company_id") @db.Uuid
+  isTaxable                 Boolean  @default(false) @map("is_taxable")
+  withholdingSpecial       Boolean  @default(false) @map("withholding_special")
+  residentTaxSpecial       Boolean  @default(false) @map("resident_tax_special")
+  previousCorporateTaxYen  BigInt?  @map("previous_corporate_tax_yen")
+  previousConsumptionTaxYen BigInt? @map("previous_consumption_tax_yen")
+  createdAt                 DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                 DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  company                   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@map("company_tax_settings")
 }
 
 model CompanyRecurringTaxDueDate {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               String   @id @default(uuid()) @db.Uuid
   companyId        String   @map("company_id") @db.Uuid
-  taxType          String   @map("tax_type")
-  title            String
-  installmentLabel String?  @map("installment_label")
+  title            String   @db.VarChar(200)
+  taxType          String   @map("tax_type") @db.VarChar(50)
+  installmentLabel String?  @map("installment_label") @db.VarChar(50)
   month            Int
   day              Int
   enabled          Boolean  @default(true)
-  sortOrder        Int      @default(0) @map("sort_order")
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  company          Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@index([companyId, enabled])
-  @@index([companyId, taxType])
+  @@index([companyId, month, day])
   @@map("company_recurring_tax_due_dates")
 }
 
+model Task {
+  id          String                 @id @default(uuid()) @db.Uuid
+  companyId   String                 @map("company_id") @db.Uuid
+  taskKey     String?                @map("task_key") @db.VarChar(255)
+  title       String                 @db.VarChar(300)
+  category    String                 @db.VarChar(30)
+  dueDate     DateTime               @map("due_date") @db.Date
+  periodStart DateTime?              @map("period_start") @db.Date
+  periodEnd   DateTime?              @map("period_end") @db.Date
+  status      String                 @default("pending") @db.VarChar(20)
+  generated   Boolean                @default(true)
+  ruleVersion String                 @default("clas-asis-1") @map("rule_version") @db.VarChar(40)
+  completedAt DateTime?              @map("completed_at") @db.Timestamptz(3)
+  createdAt   DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime               @updatedAt @map("updated_at") @db.Timestamptz(3)
+  company     Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reminders   TaskReminderDelivery[]
+
+  @@unique([companyId, taskKey])
+  @@index([companyId, dueDate])
+  @@map("tasks")
+}
+
+model TaskReminderDelivery {
+  id        String   @id @default(uuid()) @db.Uuid
+  taskId    String   @map("task_id") @db.Uuid
+  channel   String   @default("email") @db.VarChar(20)
+  remindKey String   @map("remind_key") @db.VarChar(40)
+  status    String   @db.VarChar(20)
+  errorCode String?  @map("error_code") @db.VarChar(80)
+  sentAt    DateTime? @map("sent_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, channel, remindKey])
+  @@index([createdAt])
+  @@map("task_reminder_deliveries")
+}
+
 model AccountingChecklistItem {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId String   @map("company_id") @db.Uuid
-  name      String
-  sortOrder Int      @default(0) @map("sort_order")
-  isDefault Boolean  @default(false) @map("is_default")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id        String                      @id @default(uuid()) @db.Uuid
+  companyId String                      @map("company_id") @db.Uuid
+  name      String                      @db.VarChar(100)
+  position  Int                         @default(0)
+  createdAt DateTime                    @default(now()) @map("created_at") @db.Timestamptz(3)
+  company   Company                     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  checks    AccountingChecklistCheck[]
 
-  company Company                     @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  checks  AccountingChecklistCheck[]
-
-  @@index([companyId, sortOrder])
+  @@unique([companyId, name])
+  @@index([companyId, position])
   @@map("accounting_checklist_items")
 }
 
 model AccountingChecklistCheck {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId  String   @map("company_id") @db.Uuid
-  itemId     String   @map("item_id") @db.Uuid
-  fiscalYear Int      @map("fiscal_year")
+  id         String                  @id @default(uuid()) @db.Uuid
+  companyId  String                  @map("company_id") @db.Uuid
+  itemId     String                  @map("item_id") @db.Uuid
+  fiscalYear Int                     @map("fiscal_year")
   month      Int
-  checked    Boolean  @default(false)
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  company Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  item    AccountingChecklistItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  checked    Boolean                 @default(false)
+  updatedAt  DateTime                @updatedAt @map("updated_at") @db.Timestamptz(3)
+  company    Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  item       AccountingChecklistItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@unique([companyId, itemId, fiscalYear, month])
   @@index([companyId, fiscalYear])
   @@map("accounting_checklist_checks")
 }
 
-model Membership {
-  userId        String   @map("user_id") @db.Uuid
-  companyId     String   @map("company_id") @db.Uuid
-  roleInCompany String   @default("member") @map("role_in_company") // owner|admin|member|accountant
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+model UploadGrant {
+  id        String   @id @default(uuid()) @db.Uuid
+  companyId String   @map("company_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  purpose   String   @db.VarChar(30)
+  fileName  String   @map("file_name") @db.VarChar(255)
+  mimeType  String   @map("mime_type") @db.VarChar(120)
+  size      Int
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(3)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@id([userId, companyId])
-  @@map("memberships")
-}
-
-model Session {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId          String   @map("user_id") @db.Uuid
-  tokenHash       String   @unique @map("token_hash")
-  activeCompanyId String?  @map("active_company_id") @db.Uuid
-  expiresAt       DateTime @map("expires_at") @db.Timestamptz(6)
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  lastSeenAt      DateTime @default(now()) @map("last_seen_at") @db.Timestamptz(6)
-
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activeCompany Company? @relation(fields: [activeCompanyId], references: [id], onDelete: SetNull)
-
-  @@index([userId])
-  @@map("sessions")
-}
-
-model Task {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId   String    @map("company_id") @db.Uuid
-  category    String    // tax|social|other
-  title       String
-  dueDate     DateTime  @map("due_date") @db.Date
-  taskKey     String?   @map("task_key")
-  periodStart DateTime? @map("period_start") @db.Date
-  periodEnd   DateTime? @map("period_end") @db.Date
-  status      String    @default("pending") // pending|done|overdue
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  company            Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  reminderDeliveries TaskReminderDelivery[]
-
-  @@index([companyId, dueDate])
-  @@index([companyId, status])
-  @@index([companyId, taskKey])
-  @@map("tasks")
-}
-
-model TaskReminderDelivery {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  taskId    String    @map("task_id") @db.Uuid
-  channel   String
-  remindKey String    @map("remind_key")
-  status    String    @default("queued")
-  sentAt    DateTime? @map("sent_at") @db.Timestamptz(6)
-  error     String?
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-
-  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
-  @@unique([taskId, channel, remindKey])
-  @@index([status, createdAt])
-  @@map("task_reminder_deliveries")
+  @@index([companyId, expiresAt])
+  @@map("upload_grants")
 }
 
 model Upload {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId        String   @map("company_id") @db.Uuid
-  userId           String   @map("user_id") @db.Uuid
-  purpose          String   // rating|trial_balance
-  storageProvider  String   @map("storage_provider") // vercel_blob|s3
-  storageKey       String   @map("storage_key")
-  originalFilename String   @map("original_filename")
-  mimeType         String   @map("mime_type")
-  sizeBytes        BigInt   @map("size_bytes")
-  sha256           String?
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id              String   @id @default(uuid()) @db.Uuid
+  companyId       String   @map("company_id") @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  purpose         String   @db.VarChar(30)
+  originalName    String   @map("original_name") @db.VarChar(255)
+  mimeType        String   @map("mime_type") @db.VarChar(120)
+  size            Int
+  sha256          String?  @db.VarChar(64)
+  storageProvider String   @default("local_private") @map("storage_provider") @db.VarChar(40)
+  storageKey      String   @map("storage_key") @db.VarChar(1000)
+  storageUrl      String   @map("storage_url") @db.VarChar(2000)
+  accessMode      String   @default("private") @map("access_mode") @db.VarChar(20)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  rating          Rating?
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
-  rating  Rating?
-
-  @@index([companyId, createdAt])
+  @@unique([companyId, storageProvider, storageKey])
+  @@index([companyId, purpose])
   @@map("uploads")
 }
 
 model Rating {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId String   @map("company_id") @db.Uuid
-  uploadId  String   @unique @map("upload_id") @db.Uuid
-  score     Int
-  grade     String
-  aiComment String?  @map("ai_comment")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id             String   @id @default(uuid()) @db.Uuid
+  uploadId       String   @unique @map("upload_id") @db.Uuid
+  companyId      String   @map("company_id") @db.Uuid
+  score          Int
+  grade          String   @db.VarChar(2)
+  aiComment      String   @map("ai_comment") @db.Text
+  highlights     String[]
+  aiSource       String   @default("fallback") @map("ai_source") @db.VarChar(30)
+  scoreVersion   String   @default("metadata-v1") @map("score_version") @db.VarChar(30)
+  promptVersion  String   @default("rating-ja-v1") @map("prompt_version") @db.VarChar(30)
+  modelVersion   String?  @map("model_version") @db.VarChar(100)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  upload         Upload   @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  upload  Upload  @relation(fields: [uploadId], references: [id], onDelete: Cascade)
-
+  @@index([companyId])
   @@map("ratings")
 }
 
 model Email {
-  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                  String   @id @default(uuid()) @db.Uuid
   companyId           String   @map("company_id") @db.Uuid
   userId              String   @map("user_id") @db.Uuid
-  mailTo              String   @map("mail_to")
-  subject             String
-  body                String
-  attachmentUploadIds String[] @default([]) @map("attachment_upload_ids") @db.Uuid
-  providerMessageId   String?  @map("provider_message_id")
-  status              String   @default("queued") // queued|sent|failed
-  error               String?
-  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  recipient           String   @db.VarChar(254)
+  subject             String   @db.VarChar(200)
+  body                 String   @db.Text
+  attachmentUploadIds String[] @map("attachment_upload_ids") @db.Uuid
+  idempotencyKey      String   @map("idempotency_key") @db.VarChar(100)
+  status              String   @default("queued") @db.VarChar(20)
+  providerMessageId   String?  @map("provider_message_id") @db.VarChar(255)
+  errorCode           String?  @map("error_code") @db.VarChar(80)
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  sentAt              DateTime? @map("sent_at") @db.Timestamptz(3)
+  company             Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user                User     @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
-
+  @@unique([companyId, idempotencyKey])
   @@index([companyId, createdAt])
   @@map("emails")
 }
 
 model ManualDocument {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  slug      String   @unique
-  title     String
-  contentMd String   @map("content_md")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  id        String   @id @default(uuid()) @db.Uuid
+  slug      String   @unique @db.VarChar(120)
+  title     String   @db.VarChar(200)
+  content   String   @db.Text
+  published Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@map("manual_documents")
 }
 
-model AiCache {
-  key       String   @id @db.Text
-  value     String   @db.Text
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+model ManualProcedure {
+  id                    String                         @id @default(uuid()) @db.Uuid
+  sourceKey             String?                        @unique @map("source_key") @db.VarChar(100)
+  companyId             String?                        @map("company_id") @db.Uuid
+  createdByUserId       String?                        @map("created_by_user_id") @db.Uuid
+  category              String                         @db.VarChar(30)
+  title                 String                         @db.VarChar(300)
+  trigger               String                         @db.Text
+  deadline              String                         @db.Text
+  submissionDestination String?                        @map("submission_destination") @db.Text
+  cost                  String?                        @db.Text
+  notes                 String                         @db.Text
+  position              Int                            @default(0)
+  createdAt             DateTime                       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime                       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  company               Company?                       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy             User?                          @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  companyStatuses       CompanyManualProcedureStatus[]
 
-  @@map("ai_cache")
+  @@index([companyId, category, position])
+  @@map("manual_procedures")
+}
+
+model CompanyManualProcedureStatus {
+  companyId       String          @map("company_id") @db.Uuid
+  procedureId     String          @map("procedure_id") @db.Uuid
+  status          String          @default("not_started") @db.VarChar(20)
+  updatedByUserId String?         @map("updated_by_user_id") @db.Uuid
+  updatedAt       DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  procedure       ManualProcedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  updatedBy       User?           @relation(fields: [updatedByUserId], references: [id], onDelete: SetNull)
+
+  @@id([companyId, procedureId])
+  @@index([companyId, status])
+  @@map("company_manual_procedure_statuses")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  companyId  String?  @map("company_id") @db.Uuid
+  actorUserId String? @map("actor_user_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  entityType String   @map("entity_type") @db.VarChar(80)
+  entityId   String?  @map("entity_id") @db.VarChar(100)
+  result     String   @db.VarChar(30)
+  metadata   Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([companyId, createdAt])
+  @@index([actorUserId, createdAt])
+  @@map("audit_logs")
 }

@@ -1,56 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { changePasswordSchema } from "@/lib/validators/password";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { requireAuth } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { AppError } from "@/lib/api/errors";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
-import { requireAuth } from "@/lib/auth/tenant";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+const schema = z.object({ currentPassword: z.string().min(1).max(200), newPassword: z.string().min(8).max(200), confirmPassword: z.string().min(8).max(200) }).refine((value) => value.newPassword === value.confirmPassword, { path: ["confirmPassword"], message: "確認用パスワードが一致しません" }).refine((value) => value.currentPassword !== value.newPassword, { path: ["newPassword"], message: "現在と異なるパスワードを指定してください" });
 
-export async function POST(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
+export async function POST(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const session = await requireAuth();
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    if (!(await verifyPassword(parsed.data.currentPassword, session.user.passwordHash))) throw new AppError("UNAUTHORIZED", "現在のパスワードが正しくありません", 401);
+    await db.$transaction([
+      db.user.update({ where: { id: session.userId }, data: { passwordHash: await hashPassword(parsed.data.newPassword) } }),
+      db.session.deleteMany({ where: { userId: session.userId, id: { not: session.id } } }),
+      db.auditLog.create({ data: { actorUserId: session.userId, action: "account.password.update", entityType: "User", entityId: session.userId, result: "success" } })
     ]);
-  }
-
-  const parsed = changePasswordSchema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({
-      field: i.path.join(".") || "body",
-      reason: i.code,
-    }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const { currentPassword, newPassword } = parsed.data;
-
-  const isCurrentValid = await verifyPassword(currentPassword, auth.user.passwordHash);
-  if (!isCurrentValid) {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "currentPassword", reason: "mismatch" },
-    ]);
-  }
-
-  const isSameAsCurrent = await verifyPassword(newPassword, auth.user.passwordHash);
-  if (isSameAsCurrent) {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "newPassword", reason: "same_as_current" },
-    ]);
-  }
-
-  const passwordHash = await hashPassword(newPassword);
-
-  await prisma.user.update({
-    where: { id: auth.user.id },
-    data: { passwordHash, updatedAt: new Date() },
+    return new NextResponse(null, { status: 204 });
   });
-
-  return new NextResponse(null, { status: 204 });
 }

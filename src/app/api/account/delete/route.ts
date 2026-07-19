@@ -1,44 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { requireAuth } from "@/lib/auth/tenant";
-import { ApiErrorDetail } from "@/lib/api/errors";
+import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
+import { requireGlobal } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { AppError } from "@/lib/api/errors";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+const schema = z.object({ userId: z.uuid() });
 
-export async function POST(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (auth.user.role !== "global") return jsonError(403, "FORBIDDEN", "権限がありません");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
-    ]);
-  }
-
-  const userId = (body as { userId?: string | null })?.userId;
-  if (!userId) return jsonError(400, "VALIDATION_ERROR", "ユーザーIDが必要です", [
-    { field: "userId", reason: "required" },
-  ]);
-
-  // RESTRICT のため uploads/emails があると削除できないので、事前チェックで理由を返す
-  const [uploadsCount, emailsCount] = await Promise.all([
-    prisma.upload.count({ where: { userId } }),
-    prisma.email.count({ where: { userId } }),
-  ]);
-
-  if (uploadsCount > 0 || emailsCount > 0) {
-    const details: ApiErrorDetail[] = [];
-    if (uploadsCount > 0) details.push({ field: "uploads", reason: `count:${uploadsCount}` });
-    if (emailsCount > 0) details.push({ field: "emails", reason: `count:${emailsCount}` });
-    return jsonError(409, "CONFLICT", "関連データが残っているため削除できません", details);
-  }
-
-  await prisma.user.delete({ where: { id: userId } });
-
-  return new NextResponse(null, { status: 204 });
+export async function POST(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const actor = await requireGlobal();
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    if (parsed.data.userId === actor.userId) throw new AppError("CONFLICT", "自分自身のアカウントは削除できません", 409);
+    await db.$transaction(async (tx) => {
+      const target = await tx.user.findUnique({ where: { id: parsed.data.userId }, include: { _count: { select: { uploads: true, emails: true } } } });
+      if (!target) throw new AppError("NOT_FOUND", "アカウントが見つかりません", 404);
+      if (target.role === "global" && (await tx.user.count({ where: { role: "global" } })) <= 1) throw new AppError("CONFLICT", "最後のシステム管理者は削除できません", 409);
+      if (target._count.uploads > 0 || target._count.emails > 0) throw new AppError("CONFLICT", "アップロードまたはメール監査記録があるため削除できません", 409);
+      await tx.user.delete({ where: { id: target.id } });
+      await tx.auditLog.create({ data: { actorUserId: actor.userId, action: "account.delete", entityType: "User", entityId: target.id, result: "success", metadata: { role: target.role } } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    return new NextResponse(null, { status: 204 });
+  });
 }

@@ -1,23 +1,12 @@
-import type { ReactNode } from "react";
-import { AppHeader } from "@/components/layout/AppHeader";
-import { MainContainer } from "@/components/ui/MainContainer";
+import { redirect } from "next/navigation";
+import { AppShell } from "@/components/layout/AppShell";
+import { getSession } from "@/lib/auth/session";
 
-export default function AppLayout({ children }: { children: ReactNode }) {
-  return (
-    <>
-      <a
-        href="#main"
-        className="focus-ring sr-only fixed left-3 top-3 z-[90] rounded-lg border border-[var(--color-border-default)] bg-[var(--color-surface-normal)] px-3 py-2 text-sm text-[var(--color-text-primary)] shadow-[var(--shadow-elevation-1)] focus:not-sr-only"
-      >
-        本文へスキップ
-      </a>
+export const dynamic = "force-dynamic";
 
-      <div className="min-h-dvh w-full max-w-full overflow-x-hidden bg-[var(--color-bg-primary)]">
-        <AppHeader />
-        <main id="main" className="t-page-shell min-w-0 max-w-full overflow-x-hidden pt-6">
-          <MainContainer>{children}</MainContainer>
-        </main>
-      </div>
-    </>
-  );
+export default async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
+  if (!session) redirect("/login");
+  const memberships = [...session.user.memberships].sort((a, b) => a.company.name.localeCompare(b.company.name, "ja"));
+  return <AppShell user={{ name: session.user.name, role: session.user.role }} activeCompanyId={session.activeCompanyId} companies={memberships.map(({ company, roleInCompany }) => ({ id: company.id, name: company.name, legalForm: company.legalForm, roleInCompany }))}>{children}</AppShell>;
 }

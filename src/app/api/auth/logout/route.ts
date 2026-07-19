@@ -1,36 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import {
-  deleteDbSessionByToken,
-  readSessionToken,
-  SESSION_COOKIE_NAMES,
-} from "@/lib/auth/session";
+import { NextResponse } from "next/server";
+import { deleteCurrentSession } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { withApiError } from "@/lib/api/response";
 
 export const runtime = "nodejs";
 
-export async function POST(req: NextRequest) {
-  const token = readSessionToken(req);
-  if (token) {
-    try {
-      await deleteDbSessionByToken(token);
-    } catch {
-      // best-effort
-    }
-  }
-
-  const isProd = process.env.NODE_ENV === "production";
-  const res = new NextResponse(null, { status: 204 });
-
-  for (const name of SESSION_COOKIE_NAMES) {
-    res.cookies.set({
-      name,
-      value: "",
-      httpOnly: true,
-      secure: isProd,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 0,
-    });
-  }
-
-  return res;
+export async function POST(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    await deleteCurrentSession();
+    return new NextResponse(null, { status: 204 });
+  });
 }

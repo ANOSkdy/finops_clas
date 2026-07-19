@@ -1,181 +1,23 @@
-"use client";
+import { forwardRef, useId, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
 
-import * as React from "react";
-import { cn } from "@/lib/ui/cn";
+type Base = { label: string; error?: string; hint?: string; requiredLabel?: boolean };
+export const TextField = forwardRef<HTMLInputElement, Base & InputHTMLAttributes<HTMLInputElement>>(function TextField({ label, error, hint, requiredLabel, id, className = "", ...props }, ref) {
+  const generatedId = useId();
+  const controlId = id ?? props.name ?? generatedId;
+  const description = error ? `${controlId}-error` : hint ? `${controlId}-hint` : undefined;
+  return <label className="field" htmlFor={controlId}><span className="field-label">{label}{requiredLabel ? <span className="required">必須</span> : null}</span><input ref={ref} id={controlId} className={`input ${className}`} aria-invalid={error ? true : undefined} aria-required={requiredLabel || undefined} aria-describedby={description} {...props} />{error ? <span id={`${controlId}-error`} className="field-error" role="alert">{error}</span> : hint ? <span id={`${controlId}-hint`} className="field-hint">{hint}</span> : null}</label>;
+});
 
-type Common = {
-  label: string;
-  required?: boolean;
-  hint?: string;
-  error?: string | null;
-  inputClassName?: string;
-  labelClassName?: string;
-};
-
-type TextFieldProps = Common &
-  Omit<React.InputHTMLAttributes<HTMLInputElement>, "placeholder">;
-
-export function Field({
-  label,
-  required,
-  hint,
-  error,
-  inputClassName,
-  labelClassName,
-  className,
-  ...props
-}: TextFieldProps) {
-  const id = React.useId();
-  const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
-  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
-
-  return (
-    <div className={cn("space-y-1", className)}>
-      <div className="relative">
-        <input
-          id={id}
-          placeholder=" "
-          aria-invalid={!!error}
-          aria-describedby={describedBy}
-          className={cn(
-            "focus-ring peer h-14 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-7 pb-2 text-sm leading-5 text-[var(--color-text-primary)]",
-            "border-[var(--color-border-default)] focus:border-primary",
-            error ? "border-accent2 focus:border-accent2" : "",
-            "placeholder:text-transparent",
-            inputClassName
-          )}
-          {...props}
-        />
-        <label
-          htmlFor={id}
-          className={cn(
-            "pointer-events-none absolute left-3 top-2 text-xs leading-4 text-[var(--color-text-secondary)] transition-all",
-            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-5 peer-placeholder-shown:text-[var(--color-text-secondary)]",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:leading-4 peer-focus:text-primary",
-            labelClassName
-          )}
-        >
-          {label}{required ? <span className="text-accent2"> *</span> : null}
-        </label>
-      </div>
-
-      {hint && <p id={hintId} className="text-xs text-[var(--color-text-secondary)]">{hint}</p>}
-      {error && <p id={errorId} role="alert" className="text-xs text-accent2">{error}</p>}
-    </div>
-  );
+export function SelectField({ label, error, hint, requiredLabel, id, className = "", children, ...props }: Base & SelectHTMLAttributes<HTMLSelectElement>) {
+  const generatedId = useId();
+  const controlId = id ?? props.name ?? generatedId;
+  const description = error ? `${controlId}-error` : hint ? `${controlId}-hint` : undefined;
+  return <label className="field" htmlFor={controlId}><span className="field-label">{label}{requiredLabel ? <span className="required">必須</span> : null}</span><select id={controlId} className={`select ${className}`} aria-invalid={error ? true : undefined} aria-required={requiredLabel || undefined} aria-describedby={description} {...props}>{children}</select>{error ? <span id={`${controlId}-error`} className="field-error" role="alert">{error}</span> : hint ? <span id={`${controlId}-hint`} className="field-hint">{hint}</span> : null}</label>;
 }
 
-type SelectFieldProps = Common &
-  Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "placeholder"> & {
-    placeholder?: string;
-  };
-
-export function SelectField({
-  label,
-  required,
-  hint,
-  error,
-  inputClassName,
-  labelClassName,
-  className,
-  placeholder,
-  children,
-  value,
-  ...props
-}: SelectFieldProps) {
-  const id = React.useId();
-  const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
-  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
-
-  return (
-    <div className={cn("space-y-1", className)}>
-      <div className="relative group">
-        <select
-          id={id}
-          value={value}
-          aria-invalid={!!error}
-          aria-describedby={describedBy}
-          className={cn(
-            "focus-ring peer h-14 w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-7 pb-2 pr-10 text-sm leading-5 text-[var(--color-text-primary)]",
-            "border-[var(--color-border-default)] focus:border-primary",
-            error ? "border-accent2 focus:border-accent2" : "",
-            inputClassName
-          )}
-          {...props}
-        >
-          {placeholder ? <option value="">{placeholder}</option> : null}
-          {children}
-        </select>
-        <label
-          htmlFor={id}
-          className={cn(
-            "pointer-events-none absolute left-3 top-2 text-xs leading-4 text-[var(--color-text-secondary)] transition-all",
-            "group-focus-within:text-primary",
-            labelClassName
-          )}
-        >
-          {label}{required ? <span className="text-accent2"> *</span> : null}
-        </label>
-      </div>
-
-      {hint && <p id={hintId} className="text-xs text-[var(--color-text-secondary)]">{hint}</p>}
-      {error && <p id={errorId} role="alert" className="text-xs text-accent2">{error}</p>}
-    </div>
-  );
-}
-
-type TextareaFieldProps = Common &
-  Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "placeholder">;
-
-export function TextareaField({
-  label,
-  required,
-  hint,
-  error,
-  inputClassName,
-  labelClassName,
-  className,
-  ...props
-}: TextareaFieldProps) {
-  const id = React.useId();
-  const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
-  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
-
-  return (
-    <div className={cn("space-y-1", className)}>
-      <div className="relative">
-        <textarea
-          id={id}
-          placeholder=" "
-          aria-invalid={!!error}
-          aria-describedby={describedBy}
-          className={cn(
-            "focus-ring peer min-h-[140px] w-full rounded-lg border bg-[var(--color-bg-secondary)] px-3 pt-7 pb-3 text-sm leading-5 text-[var(--color-text-primary)]",
-            "border-[var(--color-border-default)] focus:border-primary resize-y",
-            error ? "border-accent2 focus:border-accent2" : "",
-            "placeholder:text-transparent",
-            inputClassName
-          )}
-          {...props}
-        />
-        <label
-          htmlFor={id}
-          className={cn(
-            "pointer-events-none absolute left-3 top-2 text-xs leading-4 text-[var(--color-text-secondary)] transition-all",
-            "peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-5 peer-placeholder-shown:text-[var(--color-text-secondary)]",
-            "peer-focus:top-2 peer-focus:text-xs peer-focus:leading-4 peer-focus:text-primary",
-            labelClassName
-          )}
-        >
-          {label}{required ? <span className="text-accent2"> *</span> : null}
-        </label>
-      </div>
-
-      {hint && <p id={hintId} className="text-xs text-[var(--color-text-secondary)]">{hint}</p>}
-      {error && <p id={errorId} role="alert" className="text-xs text-accent2">{error}</p>}
-    </div>
-  );
+export function TextareaField({ label, error, hint, requiredLabel, id, className = "", ...props }: Base & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const generatedId = useId();
+  const controlId = id ?? props.name ?? generatedId;
+  const description = error ? `${controlId}-error` : hint ? `${controlId}-hint` : undefined;
+  return <label className="field" htmlFor={controlId}><span className="field-label">{label}{requiredLabel ? <span className="required">必須</span> : null}</span><textarea id={controlId} className={`textarea ${className}`} aria-invalid={error ? true : undefined} aria-required={requiredLabel || undefined} aria-describedby={description} {...props} />{error ? <span id={`${controlId}-error`} className="field-error" role="alert">{error}</span> : hint ? <span id={`${controlId}-hint`} className="field-hint">{hint}</span> : null}</label>;
 }

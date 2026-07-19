@@ -1,28 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { requireAuth } from "@/lib/auth/tenant";
+import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/auth/session";
+import { withApiError } from "@/lib/api/response";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-
-  const memberships = await prisma.membership.findMany({
-    where: { userId: auth.user.id },
-    include: { company: true },
-    orderBy: { createdAt: "desc" },
+export async function GET() {
+  return withApiError(async () => {
+    const session = await requireAuth();
+    const memberships = [...session.user.memberships].sort((a, b) => a.company.name.localeCompare(b.company.name, "ja"));
+    return NextResponse.json({
+      companies: memberships.map(({ company, roleInCompany }) => ({
+        id: company.id,
+        name: company.name,
+        legalForm: company.legalForm,
+        representativeName: company.representativeName,
+        email: company.email,
+        roleInCompany,
+        active: company.id === session.activeCompanyId
+      }))
+    });
   });
-
-  const res = memberships.map((m: { company: { id: string; name: string; representativeName: string | null; contactEmail: string | null; contactPhone: string | null; legalForm: string } }) => ({
-    companyId: m.company.id,
-    name: m.company.name,
-    representativeName: m.company.representativeName ?? null,
-    contactEmail: m.company.contactEmail ?? null,
-    contactPhone: m.company.contactPhone ?? null,
-    legalForm: m.company.legalForm,
-  }));
-
-  return NextResponse.json(res, { status: 200 });
 }

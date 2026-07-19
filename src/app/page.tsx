@@ -1,46 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth/session";
 
-export default function Home() {
-  return (
-    <div className="min-h-screen bg-[var(--color-bg-primary)] font-sans text-[var(--color-text-primary)]">
-      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-16">
-        <div className="w-full rounded-3xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]/90 p-10 text-center shadow-soft sm:p-14">
-          <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-6">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary text-base shadow-sm">
-              C
-            </div>
-            <div className="space-y-3">
-              <h1 className="text-3xl font-semibold leading-10 tracking-tight">
-                CLAS FinOps
-              </h1>
-              <p className="text-base leading-7 text-[var(--color-text-secondary)]">
-                会社選択とアップロードを最短で進められる、モダンで軽やかな画面に刷新しました。
-              </p>
-            </div>
+export const dynamic = "force-dynamic";
 
-            <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-              <a
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-white shadow-sm hover:bg-[color:rgb(var(--button))]/90"
-                href="/login"
-              >
-                ログインへ進む
-              </a>
-              <Link
-                className="inline-flex h-12 items-center justify-center rounded-full border border-[color:rgb(var(--button))]/30 bg-[color:rgb(var(--button))] px-6 text-sm font-medium text-white shadow-sm hover:bg-[color:rgb(var(--button))]/90"
-                href="/manual"
-              >
-                マニュアルを見る
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 flex items-center gap-3 text-xs text-[var(--color-text-secondary)]">
-          <Image src="/next.svg" alt="Next.js ロゴ" width={64} height={16} priority />
-          <span>Next.js で構築</span>
-        </div>
-      </main>
-    </div>
-  );
+export default async function RootPage() {
+  const session = await getSession();
+  redirect(!session ? "/login" : session.activeCompanyId ? "/home" : "/selectcompany");
 }

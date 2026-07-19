@@ -1,79 +1,34 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { createUserSchema } from "@/lib/validators/account";
+import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
+import { requireGlobal } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { AppError } from "@/lib/api/errors";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
 import { hashPassword } from "@/lib/auth/password";
-import { requireAuth } from "@/lib/auth/tenant";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+const schema = z.object({ loginId: z.string().trim().min(1).max(100), name: z.string().trim().min(1).max(100), password: z.string().min(8).max(200), role: z.enum(["user", "admin", "global"]), companyId: z.uuid().nullable().optional() });
 
-export async function POST(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (auth.user.role !== "global") return jsonError(403, "FORBIDDEN", "権限がありません");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
-    ]);
-  }
-
-  const parsed = createUserSchema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({
-      field: i.path.join(".") || "body",
-      reason: i.code,
-    }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const { loginId, name, password, role, companyId } = parsed.data;
-
-  const existing = await prisma.user.findUnique({ where: { loginId } });
-  if (existing) return jsonError(409, "CONFLICT", "ログインIDが重複しています");
-
-  let targetCompanyId: string | null = null;
-  if (companyId) {
-    const company = await prisma.company.findUnique({
-      where: { id: companyId },
-      select: { id: true },
-    });
-    if (!company) {
-      return jsonError(404, "NOT_FOUND", "会社が見つかりません", [
-        { field: "companyId", reason: "not_found" },
-      ]);
-    }
-    targetCompanyId = company.id;
-  }
-
-  const passwordHash = await hashPassword(password);
-
-  const user = await prisma.$transaction(async (tx) => {
-    const created = await tx.user.create({
-      data: {
-        loginId,
-        name,
-        passwordHash,
-        role,
-      },
-      select: { id: true, loginId: true, name: true, role: true, updatedAt: true },
-    });
-
-    if (targetCompanyId) {
-      await tx.membership.create({
-        data: {
-          userId: created.id,
-          companyId: targetCompanyId,
-          roleInCompany: "member",
-        },
+export async function POST(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const actor = await requireGlobal();
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    try {
+      const user = await db.$transaction(async (tx) => {
+        if (parsed.data.companyId && !(await tx.company.findUnique({ where: { id: parsed.data.companyId } }))) throw new AppError("NOT_FOUND", "会社が見つかりません", 404);
+        const created = await tx.user.create({ data: { loginId: parsed.data.loginId, name: parsed.data.name, passwordHash: await hashPassword(parsed.data.password), role: parsed.data.role } });
+        if (parsed.data.companyId) await tx.membership.create({ data: { userId: created.id, companyId: parsed.data.companyId, roleInCompany: "member" } });
+        await tx.auditLog.create({ data: { companyId: parsed.data.companyId ?? null, actorUserId: actor.userId, action: "account.create", entityType: "User", entityId: created.id, result: "success", metadata: { role: created.role } } });
+        return created;
       });
+      return NextResponse.json({ user: { id: user.id, loginId: user.loginId, name: user.name, role: user.role } }, { status: 201 });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") throw new AppError("CONFLICT", "同じログインIDが既に登録されています", 409);
+      throw error;
     }
-
-    return created;
   });
-
-  return NextResponse.json(user, { status: 201 });
 }

@@ -1,34 +1,12 @@
-export function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
+export const SCORE_VERSION = "metadata-v1";
 
-export function scoreFromUpload(meta: {
-  originalFilename: string;
-  mimeType: string;
-  sizeBytes: bigint;
-}) {
-  const name = (meta.originalFilename || "").toLowerCase();
-  const mime = meta.mimeType || "";
-
+export function calculateRatingScore(input: { fileName: string; mimeType: string; size: number }) {
   let score = 62;
-
-  // filename hints (very light)
-  if (/(決算|financial|bs|pl|貸借|損益|試算|balance|income)/.test(name)) score += 8;
-
-  // mime hints
-  if (mime === "application/pdf") score += 4;
-  if (mime.includes("csv") || mime.includes("excel") || mime.includes("spreadsheet")) score += 3;
-
-  // size hints (avoid overfitting)
-  const size = Number(meta.sizeBytes ?? BigInt(0));
-  if (size >= 200_000) score += 2;
-  if (size >= 1_500_000) score += 1;
-
-  return clamp(score, 40, 90);
-}
-
-export function gradeFromScore(score: number) {
-  if (score >= 80) return "A";
-  if (score >= 65) return "B";
-  return "C";
+  if (/(決算|financial|bs|pl|貸借|損益|試算|balance|income)/i.test(input.fileName)) score += 8;
+  if (input.mimeType === "application/pdf") score += 4;
+  if (["text/csv", "application/csv", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"].includes(input.mimeType)) score += 3;
+  if (input.size >= 200_000) score += 2;
+  if (input.size >= 1_500_000) score += 1;
+  score = Math.max(40, Math.min(90, score));
+  return { score, grade: score >= 80 ? "A" : score >= 65 ? "B" : "C" };
 }

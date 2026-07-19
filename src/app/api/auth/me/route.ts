@@ -1,11 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/session";
-import { jsonError } from "@/lib/api/response";
+import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/auth/session";
+import { withApiError } from "@/lib/api/response";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
-  const s = await getSession(req);
-  if (!s) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  return NextResponse.json({ role: s.user.role }, { status: 200 });
+export async function GET() {
+  return withApiError(async () => {
+    const session = await requireAuth();
+    return NextResponse.json({
+      user: { id: session.user.id, name: session.user.name, loginId: session.user.loginId, role: session.user.role },
+      activeCompany: session.activeCompany ? { id: session.activeCompany.id, name: session.activeCompany.name, legalForm: session.activeCompany.legalForm } : null
+    });
+  });
 }

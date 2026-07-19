@@ -1,59 +1,28 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
-import { requireActiveCompany } from "@/lib/auth/tenant";
-import { jsonError, jsonOk } from "@/lib/api/response";
-import { accountingChecklistFiscalYearSchema } from "@/lib/validators/accountingChecklist";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { requireActiveCompany } from "@/lib/auth/session";
+import { AppError } from "@/lib/api/errors";
+import { withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
+import { fiscalYearInTokyo } from "@/lib/date/business-date";
 
 export const runtime = "nodejs";
+const defaults = ["領収書", "通帳", "売上資料", "請求書", "クレジットカード明細"];
 
-const DEFAULT_ITEMS = ["領収書", "通帳", "売上資料", "請求書", "クレジットカード明細"] as const;
-
-function currentFiscalYear() {
-  const now = new Date();
-  const month = now.getUTCMonth() + 1;
-  return month >= 4 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
-}
-
-async function ensureDefaultItems(companyId: string) {
-  const existingItems = await prisma.accountingChecklistItem.findMany({
-    where: { companyId, name: { in: [...DEFAULT_ITEMS] } },
-    select: { name: true },
+export async function GET(request: Request) {
+  return withApiError(async () => {
+    const context = await requireActiveCompany();
+    const raw = new URL(request.url).searchParams.get("fiscalYear") ?? String(fiscalYearInTokyo());
+    const parsed = z.coerce.number().int().min(2000).max(2100).safeParse(raw);
+    if (!parsed.success) throw new AppError("VALIDATION_ERROR", "年度は2000〜2100で指定してください", 400);
+    await db.accountingChecklistItem.createMany({
+      data: defaults.map((name, position) => ({ companyId: context.companyId, name, position })),
+      skipDuplicates: true
+    });
+    const [items, checks] = await Promise.all([
+      db.accountingChecklistItem.findMany({ where: { companyId: context.companyId }, orderBy: [{ position: "asc" }, { createdAt: "asc" }] }),
+      db.accountingChecklistCheck.findMany({ where: { companyId: context.companyId, fiscalYear: parsed.data } })
+    ]);
+    return NextResponse.json({ fiscalYear: parsed.data, items, checks });
   });
-  const existingNames = new Set(existingItems.map((item: { name: string }) => item.name));
-  const missingItems = DEFAULT_ITEMS.flatMap((name, index) =>
-    existingNames.has(name) ? [] : [{ companyId, name, isDefault: true, sortOrder: index }]
-  );
-
-  if (missingItems.length > 0) {
-    await prisma.accountingChecklistItem.createMany({ data: missingItems });
-  }
-}
-
-export async function GET(req: NextRequest) {
-  const scoped = await requireActiveCompany(req);
-  if (!scoped) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
-  if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
-
-  const fiscalYearParam = req.nextUrl.searchParams.get("fiscalYear");
-  const fiscalYearResult = fiscalYearParam
-    ? accountingChecklistFiscalYearSchema.safeParse(Number(fiscalYearParam))
-    : { success: true as const, data: currentFiscalYear() };
-  if (!fiscalYearResult.success) return jsonError(400, "VALIDATION_ERROR", "fiscalYear が不正です");
-
-  await ensureDefaultItems(scoped.companyId);
-
-  const [items, checks] = await Promise.all([
-    prisma.accountingChecklistItem.findMany({
-      where: { companyId: scoped.companyId },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-      select: { id: true, name: true, isDefault: true, sortOrder: true },
-    }),
-    prisma.accountingChecklistCheck.findMany({
-      where: { companyId: scoped.companyId, fiscalYear: fiscalYearResult.data },
-      select: { itemId: true, month: true, checked: true },
-    }),
-  ]);
-
-  return jsonOk({ fiscalYear: fiscalYearResult.data, items, checks });
 }

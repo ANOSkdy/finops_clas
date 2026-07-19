@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: clas
+      POSTGRES_PASSWORD: clas
+      POSTGRES_DB: clas_finops
+    ports:
+      - "55432:5432"
+    volumes:
+      - clas-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clas -d clas_finops"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  clas-postgres:

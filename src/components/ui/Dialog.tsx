@@ -1,42 +1,8 @@
 "use client";
 
-import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { cn } from "@/lib/ui/cn";
+import type { ReactNode } from "react";
 
-export const Dialog = DialogPrimitive.Root;
-export const DialogTrigger = DialogPrimitive.Trigger;
-export const DialogClose = DialogPrimitive.Close;
-
-export function DialogContent({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>) {
-  return (
-    <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-[70] bg-ink/45" />
-      <DialogPrimitive.Content
-        className={cn(
-          "fixed left-1/2 top-1/2 z-[80] w-[min(92vw,520px)] -translate-x-1/2 -translate-y-1/2",
-          "rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] p-4 text-[var(--color-text-primary)] shadow-raised focus-ring outline-none",
-          className
-        )}
-        {...props}
-      />
-    </DialogPrimitive.Portal>
-  );
-}
-
-export function DialogTitle({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title className={cn("text-base font-semibold tracking-tight", className)} {...props} />;
-}
-
-export function DialogDescription({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>) {
-  return <DialogPrimitive.Description className={cn("mt-1 text-sm text-[var(--color-text-secondary)]", className)} {...props} />;
+export function ConfirmDialog({ open, onOpenChange, title, description, children, actions }: { open: boolean; onOpenChange: (open: boolean) => void; title: string; description: string; children?: ReactNode; actions: ReactNode }) {
+  return <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}><DialogPrimitive.Portal><DialogPrimitive.Overlay className="dialog-overlay" /><DialogPrimitive.Content className="dialog-content"><DialogPrimitive.Title asChild><h2>{title}</h2></DialogPrimitive.Title><DialogPrimitive.Description className="dialog-description">{description}</DialogPrimitive.Description>{children}<div className="dialog-actions">{actions}</div></DialogPrimitive.Content></DialogPrimitive.Portal></DialogPrimitive.Root>;
 }

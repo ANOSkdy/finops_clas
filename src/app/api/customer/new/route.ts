@@ -1,62 +1,35 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { customerNewSchema } from "@/lib/validators/customer";
-import { requireAuth } from "@/lib/auth/tenant";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { requireAuth } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+const schema = z.object({
+  legalForm: z.enum(["corporation", "sole_proprietor"]),
+  name: z.string().trim().min(1).max(200),
+  closingMonth: z.number().int().min(1).max(12),
+  representativeName: z.string().trim().max(100).optional().nullable(),
+  email: z.email().max(254).optional().nullable(),
+  phone: z.string().trim().max(30).optional().nullable(),
+  postalCode: z.string().trim().max(12).optional().nullable(),
+  address: z.string().trim().max(500).optional().nullable()
+});
 
-export async function POST(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
-    ]);
-  }
-
-  const parsed = customerNewSchema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({
-      field: i.path.join(".") || "body",
-      reason: i.code,
-    }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const v = parsed.data;
-
-  const fiscalClosingMonth = v.legalForm === "sole" ? 12 : v.fiscalClosingMonth;
-
-  const company = await prisma.company.create({
-    data: {
-      name: v.name,
-      legalForm: v.legalForm,
-      address: v.address ?? null,
-      fiscalClosingMonth,
-      representativeName: v.representativeName ?? null,
-      contactEmail: v.contactEmail ?? null,
-      contactPhone: v.contactPhone ?? null,
-    },
+export async function POST(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const session = await requireAuth();
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    const company = await db.$transaction(async (tx) => {
+      const created = await tx.company.create({ data: { ...parsed.data, closingMonth: parsed.data.legalForm === "sole_proprietor" ? 12 : parsed.data.closingMonth } });
+      await tx.membership.create({ data: { userId: session.userId, companyId: created.id, roleInCompany: "owner" } });
+      await tx.session.update({ where: { id: session.id }, data: { activeCompanyId: created.id } });
+      await tx.auditLog.create({ data: { companyId: created.id, actorUserId: session.userId, action: "company.create", entityType: "Company", entityId: created.id, result: "success" } });
+      return created;
+    });
+    return NextResponse.json({ company: { id: company.id, name: company.name } }, { status: 201 });
   });
-
-  await prisma.membership.create({
-    data: {
-      userId: auth.user.id,
-      companyId: company.id,
-      roleInCompany: "owner",
-    },
-  });
-
-  // 便利のため、初回は自動でアクティブに（UIが後で home/schedule に入れる）
-  await prisma.session.update({
-    where: { id: auth.session.id },
-    data: { activeCompanyId: company.id },
-  });
-
-  return NextResponse.json({ companyId: company.id }, { status: 200 });
 }

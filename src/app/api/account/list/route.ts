@@ -1,25 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { requireAuth } from "@/lib/auth/tenant";
+import { NextResponse } from "next/server";
+import { requireGlobal } from "@/lib/auth/session";
+import { withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (auth.user.role !== "global") return jsonError(403, "FORBIDDEN", "権限がありません");
-
-  const users = await prisma.user.findMany({
-    orderBy: { updatedAt: "desc" },
-    select: {
-      id: true,
-      loginId: true,
-      name: true,
-      role: true,
-      updatedAt: true,
-    },
+export async function GET() {
+  return withApiError(async () => {
+    await requireGlobal();
+    const users = await db.user.findMany({ select: { id: true, loginId: true, name: true, role: true, createdAt: true, _count: { select: { memberships: true, uploads: true, emails: true } } }, orderBy: { createdAt: "desc" } });
+    return NextResponse.json({ users });
   });
-
-  return NextResponse.json(users, { status: 200 });
 }

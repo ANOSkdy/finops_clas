@@ -1,0 +1,94 @@
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ds-color-canvas: #08090a;
+  --ds-color-sidebar: #0b0c0e;
+  --ds-color-surface-1: #0f1012;
+  --ds-color-surface-2: #141519;
+  --ds-color-surface-3: #191b20;
+  --ds-color-surface-hover: #1d1f25;
+  --ds-color-surface-active: #25283a;
+  --ds-color-overlay: rgb(0 0 0 / 56%);
+  --ds-color-text-primary: #f7f8f8;
+  --ds-color-text-secondary: #c5cad3;
+  --ds-color-text-tertiary: #8a8f98;
+  --ds-color-text-disabled: #62666d;
+  --ds-color-text-inverse: #fff;
+  --ds-color-border-subtle: rgb(255 255 255 / 6%);
+  --ds-color-border-default: rgb(255 255 255 / 10%);
+  --ds-color-border-strong: rgb(255 255 255 / 16%);
+  --ds-color-accent-solid: #5e6ad2;
+  --ds-color-accent-solid-hover: #5360c6;
+  --ds-color-accent-solid-active: #4b57b8;
+  --ds-color-accent-text: #aab0ff;
+  --ds-color-accent-subtle: rgb(94 106 210 / 16%);
+  --ds-color-accent-border: rgb(139 148 241 / 42%);
+  --ds-color-success-text: #6dd58c;
+  --ds-color-success-bg: rgb(39 166 68 / 13%);
+  --ds-color-success-border: rgb(109 213 140 / 32%);
+  --ds-color-warning-text: #f6c177;
+  --ds-color-warning-bg: rgb(185 121 0 / 14%);
+  --ds-color-warning-border: rgb(246 193 119 / 34%);
+  --ds-color-danger-text: #ff8b84;
+  --ds-color-danger-bg: rgb(248 81 73 / 13%);
+  --ds-color-danger-border: rgb(255 123 114 / 36%);
+  --ds-color-info-text: #74c0fc;
+  --ds-color-info-bg: rgb(38 139 210 / 13%);
+  --ds-color-info-border: rgb(116 192 252 / 34%);
+  --ds-color-focus: #aab0ff;
+  --ds-shadow-popover: 0 8px 24px rgb(0 0 0 / 34%);
+  --ds-shadow-dialog: 0 20px 60px rgb(0 0 0 / 44%);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --ds-color-canvas: #f7f8fa;
+  --ds-color-sidebar: #f1f2f4;
+  --ds-color-surface-1: #fff;
+  --ds-color-surface-2: #f1f2f4;
+  --ds-color-surface-3: #e8eaf0;
+  --ds-color-surface-hover: #eceef2;
+  --ds-color-surface-active: #e4e7ed;
+  --ds-color-overlay: rgb(15 16 18 / 40%);
+  --ds-color-text-primary: #17181a;
+  --ds-color-text-secondary: #4f535a;
+  --ds-color-text-tertiary: #62666d;
+  --ds-color-text-disabled: #8f949d;
+  --ds-color-text-inverse: #fff;
+  --ds-color-border-subtle: rgb(23 24 26 / 7%);
+  --ds-color-border-default: rgb(23 24 26 / 12%);
+  --ds-color-border-strong: rgb(23 24 26 / 20%);
+  --ds-color-accent-solid: #5e6ad2;
+  --ds-color-accent-solid-hover: #5360c6;
+  --ds-color-accent-solid-active: #4b57b8;
+  --ds-color-accent-text: #414dad;
+  --ds-color-accent-subtle: rgb(94 106 210 / 11%);
+  --ds-color-accent-border: rgb(79 92 194 / 34%);
+  --ds-color-success-text: #1f7a3d;
+  --ds-color-success-bg: rgb(31 122 61 / 9%);
+  --ds-color-success-border: rgb(31 122 61 / 26%);
+  --ds-color-warning-text: #805300;
+  --ds-color-warning-bg: rgb(138 90 0 / 9%);
+  --ds-color-warning-border: rgb(138 90 0 / 27%);
+  --ds-color-danger-text: #a51f16;
+  --ds-color-danger-bg: rgb(180 35 24 / 8%);
+  --ds-color-danger-border: rgb(180 35 24 / 27%);
+  --ds-color-info-text: #175cd3;
+  --ds-color-info-bg: rgb(23 92 211 / 8%);
+  --ds-color-info-border: rgb(23 92 211 / 25%);
+  --ds-color-focus: #4d58b4;
+  --ds-shadow-popover: 0 8px 24px rgb(15 16 18 / 14%);
+  --ds-shadow-dialog: 0 20px 60px rgb(15 16 18 / 20%);
+}
+
+:root {
+  --ds-font-ui: Inter, "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif;
+  --ds-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --ds-text-11: .6875rem; --ds-text-12: .75rem; --ds-text-13: .8125rem; --ds-text-14: .875rem;
+  --ds-text-16: 1rem; --ds-text-20: 1.25rem; --ds-text-24: 1.5rem; --ds-text-32: 2rem;
+  --ds-space-1: 2px; --ds-space-2: 4px; --ds-space-3: 6px; --ds-space-4: 8px; --ds-space-5: 12px;
+  --ds-space-6: 16px; --ds-space-7: 20px; --ds-space-8: 24px; --ds-space-9: 32px; --ds-space-10: 40px;
+  --ds-radius-xs: 4px; --ds-radius-sm: 6px; --ds-radius-md: 8px; --ds-radius-lg: 10px; --ds-radius-xl: 12px; --ds-radius-pill: 9999px;
+  --ds-duration-instant: 80ms; --ds-duration-fast: 120ms; --ds-duration-base: 180ms; --ds-duration-slow: 240ms;
+  --ds-ease-standard: cubic-bezier(.2, 0, 0, 1);
+}

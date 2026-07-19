@@ -1,0 +1,11 @@
+import Link from "next/link";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { EmptyState, NeedsCompanyState } from "@/components/ui/State";
+import type { HomeSummary } from "@/lib/home/summary";
+
+export function HomeDashboard({ data, needsCompany = false }: { data?: HomeSummary; needsCompany?: boolean }) {
+  if (needsCompany) return <div className="page"><PageHeader title="ホーム" /><NeedsCompanyState /></div>;
+  if (!data) return null;
+  return <div className="page"><PageHeader title="ホーム" description="今日の対応優先度を確認します。" actions={<Link className="button-link" href="/schedule">スケジュールを開く</Link>} /><div className="summary-strip"><Link href="/schedule?status=overdue" className="summary-cell"><span className="tone-danger">期限切れ</span><strong className="summary-value">{data.counts.overdue}</strong></Link><Link href="/schedule?due=today" className="summary-cell"><span className="tone-warning">本日期限</span><strong className="summary-value">{data.counts.today}</strong></Link><Link href="/schedule?days=7" className="summary-cell"><span className="tone-info">7日以内</span><strong className="summary-value">{data.counts.within7Days}</strong></Link><Link href="/schedule?days=30" className="summary-cell"><span>30日以内</span><strong className="summary-value">{data.counts.within30Days}</strong></Link></div><section className="section"><h2 className="section-title">要対応タスク</h2>{data.tasks.length === 0 ? <EmptyState title="要対応タスクはありません" message="30日以内に対応が必要なタスクはありません。" /> : <div className="data-list">{data.tasks.map((task) => <div className="data-row" key={task.id}><div className="row-title">{task.title}<div className="row-meta">{task.category === "tax" ? "税務" : task.category === "labor" ? "労務" : "その他"}</div></div><span>{task.category === "tax" ? "税務" : task.category === "labor" ? "労務" : "その他"}</span><time className="tabular" dateTime={task.dueDate}>{task.dueDate}</time><StatusBadge status={task.status} /><Link className="button-link" href={`/schedule?q=${encodeURIComponent(task.title)}`}>確認</Link></div>)}</div>}{data.totalTasks > data.tasks.length ? <p className="muted">{data.totalTasks}件中{data.tasks.length}件を表示しています。</p> : null}</section></div>;
+}

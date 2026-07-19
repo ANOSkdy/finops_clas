@@ -1,0 +1,52 @@
+name: CLAS FinOps CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: clas
+          POSTGRES_PASSWORD: clas
+          POSTGRES_DB: clas_finops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U clas -d clas_finops"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://clas:clas@localhost:5432/clas_finops?schema=public
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm test:tax-schedule
+      - run: pnpm build
+      - run: pnpm db:migrate
+      - run: pnpm smoke:local

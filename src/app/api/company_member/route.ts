@@ -1,179 +1,66 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { requireAuth } from "@/lib/auth/tenant";
-import { companyMemberCreateSchema, companyMemberDeleteSchema } from "@/lib/validators/companyMember";
+import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
+import { requireGlobal } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { AppError } from "@/lib/api/errors";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+const schema = z.object({ companyId: z.uuid(), userId: z.uuid(), roleInCompany: z.enum(["owner", "admin", "member", "accountant"]) });
+const deleteSchema = z.object({ companyId: z.uuid(), userId: z.uuid() });
 
-function shapeMembership(m: {
-  company: { id: string; name: string; legalForm: string };
-  user: { id: string; name: string; loginId: string; role: string };
-  roleInCompany: string;
-  createdAt: Date;
-}) {
-  return {
-    companyId: m.company.id,
-    companyName: m.company.name,
-    legalForm: m.company.legalForm,
-    userId: m.user.id,
-    userName: m.user.name,
-    loginId: m.user.loginId,
-    userRole: m.user.role,
-    roleInCompany: m.roleInCompany,
-    createdAt: m.createdAt.toISOString(),
-  };
+export async function GET() {
+  return withApiError(async () => {
+    await requireGlobal();
+    const [memberships, users, companies] = await Promise.all([
+      db.membership.findMany({ include: { user: { select: { id: true, name: true, loginId: true } }, company: { select: { id: true, name: true } } }, orderBy: { createdAt: "desc" } }),
+      db.user.findMany({ select: { id: true, name: true, loginId: true }, orderBy: { name: "asc" } }),
+      db.company.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } })
+    ]);
+    return NextResponse.json({ memberships, users, companies });
+  });
 }
 
-export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (auth.user.role !== "global") return jsonError(403, "FORBIDDEN", "権限がありません");
-
-  const [companies, users, memberships] = await Promise.all([
-    prisma.company.findMany({
-      orderBy: { updatedAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        legalForm: true,
-      },
-    }),
-    prisma.user.findMany({
-      orderBy: { updatedAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        loginId: true,
-        role: true,
-      },
-    }),
-    prisma.membership.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        company: { select: { id: true, name: true, legalForm: true } },
-        user: { select: { id: true, name: true, loginId: true, role: true } },
-      },
-    }),
-  ]);
-
-  return NextResponse.json(
-    {
-      companies,
-      users,
-      memberships: memberships.map(shapeMembership),
-    },
-    { status: 200 }
-  );
+export async function POST(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const actor = await requireGlobal();
+    const parsed = schema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    try {
+      const membership = await db.$transaction(async (tx) => {
+        const created = await tx.membership.create({ data: parsed.data });
+        await tx.auditLog.create({ data: { companyId: parsed.data.companyId, actorUserId: actor.userId, action: "membership.create", entityType: "Membership", entityId: `${created.userId}:${created.companyId}`, result: "success", metadata: { role: created.roleInCompany } } });
+        return created;
+      });
+      return NextResponse.json({ membership }, { status: 201 });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") throw new AppError("CONFLICT", "この所属は既に登録されています", 409);
+      throw error;
+    }
+  });
 }
 
-export async function POST(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (auth.user.role !== "global") return jsonError(403, "FORBIDDEN", "権限がありません");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
-    ]);
-  }
-
-  const parsed = companyMemberCreateSchema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({
-      field: i.path.join(".") || "body",
-      reason: i.code,
-    }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const { companyId, userId, roleInCompany } = parsed.data;
-
-  const [company, user] = await Promise.all([
-    prisma.company.findUnique({ where: { id: companyId }, select: { id: true } }),
-    prisma.user.findUnique({ where: { id: userId }, select: { id: true } }),
-  ]);
-
-  if (!company) {
-    return jsonError(404, "NOT_FOUND", "会社が見つかりません", [
-      { field: "companyId", reason: "not_found" },
-    ]);
-  }
-
-  if (!user) {
-    return jsonError(404, "NOT_FOUND", "ユーザーが見つかりません", [
-      { field: "userId", reason: "not_found" },
-    ]);
-  }
-
-  const existing = await prisma.membership.findUnique({
-    where: { userId_companyId: { companyId, userId } },
+export async function DELETE(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const actor = await requireGlobal();
+    const parsed = deleteSchema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    if (parsed.data.userId === actor.userId) throw new AppError("CONFLICT", "自分自身の所属は解除できません", 409);
+    await db.$transaction(async (tx) => {
+      const membership = await tx.membership.findUnique({ where: { userId_companyId: parsed.data } });
+      if (!membership) throw new AppError("NOT_FOUND", "所属が見つかりません", 404);
+      if (["owner", "admin"].includes(membership.roleInCompany)) {
+        const remaining = await tx.membership.count({ where: { companyId: parsed.data.companyId, roleInCompany: { in: ["owner", "admin"] }, userId: { not: parsed.data.userId } } });
+        if (remaining === 0) throw new AppError("CONFLICT", "最後の会社管理者は解除できません", 409);
+      }
+      await tx.membership.delete({ where: { userId_companyId: parsed.data } });
+      await tx.session.updateMany({ where: { userId: parsed.data.userId, activeCompanyId: parsed.data.companyId }, data: { activeCompanyId: null } });
+      await tx.auditLog.create({ data: { companyId: parsed.data.companyId, actorUserId: actor.userId, action: "membership.delete", entityType: "Membership", entityId: `${membership.userId}:${membership.companyId}`, result: "success", metadata: { role: membership.roleInCompany } } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    return new NextResponse(null, { status: 204 });
   });
-
-  if (existing) {
-    return jsonError(409, "CONFLICT", "既に紐付け済みです", [
-      { field: "companyId", reason: "duplicate" },
-      { field: "userId", reason: "duplicate" },
-    ]);
-  }
-
-  const membership = await prisma.membership.create({
-    data: {
-      companyId,
-      userId,
-      roleInCompany: roleInCompany ?? "member",
-    },
-    include: {
-      company: { select: { id: true, name: true, legalForm: true } },
-      user: { select: { id: true, name: true, loginId: true, role: true } },
-    },
-  });
-
-  return NextResponse.json(shapeMembership(membership), { status: 201 });
-}
-
-export async function DELETE(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (auth.user.role !== "global") return jsonError(403, "FORBIDDEN", "権限がありません");
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
-    ]);
-  }
-
-  const parsed = companyMemberDeleteSchema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({
-      field: i.path.join(".") || "body",
-      reason: i.code,
-    }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const { companyId, userId } = parsed.data;
-
-  const existing = await prisma.membership.findUnique({
-    where: { userId_companyId: { companyId, userId } },
-  });
-
-  if (!existing) {
-    return jsonError(404, "NOT_FOUND", "紐付けが見つかりません", [
-      { field: "companyId", reason: "not_found" },
-      { field: "userId", reason: "not_found" },
-    ]);
-  }
-
-  await prisma.membership.delete({
-    where: { userId_companyId: { companyId, userId } },
-  });
-
-  return new NextResponse(null, { status: 204 });
 }

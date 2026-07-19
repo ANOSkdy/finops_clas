@@ -1,120 +1,67 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/api/response";
-import { customerUpdateSchema } from "@/lib/validators/customer";
-import { requireActiveCompany } from "@/lib/auth/tenant";
-import { canEditCompany } from "@/lib/auth/rbac";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { requireActiveCompany, requireCompanyEditor } from "@/lib/auth/session";
+import { assertSameOrigin } from "@/lib/api/origin";
+import { parseJson, validationError, withApiError } from "@/lib/api/response";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+const updateSchema = z.object({
+  name: z.string().trim().min(1).max(200),
+  closingMonth: z.number().int().min(1).max(12),
+  representativeName: z.string().trim().max(100).nullable(),
+  email: z.union([z.email().max(254), z.literal("")]).nullable(),
+  phone: z.string().trim().max(30).nullable(),
+  postalCode: z.string().trim().max(12).nullable(),
+  address: z.string().trim().max(500).nullable(),
+  corporateNumber: z.union([z.string().regex(/^\d{13}$/), z.literal("")]).nullable()
+});
 
-function formatDate(date: Date | null) {
-  return date ? date.toISOString().slice(0, 10) : null;
-}
-
-type CompanyShapeSource = {
-  id: string;
-  name: string;
-  legalForm: string;
-  address: string | null;
-  fiscalClosingMonth: number;
-  representativeName: string | null;
-  contactEmail: string | null;
-  contactPhone: string | null;
-  corporateNumber: string | null;
-  establishedOn: Date | null;
-  withholdingIncomeTaxPaymentSchedule: string | null;
-  residentTaxPaymentSchedule: string | null;
-};
-
-function shapeCompany(c: CompanyShapeSource) {
-  return {
-    companyId: c.id,
-    name: c.name,
-    legalForm: c.legalForm,
-    address: c.address ?? null,
-    fiscalClosingMonth: c.fiscalClosingMonth,
-    representativeName: c.representativeName ?? null,
-    contactEmail: c.contactEmail ?? null,
-    contactPhone: c.contactPhone ?? null,
-    corporateNumber: c.corporateNumber ?? null,
-    establishedOn: formatDate(c.establishedOn ?? null),
-    withholdingIncomeTaxPaymentSchedule: c.withholdingIncomeTaxPaymentSchedule ?? null,
-    residentTaxPaymentSchedule: c.residentTaxPaymentSchedule ?? null,
-  };
-}
-
-export async function GET(req: NextRequest) {
-  const scoped = await requireActiveCompany(req);
-  if (!scoped) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
-  if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
-  if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
-
-  return NextResponse.json(
-    {
-      company: shapeCompany(scoped.company),
-      roleInCompany: scoped.membership.roleInCompany,
-      userRole: scoped.auth.user.role,
-    },
-    { status: 200 }
-  );
-}
-
-export async function PUT(req: NextRequest) {
-  const scoped = await requireActiveCompany(req);
-  if (!scoped) return jsonError(401, "UNAUTHORIZED", "ログインが必要です");
-  if (!scoped.companyId) return jsonError(404, "NOT_FOUND", "会社が選択されていません");
-  if (!scoped.membership) return jsonError(403, "FORBIDDEN", "アクセス権限がありません");
-  if (!scoped.company) return jsonError(404, "NOT_FOUND", "会社が見つかりません");
-
-  // admin only (membership role)。システム管理者(global含む)は常に許可
-  const isSystemAdmin =
-    scoped.auth.user.role === "admin" || scoped.auth.user.role === "global";
-  if (!isSystemAdmin && !canEditCompany(scoped.membership.roleInCompany)) {
-    return jsonError(403, "FORBIDDEN", "編集権限がありません");
-  }
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", [
-      { field: "body", reason: "invalid_json" },
-    ]);
-  }
-
-  const parsed = customerUpdateSchema.safeParse(body);
-  if (!parsed.success) {
-    const details = parsed.error.issues.map((i) => ({
-      field: i.path.join(".") || "body",
-      reason: i.code,
-    }));
-    return jsonError(400, "VALIDATION_ERROR", "入力に誤りがあります", details);
-  }
-
-  const v = parsed.data.company;
-
-  // legalForm は変更不可。sole は決算月12固定をサーバで強制
-  const fiscalClosingMonth =
-    scoped.company.legalForm === "sole" ? 12 : v.fiscalClosingMonth;
-
-  const updated = await prisma.company.update({
-    where: { id: scoped.companyId },
-    data: {
-      name: v.name,
-      address: v.address ?? null,
-      fiscalClosingMonth,
-      representativeName: v.representativeName ?? null,
-      contactEmail: v.contactEmail ?? null,
-      contactPhone: v.contactPhone ?? null,
-      corporateNumber: v.corporateNumber ?? null,
-      establishedOn: v.establishedOn ? new Date(v.establishedOn) : null,
-      withholdingIncomeTaxPaymentSchedule:
-        v.withholdingIncomeTaxPaymentSchedule ?? null,
-      residentTaxPaymentSchedule: v.residentTaxPaymentSchedule ?? null,
-      updatedAt: new Date(),
-    },
+export async function GET() {
+  return withApiError(async () => {
+    const context = await requireActiveCompany();
+    const record = await db.company.findUniqueOrThrow({
+      where: { id: context.companyId },
+      include: { taxSetting: true, recurringTaxDueDates: { orderBy: [{ month: "asc" }, { day: "asc" }] } }
+    });
+    const { taxSetting, recurringTaxDueDates, ...company } = record;
+    const setting = taxSetting ? {
+      ...taxSetting,
+      previousCorporateTaxYen: taxSetting.previousCorporateTaxYen?.toString() ?? null,
+      previousConsumptionTaxYen: taxSetting.previousConsumptionTaxYen?.toString() ?? null
+    } : {
+      isTaxable: false,
+      withholdingSpecial: false,
+      residentTaxSpecial: false,
+      previousCorporateTaxYen: null,
+      previousConsumptionTaxYen: null
+    };
+    const canEdit = context.session.user.role === "global" || context.session.user.role === "admin" || context.membership.roleInCompany === "admin";
+    return NextResponse.json({ company, setting, dueDates: recurringTaxDueDates, roleInCompany: context.membership.roleInCompany, userRole: context.session.user.role, canEdit });
   });
+}
 
-  return NextResponse.json({ company: shapeCompany(updated) }, { status: 200 });
+export async function PUT(request: Request) {
+  return withApiError(async () => {
+    assertSameOrigin(request);
+    const context = await requireCompanyEditor();
+    const parsed = updateSchema.safeParse(await parseJson(request));
+    if (!parsed.success) return validationError(parsed.error);
+    const company = await db.$transaction(async (tx) => {
+      const current = await tx.company.findUniqueOrThrow({ where: { id: context.companyId } });
+      const updated = await tx.company.update({
+        where: { id: context.companyId },
+        data: {
+          ...parsed.data,
+          closingMonth: current.legalForm === "sole_proprietor" ? 12 : parsed.data.closingMonth,
+          email: parsed.data.email || null,
+          corporateNumber: parsed.data.corporateNumber || null,
+          scheduleDirtyAt: new Date()
+        }
+      });
+      await tx.auditLog.create({ data: { companyId: updated.id, actorUserId: context.session.userId, action: "company.update", entityType: "Company", entityId: updated.id, result: "success" } });
+      return updated;
+    });
+    return NextResponse.json({ company });
+  });
 }
