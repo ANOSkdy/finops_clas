@@ -9,6 +9,10 @@ export type ApiErrorCode =
   | "DATABASE_UNAVAILABLE"
   | "STORAGE_ERROR"
   | "MAIL_ERROR"
+  | "MAIL_RATE_LIMITED"
+  | "MAIL_TRANSIENT"
+  | "MAIL_PERMANENT"
+  | "MAIL_TIMEOUT"
   | "AI_ERROR";
 
 export type ApiErrorDetail = { field: string; reason: string };
