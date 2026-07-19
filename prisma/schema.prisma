@@ -140,19 +140,23 @@ model Task {
 }
 
 model TaskReminderDelivery {
-  id        String   @id @default(uuid()) @db.Uuid
-  taskId    String   @map("task_id") @db.Uuid
-  channel   String   @default("email") @db.VarChar(20)
-  remindKey String   @map("remind_key") @db.VarChar(40)
-  status    String   @db.VarChar(20)
-  errorCode String?  @map("error_code") @db.VarChar(80)
-  sentAt    DateTime? @map("sent_at") @db.Timestamptz(3)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id            String    @id @default(uuid()) @db.Uuid
+  taskId        String    @map("task_id") @db.Uuid
+  channel       String    @default("email") @db.VarChar(20)
+  remindKey     String    @map("remind_key") @db.VarChar(40)
+  status        String    @db.VarChar(20)
+  errorCode     String?   @map("error_code") @db.VarChar(80)
+  attemptCount  Int       @default(0) @map("attempt_count")
+  nextAttemptAt DateTime? @map("next_attempt_at") @db.Timestamptz(3)
+  lastAttemptAt DateTime? @map("last_attempt_at") @db.Timestamptz(3)
+  sentAt        DateTime? @map("sent_at") @db.Timestamptz(3)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@unique([taskId, channel, remindKey])
   @@index([createdAt])
+  @@index([status, nextAttemptAt])
   @@map("task_reminder_deliveries")
 }
 
